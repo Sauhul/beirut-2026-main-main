@@ -1,394 +1,343 @@
-import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-import { ShoppingCart } from "lucide-react";
-import hero from "@assets/hero-mesa.jpg";
+import { Clock, MapPin, MessageCircle, Phone, Ship, Sparkles, Store, Truck } from "lucide-react";
+import { ProductCard } from "@components/product/ProductCard";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
-import { getMotionQuality } from "@hooks/useAnimationQuality";
 import { productImageSrc } from "@shared/utils/category-images";
-import { formatCOP } from "@shared/utils/format";
-import { useCart } from "@domain/cart/use-cart";
-import { toast } from "sonner";
-
-gsap.registerPlugin(ScrollTrigger);
-
-const IMG_BASE = "https://unjojlgwgbcxyxqqkjbe.supabase.co/storage/v1/object/public/product-images/products/";
-
-// Category tiles config — imágenes reales de productos del catálogo
-const CATEGORY_TILES = [
-  { slug: "cafeteras-teteras", label: "Cafeteras y Teteras", image: `${IMG_BASE}brioni-cezve-cafetera-turca-de-granito-azul.jpg` },
-  { slug: "cafe-te", label: "Café y Té", image: `${IMG_BASE}cafe-maatouk-450gr.jpg` },
-  { slug: "frutos-secos", label: "Frutos Secos", image: `${IMG_BASE}datiles-kilo.jpg` },
-  { slug: "panaderia", label: "Panadería", image: `${IMG_BASE}pan-arabe.jpg` },
-  { slug: "especias-hierbas", label: "Especias y Hierbas", image: `${IMG_BASE}zaatar-500gr.jpg` },
-  { slug: "salsas-condimentos", label: "Salsas y Condimentos", image: `${IMG_BASE}tahine-454gr.jpg` },
-];
+import { SITE, whatsappLink } from "@config/site";
+import hero from "@assets/hero-levantine-light.jpg";
+import souk from "@assets/story-souk.jpg";
 
 export function HomePage() {
-  usePageTitle("BEIRUT · Sabores del Líbano en tu mesa");
+  usePageTitle("Delikatessen Beyrouth | Tienda libanesa en Barranquilla");
+
   const { data } = useQuery(catalogQuery);
-  const { add } = useCart();
-  const featured = data?.products.filter((p) => p.featured).slice(0, 3) ?? [];
-  const containerRef = useRef<HTMLDivElement>(null);
+  const products = data?.products ?? [];
+  const categories = data?.categories ?? [];
 
-  useGSAP(
-    () => {
-      const motion = getMotionQuality();
-      gsap.set(".motion-ready", { autoAlpha: 1 });
-      if (motion === "minimal") return;
+  const featured = products.filter((p) => p.featured && p.in_stock).slice(0, 8);
 
-      gsap
-        .timeline({ defaults: { ease: "expo.out" } })
-        .from(".hero-title", { y: 48, autoAlpha: 0, duration: 0.9 })
-        .from(".hero-sub", { y: 24, autoAlpha: 0, duration: 0.6 }, "-=0.5")
-        .from(".hero-cta", { y: 20, autoAlpha: 0, duration: 0.5 }, "-=0.35");
+  const tiles = categories
+    .filter((c) => products.some((p) => p.category_slug === c.slug))
+    .slice(0, 6)
+    .map((c) => {
+      const sample = products.find((p) => p.category_slug === c.slug && p.image_url);
+      const count = products.filter((p) => p.category_slug === c.slug).length;
+      return { slug: c.slug, name: c.name, image: productImageSrc(sample?.image_url), count };
+    });
 
-      gsap.utils.toArray<HTMLElement>(".reveal-section").forEach((section) => {
-        gsap.from(section.querySelectorAll(".reveal-item"), {
-          y: 40,
-          autoAlpha: 0,
-          stagger: 0.1,
-          duration: 0.7,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-        });
-      });
-
-      ScrollTrigger.refresh();
+  const PILLARS = [
+    {
+      icon: Ship,
+      title: "Importación directa",
+      text: "Traemos cada lote desde Líbano, Siria y Turquía, sin intermediarios que encarezcan la mesa.",
     },
     {
-      scope: containerRef,
-      dependencies: [featured.length],
-      revertOnUpdate: true,
+      icon: Store,
+      title: "Tienda física en El Prado",
+      text: "Puedes venir, oler las especias, probar el café y pedir consejo sobre cada producto.",
     },
-  );
+    {
+      icon: Sparkles,
+      title: "Asesoría de cocina",
+      text: "Te explicamos cómo usar el zaatar, el tahine o el agua de azahar en recetas de casa.",
+    },
+    {
+      icon: Truck,
+      title: "Domicilios en Barranquilla",
+      text: "Coordinamos entrega el mismo día por WhatsApp y envíos al resto del país.",
+    },
+  ];
+
+  const STEPS = [
+    { n: "01", title: "Elige tus productos", text: "Explora el catálogo por categoría o búscalo por nombre." },
+    { n: "02", title: "Confirma tu pedido", text: "Agrégalo al carrito y paga en línea con Wompi, o escríbenos por WhatsApp." },
+    { n: "03", title: "Recibe o recoge", text: "Domicilio en Barranquilla o recogida en la tienda el mismo día." },
+  ];
 
   return (
-    <div ref={containerRef} className="route-page overflow-hidden">
-
-      {/* ── HERO ─────────────────────────────────────────── */}
-      <section
-        className="relative flex items-center justify-center overflow-hidden"
-        style={{ minHeight: "calc(100vh - 6rem)" }}
-      >
-        {/* Background image */}
-        <img
-          src={hero}
-          alt="Mesa libanesa"
-          className="absolute inset-0 h-full w-full object-cover object-center"
-        />
-        {/* Dark overlay */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(160deg, rgba(20,8,2,0.72) 0%, rgba(30,12,4,0.68) 50%, rgba(10,5,0,0.75) 100%)",
-          }}
-        />
-
-        {/* Content */}
-        <div className="relative z-10 mx-auto max-w-4xl px-6 py-20 text-center">
-          <h1
-            className="hero-title motion-ready font-display font-black uppercase leading-[0.9] tracking-[0.02em]"
-            style={{
-              fontSize: "clamp(3rem, 9vw, 6.5rem)",
-              color: "#ffffff",
-              textShadow: "0 4px 32px rgba(0,0,0,0.5)",
-            }}
-          >
-            VIVE EL SABOR
-            <br />
-            <span style={{ color: "var(--dk-gold)" }}>DE BEIRUT</span>
-          </h1>
-
-          <p
-            className="hero-sub motion-ready mx-auto mt-6 max-w-lg leading-7"
-            style={{
-              fontSize: "1rem",
-              color: "rgba(255,255,255,0.8)",
-              letterSpacing: "0.02em",
-            }}
-          >
-            Delicias artesanales premium, elaboradas con tradición libanesa
-          </p>
-
-          <div className="hero-cta motion-ready mt-10 flex justify-center">
-            <Link
-              to="/tienda"
-              className="dk-btn-primary"
-            >
-              VER LA COLECCIÓN
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FEATURED SPECIALTIES ─────────────────────────── */}
-      <section
-        className="reveal-section px-5 py-16"
-        style={{ background: "var(--dk-cream)" }}
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="reveal-item mb-10 text-center">
-            <h2 className="dk-section-title">ESPECIALIDADES DESTACADAS</h2>
-            <div className="dk-divider mx-auto mt-3" />
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((p) => {
-              const imgSrc = productImageSrc(p.image_url);
-
-              return (
-                <article
-                  key={p.id}
-                  className="reveal-item dk-product-card group"
-                >
-                  {/* Image */}
-                  <Link
-                    to={`/producto/${p.slug}`}
-                    className="block overflow-hidden"
-                    style={{ aspectRatio: "1 / 1" }}
-                  >
-                    <img
-                      src={imgSrc}
-                      alt={p.name}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src =
-                          "/fallback/baklawa-pistacho.jpg";
-                      }}
-                    />
-                  </Link>
-
-                  {/* Info */}
-                  <div className="p-4">
-                    <Link to={`/producto/${p.slug}`}>
-                      <h3
-                        className="font-display font-bold leading-tight"
-                        style={{ fontSize: "1rem", color: "var(--dk-brown)" }}
-                      >
-                        {p.name}
-                      </h3>
-                    </Link>
-                    <p
-                      className="mt-1 line-clamp-2 leading-5"
-                      style={{ fontSize: "0.8rem", color: "rgba(61,26,10,0.6)" }}
-                    >
-                      {p.description}
-                    </p>
-
-                    <div className="mt-3 flex items-center justify-between">
-                      <span
-                        className="font-display font-black"
-                        style={{ fontSize: "1.15rem", color: "var(--dk-brown)" }}
-                      >
-                        {formatCOP(p.price)}
-                      </span>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        add({
-                          id: p.id,
-                          slug: p.slug,
-                          name: p.name,
-                          price: p.price,
-                          unit: p.unit,
-                          categorySlug: p.category_slug,
-                          imageUrl: p.image_url,
-                        });
-                        toast.success(`${p.name} agregado al carrito`);
-                      }}
-                      className="dk-btn-cart mt-3 w-full"
-                      aria-label={`Agregar ${p.name} al carrito`}
-                    >
-                      <ShoppingCart className="h-3.5 w-3.5" />
-                      AGREGAR AL CARRITO
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── DISCOVER CATEGORIES ──────────────────────────── */}
-      <section
-        className="reveal-section px-5 py-16"
-        style={{ background: "var(--dk-marble)" }}
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="reveal-item mb-10 text-center">
-            <h2 className="dk-section-title">DESCUBRE NUESTRAS CATEGORÍAS</h2>
-            <div className="dk-divider mx-auto mt-3" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {CATEGORY_TILES.map((cat) => (
-              <Link
-                key={cat.slug}
-                to={`/tienda?categoria=${cat.slug}`}
-                className="reveal-item dk-category-tile group"
-              >
-                <div className="overflow-hidden rounded" style={{ aspectRatio: "1 / 1" }}>
-                  <img
-                    src={cat.image}
-                    alt={cat.label}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-107"
-                  />
-                </div>
-                <p
-                  className="mt-2 text-center font-sans font-black uppercase"
-                  style={{
-                    fontSize: "0.62rem",
-                    letterSpacing: "0.16em",
-                    color: "var(--dk-brown)",
-                  }}
-                >
-                  {cat.label}
-                </p>
+    <div className="route-page">
+      {/* HERO */}
+      <section className="relative overflow-hidden border-b border-border bg-card">
+        <div className="arabesque pointer-events-none absolute inset-0 opacity-50" />
+        <div className="relative mx-auto grid min-h-[calc(100vh-5rem)] max-w-[96rem] lg:grid-cols-2">
+          <div className="flex flex-col justify-center px-6 py-16 sm:px-10 lg:px-16 lg:py-20 xl:px-24">
+            <div className="mb-6 flex items-center gap-3">
+              <span className="h-px w-10 bg-gold" />
+              <p className="eyebrow">Auténticos sabores del Líbano</p>
+            </div>
+            <h1 className="font-display text-6xl leading-[0.92] text-foreground sm:text-7xl lg:text-8xl">
+              Delikatessen
+              <br />
+              <span className="italic text-gold">Beyrouth</span>
+            </h1>
+            <p className="mt-8 max-w-xl text-base font-light leading-8 text-muted-foreground md:text-lg">
+              Una tienda libanesa en Barranquilla con más de {SITE.stats.products} productos del
+              Medio Oriente: especias, café con cardamomo, dulces de pistacho, conservas y piezas
+              para servir la mesa como en casa.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Link to="/tienda" className="btn-gold">
+                Ver el catálogo
               </Link>
+              <a
+                href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-outline-gold"
+              >
+                <MessageCircle className="h-4 w-4" /> Pedir por WhatsApp
+              </a>
+            </div>
+            <div className="mt-14 grid grid-cols-2 gap-6 border-t border-border pt-7 sm:grid-cols-3">
+              <div>
+                <p className="eyebrow">Productos</p>
+                <p className="mt-1 text-sm text-foreground">Selección importada</p>
+              </div>
+              <div>
+                <p className="eyebrow">Tradición</p>
+                <p className="mt-1 text-sm text-foreground">Sabores familiares</p>
+              </div>
+              <div className="hidden sm:block">
+                <p className="eyebrow">Ubicación</p>
+                <p className="mt-1 text-sm text-foreground">Barranquilla</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative min-h-[52vh] overflow-hidden rounded-t-[9rem] lg:min-h-full lg:rounded-t-none lg:rounded-l-[12rem]">
+            <img
+              src={hero}
+              alt="Mesa luminosa con hummus, baklava, dátiles, especias y café libanés"
+              width={1024}
+              height={1408}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-secondary/35 via-transparent to-transparent lg:bg-linear-to-r lg:from-card/40 lg:to-transparent" />
+            <div className="absolute top-8 right-8 flex h-28 w-28 items-center justify-center rounded-full border border-card/70 bg-secondary/55 p-4 text-center text-[0.6rem] font-semibold tracking-[0.18em] text-secondary-foreground uppercase backdrop-blur-sm md:top-12 md:right-12">
+              Tradición levantina original
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CIFRAS */}
+      <section className="border-b border-border bg-secondary text-secondary-foreground">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 divide-gold/20 px-5 md:grid-cols-4 md:divide-x">
+          {[
+            { k: `${SITE.stats.years}`, v: "años en Barranquilla" },
+            { k: `${Math.max(SITE.stats.products, products.length)}+`, v: "productos importados" },
+            { k: `${Math.max(categories.length, 1)}`, v: "categorías en tienda" },
+            { k: `${SITE.stats.families}`, v: "generaciones de recetas" },
+          ].map((s) => (
+            <div key={s.v} className="px-4 py-10 text-center">
+              <p className="font-display text-5xl text-gold">{s.k}</p>
+              <p className="mt-2 text-[0.62rem] font-semibold tracking-[0.22em] uppercase text-secondary-foreground/65">
+                {s.v}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* HISTORIA */}
+      <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-24 lg:grid-cols-2">
+        <div className="relative">
+          <img
+            src={souk}
+            alt="Sacos de especias del Medio Oriente: sumac, zaatar y capullos de rosa"
+            width={1200}
+            height={1408}
+            loading="lazy"
+            className="w-full object-cover"
+          />
+          <div className="absolute -bottom-6 -right-4 hidden bg-gold px-7 py-5 text-center md:block">
+            <p className="font-display text-4xl text-primary-foreground">{SITE.stats.years}</p>
+            <p className="text-[0.55rem] font-bold tracking-[0.2em] uppercase text-primary-foreground">
+              años de tienda
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <p className="eyebrow">Nuestra historia</p>
+          <h2 className="mt-4 font-display text-4xl leading-tight text-sand md:text-5xl">
+            De una cocina familiar de Beirut a la Cra. 43
+          </h2>
+          <div className="mt-6 h-px w-24 bg-gold" />
+          <div className="mt-6 space-y-5 text-sm leading-8 text-muted-foreground">
+            <p>
+              Delikatessen Beyrouth nació del deseo de encontrar en Barranquilla los sabores que la
+              familia traía del Líbano: el zaatar de la abuela, el café con cardamomo de las tardes,
+              la baklava del día de fiesta.
+            </p>
+            <p>
+              Hoy somos una tienda de barrio donde se entra a preguntar. Molemos especias, pesamos
+              dátiles y explicamos cómo se prepara un hummus como en Beirut. Cada producto se elige
+              probándolo primero: si no lo servimos en nuestra mesa, no entra a los estantes.
+            </p>
+            <p>
+              Atendemos a familias libanesas, sirias y palestinas de la ciudad, a restaurantes de
+              comida árabe y a cualquiera con curiosidad por el Medio Oriente.
+            </p>
+          </div>
+          <Link to="/contacto" className="btn-outline-gold mt-8">
+            <MapPin className="h-4 w-4" /> Cómo llegar
+          </Link>
+        </div>
+      </section>
+
+      {/* PILARES */}
+      <section className="arabesque border-y border-border bg-muted py-20">
+        <div className="mx-auto max-w-7xl px-5">
+          <div className="text-center">
+            <p className="eyebrow">Por qué comprarnos</p>
+            <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">La tienda, en corto</h2>
+            <div className="rule-gold mt-5" />
+          </div>
+          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {PILLARS.map((p) => (
+              <div key={p.title} className="border-t border-gold/40 pt-6">
+                <p.icon className="h-7 w-7 text-gold" />
+                <h3 className="mt-4 font-display text-2xl text-sand">{p.title}</h3>
+                <p className="mt-3 text-xs leading-7 text-muted-foreground">{p.text}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── SHOP BANNER ──────────────────────────────────── */}
-      <section
-        className="relative overflow-hidden px-5 py-20"
-        style={{ background: "var(--dk-brown)" }}
-      >
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-          }}
-        />
-        <div className="relative mx-auto max-w-3xl text-center">
-          <p
-            className="font-sans font-black uppercase tracking-[0.3em]"
-            style={{ fontSize: "0.68rem", color: "rgba(229,196,120,0.7)" }}
-          >
-            ✦ BEIRUT DELIKATESSEN ✦
-          </p>
-          <h2
-            className="mt-4 font-display font-black uppercase leading-tight"
-            style={{
-              fontSize: "clamp(2rem, 5vw, 3.5rem)",
-              color: "var(--dk-cream)",
-            }}
-          >
-            Sabores Libaneses Auténticos
-            <br />
-            <span style={{ color: "var(--dk-gold)" }}>En Cada Bocado</span>
-          </h2>
-          <p
-            className="mx-auto mt-5 max-w-lg leading-7"
-            style={{ fontSize: "0.9rem", color: "rgba(229,196,120,0.7)" }}
-          >
-            Desde especias hasta dulces, aceites de oliva hasta panes artesanales — 
-            todo obtenido de los mejores productores libaneses, entregado a tu mesa en Colombia.
-          </p>
-          <div className="mt-8 flex justify-center gap-3">
-            <Link to="/tienda" className="dk-btn-gold">
-              VER TODOS LOS PRODUCTOS
+      {/* CATEGORÍAS */}
+      <section className="mx-auto max-w-7xl px-5 py-24">
+        <div className="text-center">
+          <p className="eyebrow">Qué encuentras</p>
+          <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">Nuestras categorías</h2>
+          <div className="rule-gold mt-5" />
+        </div>
+
+        <div className="mt-14 grid grid-cols-2 gap-5 md:grid-cols-3">
+          {tiles.map((t) => (
+            <Link key={t.slug} to={`/tienda?categoria=${t.slug}`} className="group relative block overflow-hidden">
+              <img
+                src={t.image}
+                alt={t.name}
+                loading="lazy"
+                className="aspect-4/3 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="veil absolute inset-0" />
+              <div className="absolute inset-x-0 bottom-0 p-5">
+                <p className="font-display text-2xl text-sand">{t.name}</p>
+                <p className="mt-1 text-[0.58rem] font-bold tracking-[0.2em] uppercase text-gold">
+                  {t.count} productos
+                </p>
+              </div>
             </Link>
-            <Link to="/contacto" className="dk-btn-outline-light">
-              SABER MÁS
+          ))}
+        </div>
+      </section>
+
+      {/* DESTACADOS */}
+      <section className="border-y border-border bg-muted py-24">
+        <div className="mx-auto max-w-7xl px-5">
+          <div className="text-center">
+            <p className="eyebrow">Selección de la casa</p>
+            <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">Los más pedidos</h2>
+            <div className="rule-gold mt-5" />
+          </div>
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {featured.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+          {featured.length === 0 && (
+            <p className="mt-14 text-center text-sm text-muted-foreground">
+              Pronto tendremos más productos destacados.
+            </p>
+          )}
+          <div className="mt-12 text-center">
+            <Link to="/tienda" className="btn-gold">
+              Ver los {Math.max(SITE.stats.products, products.length)}+ productos
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── ALL PRODUCTS GRID (compact teaser) ───────────── */}
-      <section
-        className="reveal-section px-5 py-16"
-        style={{ background: "var(--dk-cream)" }}
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="reveal-item mb-10 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="dk-section-title">NUESTRA COLECCIÓN</h2>
-              <div className="dk-divider mt-3" />
+      {/* CÓMO COMPRAR */}
+      <section className="mx-auto max-w-7xl px-5 py-24">
+        <div className="text-center">
+          <p className="eyebrow">Cómo comprar</p>
+          <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">Tres pasos</h2>
+          <div className="rule-gold mt-5" />
+        </div>
+        <div className="mt-14 grid gap-8 md:grid-cols-3">
+          {STEPS.map((s) => (
+            <div key={s.n} className="card-onyx p-8">
+              <p className="font-display text-5xl text-gold/60">{s.n}</p>
+              <h3 className="mt-4 font-display text-2xl text-sand">{s.title}</h3>
+              <p className="mt-3 text-xs leading-7 text-muted-foreground">{s.text}</p>
             </div>
-            <Link to="/tienda" className="dk-btn-outline-brown text-xs">
-              VER TODO →
-            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* VISÍTANOS */}
+      <section className="arabesque border-t border-border bg-muted py-24">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2">
+          <div>
+            <p className="eyebrow">Visítanos</p>
+            <h2 className="mt-3 font-display text-4xl leading-tight text-sand md:text-5xl">
+              Te esperamos en la tienda
+            </h2>
+            <div className="mt-6 h-px w-24 bg-gold" />
+            <ul className="mt-8 space-y-6 text-sm text-muted-foreground">
+              <li className="flex gap-4">
+                <MapPin className="mt-1 h-5 w-5 shrink-0 text-gold" />
+                <span>
+                  <span className="block text-[0.6rem] font-bold tracking-[0.22em] uppercase text-gold">
+                    Dirección
+                  </span>
+                  {SITE.address}
+                </span>
+              </li>
+              <li className="flex gap-4">
+                <Clock className="mt-1 h-5 w-5 shrink-0 text-gold" />
+                <span>
+                  <span className="block text-[0.6rem] font-bold tracking-[0.22em] uppercase text-gold">
+                    Horarios
+                  </span>
+                  {SITE.hoursWeek}
+                  <br />
+                  {SITE.hoursSunday}
+                </span>
+              </li>
+              <li className="flex gap-4">
+                <Phone className="mt-1 h-5 w-5 shrink-0 text-gold" />
+                <span>
+                  <span className="block text-[0.6rem] font-bold tracking-[0.22em] uppercase text-gold">
+                    Pedidos
+                  </span>
+                  {SITE.phoneDisplay}
+                </span>
+              </li>
+            </ul>
+            <a
+              href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-gold mt-10"
+            >
+              <MessageCircle className="h-4 w-4" /> Escríbenos por WhatsApp
+            </a>
           </div>
 
-          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-            {(data?.products ?? []).slice(0, 8).map((p) => {
-              const imgSrc = productImageSrc(p.image_url);
-
-              return (
-                <article key={p.id} className="reveal-item dk-product-card group">
-                  <Link
-                    to={`/producto/${p.slug}`}
-                    className="block overflow-hidden"
-                    style={{ aspectRatio: "1 / 1" }}
-                  >
-                    <img
-                      src={imgSrc}
-                      alt={p.name}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src =
-                          "/fallback/baklawa-pistacho.jpg";
-                      }}
-                    />
-                  </Link>
-                  <div className="p-3">
-                    <Link to={`/producto/${p.slug}`}>
-                      <h3
-                        className="font-display font-bold line-clamp-1"
-                        style={{ fontSize: "0.88rem", color: "var(--dk-brown)" }}
-                      >
-                        {p.name}
-                      </h3>
-                    </Link>
-                    <div className="mt-2 flex items-center justify-between gap-2">
-                      <span
-                        className="font-sans font-black"
-                        style={{ fontSize: "0.88rem", color: "var(--dk-brown)" }}
-                      >
-                        {formatCOP(p.price)}
-                      </span>
-                      <button
-                        onClick={() => {
-                          add({
-                            id: p.id,
-                            slug: p.slug,
-                            name: p.name,
-                            price: p.price,
-                            unit: p.unit,
-                            categorySlug: p.category_slug,
-                            imageUrl: p.image_url,
-                          });
-                          toast.success(`${p.name} agregado`);
-                        }}
-                        aria-label={`Agregar ${p.name}`}
-                        className="dk-btn-icon"
-                      >
-                        <ShoppingCart className="h-3 w-3" />
-                      </button>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+          <div className="min-h-[380px] border border-border">
+            <iframe
+              title="Mapa de Delikatessen Beyrouth"
+              src={SITE.mapEmbed}
+              className="h-full min-h-[380px] w-full"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>

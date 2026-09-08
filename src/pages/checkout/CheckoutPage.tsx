@@ -8,7 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { toast } from "sonner";
 import { useCart } from "@domain/cart/use-cart";
-import { formatCOP } from "@shared/utils/format";
+import { formatCOP, titleCase } from "@shared/utils/format";
 import { formatPresentation } from "@shared/utils/product-format";
 import { createOrder, type PaymentMethod, type CreatedOrder } from "@domain/orders/order-service";
 import { openWompiCheckout } from "@domain/payments/wompi";
@@ -77,7 +77,6 @@ export function CheckoutPage() {
   });
 
   const delivery = watch("delivery_method");
-  const paymentMethod = watch("payment_method");
 
   useGSAP(
     () => {
@@ -101,8 +100,8 @@ export function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="route-page mx-auto max-w-xl px-5 py-28 text-center">
-        <p className="font-script text-5xl text-primary">Tu carrito está vacío</p>
-        <Link to="/tienda" className="liquid-button mx-auto mt-8 max-w-max">
+        <p className="font-display text-4xl text-sand">Tu carrito está vacío</p>
+        <Link to="/tienda" className="btn-gold mx-auto mt-8 max-w-max">
           Ver productos
         </Link>
       </div>
@@ -211,8 +210,11 @@ export function CheckoutPage() {
   }
 
   return (
-    <div ref={containerRef} className="route-page checkout-lab mx-auto max-w-7xl px-5 pb-24 pt-10">
-      <h1 className="checkout-title checkout-motion display-slab">Finalizar compra</h1>
+    <div ref={containerRef} className="route-page mx-auto max-w-7xl px-5 pb-24 pt-10">
+      <div className="checkout-title checkout-motion border-b border-border pb-8 mb-10">
+        <p className="eyebrow">Paso final</p>
+        <h1 className="mt-3 font-display text-5xl text-sand">Finalizar compra</h1>
+      </div>
 
       <form
         onSubmit={handleSubmit(onSubmit, (errors) => {
@@ -227,30 +229,28 @@ export function CheckoutPage() {
         className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]"
       >
         <div className="space-y-6">
-          <fieldset className="checkout-fieldset checkout-motion rounded-[2rem] border border-foreground/10 bg-background/70 p-6 backdrop-blur-xl">
-            <legend className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-              Tus datos
-            </legend>
+          <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
+            <legend className="px-2 eyebrow">Tus datos</legend>
             <div className="grid gap-5 sm:grid-cols-2">
-              <label className="block text-sm font-medium">
+              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Nombre completo
                 <input {...register("customer_name")} maxLength={100} className={inputClass} />
                 {errors.customer_name && (
-                  <span className="mt-1 block text-xs text-coral">
+                  <span className="mt-1 block text-xs text-destructive">
                     {errors.customer_name.message}
                   </span>
                 )}
               </label>
-              <label className="block text-sm font-medium">
+              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Teléfono / WhatsApp
                 <input {...register("customer_phone")} maxLength={30} className={inputClass} />
                 {errors.customer_phone && (
-                  <span className="mt-1 block text-xs text-coral">
+                  <span className="mt-1 block text-xs text-destructive">
                     {errors.customer_phone.message}
                   </span>
                 )}
               </label>
-              <label className="block text-sm font-medium sm:col-span-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2">
                 Correo electrónico (opcional)
                 <input
                   {...register("customer_email")}
@@ -259,7 +259,7 @@ export function CheckoutPage() {
                   className={inputClass}
                 />
                 {errors.customer_email && (
-                  <span className="mt-1 block text-xs text-coral">
+                  <span className="mt-1 block text-xs text-destructive">
                     {errors.customer_email.message}
                   </span>
                 )}
@@ -267,49 +267,47 @@ export function CheckoutPage() {
             </div>
           </fieldset>
 
-          <fieldset className="checkout-fieldset checkout-motion rounded-[2rem] border border-foreground/10 bg-background/70 p-6 backdrop-blur-xl">
-            <legend className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-              Entrega
-            </legend>
+          <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
+            <legend className="px-2 eyebrow">Entrega</legend>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <div className="flex flex-wrap gap-3">
-                  <label className="flex cursor-pointer items-center gap-2 rounded-full border border-foreground/10 px-5 py-3 text-sm font-black uppercase tracking-[0.13em] transition has-[:checked]:border-primary has-[:checked]:bg-primary/10 hover:border-primary">
+                  <label className="flex cursor-pointer items-center gap-2 border border-input px-5 py-3 text-[0.65rem] font-bold tracking-[0.18em] uppercase transition has-[:checked]:border-gold has-[:checked]:bg-gold/10 hover:border-gold">
                     <input
                       type="radio"
                       {...register("delivery_method")}
                       value="domicilio"
                       className="sr-only"
                     />
-                    <Truck className="h-4 w-4 text-primary" /> A domicilio
+                    <Truck className="h-4 w-4 text-gold" /> A domicilio
                   </label>
-                  <label className="flex cursor-pointer items-center gap-2 rounded-full border border-foreground/10 px-5 py-3 text-sm font-black uppercase tracking-[0.13em] transition has-[:checked]:border-primary has-[:checked]:bg-primary/10 hover:border-primary">
+                  <label className="flex cursor-pointer items-center gap-2 border border-input px-5 py-3 text-[0.65rem] font-bold tracking-[0.18em] uppercase transition has-[:checked]:border-gold has-[:checked]:bg-gold/10 hover:border-gold">
                     <input
                       type="radio"
                       {...register("delivery_method")}
                       value="tienda"
                       className="sr-only"
                     />
-                    <Truck className="h-4 w-4 text-primary" /> Recoger en tienda
+                    <Truck className="h-4 w-4 text-gold" /> Recoger en tienda
                   </label>
                 </div>
               </div>
               {delivery === "domicilio" && (
                 <>
-                  <label className="block text-sm font-medium sm:col-span-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2">
                     Dirección
                     <input {...register("address")} maxLength={200} className={inputClass} />
                     {errors.address && (
-                      <span className="mt-1 block text-xs text-coral">
+                      <span className="mt-1 block text-xs text-destructive">
                         {errors.address.message}
                       </span>
                     )}
                   </label>
-                  <label className="block text-sm font-medium">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Ciudad
                     <input {...register("city")} maxLength={100} className={inputClass} />
                     {errors.city && (
-                      <span className="mt-1 block text-xs text-coral">{errors.city.message}</span>
+                      <span className="mt-1 block text-xs text-destructive">{errors.city.message}</span>
                     )}
                   </label>
                 </>
@@ -317,15 +315,13 @@ export function CheckoutPage() {
             </div>
           </fieldset>
 
-          <fieldset className="checkout-fieldset checkout-motion rounded-[2rem] border border-foreground/10 bg-background/70 p-6 backdrop-blur-xl">
-            <legend className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-              Pago
-            </legend>
+          <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
+            <legend className="px-2 eyebrow">Pago</legend>
             <div className="space-y-3">
               {PAYMENT_OPTIONS.map((opt) => (
                 <label
                   key={opt.value}
-                  className="group flex cursor-pointer items-center gap-3 rounded-xl border border-foreground/10 px-5 py-4 transition has-[:checked]:border-primary has-[:checked]:bg-primary/10 hover:border-primary"
+                  className="group flex cursor-pointer items-center gap-3 border border-input px-5 py-4 transition has-[:checked]:border-gold has-[:checked]:bg-gold/10 hover:border-gold"
                 >
                   <input
                     type="radio"
@@ -333,70 +329,68 @@ export function CheckoutPage() {
                     value={opt.value}
                     className="sr-only"
                   />
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-foreground/30 transition has-[:checked]:border-primary group-has-[:checked]:border-primary">
-                    <div className="h-2.5 w-2.5 scale-0 rounded-full bg-primary transition-transform group-has-[:checked]:scale-100" />
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-gold/40 group-has-[:checked]:border-gold">
+                    <div className="h-2.5 w-2.5 scale-0 rounded-full bg-gold transition-transform group-has-[:checked]:scale-100" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-black">{opt.label}</p>
-                    <p className="text-xs text-foreground/55">{opt.sub}</p>
+                    <p className="font-bold text-sand">{opt.label}</p>
+                    <p className="text-xs text-muted-foreground">{opt.sub}</p>
                   </div>
                 </label>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="checkout-fieldset checkout-motion rounded-[2rem] border border-foreground/10 bg-background/70 p-6 backdrop-blur-xl">
-            <legend className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-              Notas (opcional)
-            </legend>
+          <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
+            <legend className="px-2 eyebrow">Notas (opcional)</legend>
             <textarea {...register("notes")} maxLength={300} rows={3} className={inputClass} />
           </fieldset>
         </div>
 
         <div className="checkout-summary checkout-motion sticky top-24 self-start">
-          <div className="rounded-[2rem] border border-foreground/10 bg-background/80 p-8 backdrop-blur-xl shadow-[var(--shadow-soft)]">
-            <h2 className="text-xl font-black uppercase tracking-[0.15em]">Resumen</h2>
-            <ul className="mt-6 divide-y divide-foreground/10">
+          <div className="border border-border bg-card p-8 shadow-[var(--shadow-soft)]">
+            <h2 className="font-display text-2xl text-sand">Resumen</h2>
+            <ul className="mt-6 divide-y divide-border">
               {items.map((item) => (
                 <li key={item.id} className="py-4 flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="font-bold truncate">{item.name}</p>
-                    <p className="text-xs text-foreground/55">{formatPresentation(item.unit)}</p>
+                    <p className="font-bold text-sand truncate">{titleCase(item.name)}</p>
+                    <p className="text-xs text-muted-foreground">{formatPresentation(item.unit)}</p>
                   </div>
                   <div className="flex items-center gap-4 shrink-0">
-                    <span className="font-bold text-right">
+                    <span className="font-display text-sand text-right">
                       {formatCOP(item.price * item.quantity)}
                     </span>
-                    <span className="text-xs text-foreground/55">x {item.quantity}</span>
+                    <span className="text-xs text-muted-foreground">x {item.quantity}</span>
                   </div>
                 </li>
               ))}
             </ul>
-            <div className="mt-6 flex items-center justify-between text-xl font-black">
-              <span>Total</span>
-              <span>{formatCOP(subtotal)}</span>
+            <div className="mt-6 flex items-center justify-between border-t border-border pt-6 text-xl">
+              <span className="text-sand">Total</span>
+              <span className="font-display text-3xl text-gold">{formatCOP(subtotal)}</span>
             </div>
-            <div className="mt-4 space-y-2 text-xs text-foreground/55">
+            <div className="mt-4 space-y-2 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
-                <ShieldCheck className="h-3 w-3 text-gold" /> Pago seguro
+                <ShieldCheck className="h-3.5 w-3.5 text-gold" /> Pago seguro
               </li>
               <li className="flex items-center gap-2">
-                <Truck className="h-3 w-3 text-gold" /> Envío calculado al confirmar
+                <Truck className="h-3.5 w-3.5 text-gold" /> Envío calculado al confirmar
               </li>
             </div>
             <button
               type="submit"
               disabled={submitting}
-              className="liquid-button w-full mt-7 py-4 text-base"
+              className="btn-gold w-full mt-7 py-4 text-sm"
             >
               {submitting ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Procesando...
                 </>
               ) : (
                 <>
-                  <MessageCircle className="h-5 w-5" />
+                  <MessageCircle className="h-4 w-4" />
                   Confirmar y pagar
                 </>
               )}

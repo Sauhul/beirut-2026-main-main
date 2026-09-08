@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import * as THREE from "three";
-import { Spline } from "@splinetool/runtime";
+import { Application } from "@splinetool/runtime";
 
 interface SplineSceneProps {
   sceneUrl: string;
@@ -17,45 +16,33 @@ export const SplineScene: React.FC<SplineSceneProps> = ({
   style = {},
   height = "100%",
   width = "100%",
-  fallbackColor = "var(--moss)",
+  fallbackColor = "var(--gold)",
 }) => {
-  const canvasRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
-
-    const loadSpline = async () => {
-      try {
-        const spline = await Spline.load(sceneUrl);
-        spline.addToCanvas(canvasRef.current);
-        return () => spline.removeFromCanvas();
-      } catch (error) {
-        console.warn("Failed to load Spline scene, showing fallback:", error);
-        canvasRef.current.style.background = fallbackColor;
-        canvasRef.current.style.opacity = "0.15";
-        return () => {};
+    const canvas = canvasRef.current;
+    const spline = new Application(canvas);
+    spline.load(sceneUrl).catch((error) => {
+      console.warn("Failed to load Spline scene, showing fallback:", error);
+      if (canvas) {
+        canvas.style.background = fallbackColor;
+        canvas.style.opacity = "0.15";
       }
-    };
+    });
 
-    const cleanup = loadSpline();
-    return cleanup;
+    return () => {
+      spline.dispose();
+    };
   }, [sceneUrl, fallbackColor]);
 
   return (
     <div
-      ref={canvasRef}
       className={`relative w-full h-full overflow-hidden ${className}`}
-      style={{
-        width,
-        height,
-        position: "relative",
-        ...style,
-      }}
+      style={{ width, height, position: "relative", ...style }}
     >
-      <div
-        className="absolute inset-0 pointer-events-none spline-fallback"
-        style={{ background: `linear-gradient(135deg, var(--moss) 0%, var(--coral) 100%)` }}
-      />
+      <canvas ref={canvasRef} className="w-full h-full" />
     </div>
   );
 };

@@ -122,7 +122,7 @@ export async function openWompiCheckout(input: WompiPaymentInput): Promise<Wompi
         }
       });
 
-      widget.open((result) => {
+      widget.open((result: any) => {
         resolved = true;
         observer.disconnect();
         const transaction = result?.transaction;

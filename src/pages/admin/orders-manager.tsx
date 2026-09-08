@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@data/supabase/client";
-import { formatCOP } from "@shared/utils/format";
+import { formatCOP, titleCase } from "@shared/utils/format";
 import type { OrderItemRow, OrderRow } from "./admin.types";
 
 /* ── Pedidos ───────────────────────────────────────────────── */
@@ -44,18 +44,18 @@ export function OrdersManager() {
   return (
     <div className="space-y-4">
       {orders.map((o) => (
-        <article key={o.id} className="rounded-2xl border border-border p-5 smooth-card">
+        <article key={o.id} className="card-onyx p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-sm font-bold">Pedido #{o.order_number}</p>
+              <p className="font-display text-lg text-sand">Pedido #{o.order_number}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {new Date(o.created_at).toLocaleString("es-CO")}
               </p>
             </div>
           </div>
-          <div className="mt-3 grid gap-1 text-sm text-muted-foreground md:grid-cols-2">
+          <div className="mt-3 grid gap-1 text-xs text-muted-foreground md:grid-cols-2">
             <p>
-              <strong className="text-foreground">{o.customer_name}</strong> · {o.customer_phone}
+              <strong className="text-sand">{o.customer_name}</strong> · {o.customer_phone}
             </p>
             <p>
               {o.delivery_method === "domicilio"
@@ -64,17 +64,17 @@ export function OrdersManager() {
               · Pago: {o.payment_method}
             </p>
           </div>
-          <ul className="mt-3 border-t border-border pt-3 text-sm text-muted-foreground">
+          <ul className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
             {(itemsByOrder.get(o.id) ?? []).map((i, idx) => (
-              <li key={idx} className="flex justify-between">
+              <li key={idx} className="flex justify-between py-0.5">
                 <span>
-                  {i.quantity} × {i.product_name}
+                  {i.quantity} × {titleCase(i.product_name)}
                 </span>
-                <span>{formatCOP(i.line_total)}</span>
+                <span className="font-display text-sand">{formatCOP(i.line_total)}</span>
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-right text-base font-bold">{formatCOP(o.total)}</p>
+          <p className="mt-3 text-right font-display text-xl text-gold">{formatCOP(o.total)}</p>
         </article>
       ))}
     </div>

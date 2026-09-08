@@ -72,9 +72,12 @@ function LoginForm() {
 
   return (
     <div className="mx-auto max-w-sm px-5 py-24">
-      <h1 className="text-center font-script text-5xl text-primary">Beirut Admin</h1>
-      <form onSubmit={onSubmit} className="mt-10 space-y-4 rounded-2xl border border-border p-7">
-        <label className="block text-sm font-medium">
+      <div className="text-center">
+        <p className="eyebrow">Acceso Restringido</p>
+        <h1 className="mt-2 font-display text-4xl text-sand">Beirut Admin</h1>
+      </div>
+      <form onSubmit={onSubmit} className="mt-8 card-onyx p-7 space-y-4">
+        <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
           Correo
           <input
             type="email"
@@ -84,7 +87,7 @@ function LoginForm() {
             className={`mt-1 ${inputClass}`}
           />
         </label>
-        <label className="block text-sm font-medium">
+        <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
           Contraseña
           <input
             type="password"
@@ -97,7 +100,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground smooth-button disabled:opacity-60"
+          className="btn-gold w-full mt-4 !py-3"
         >
           {loading ? "Ingresando…" : "Ingresar"}
         </button>
@@ -113,11 +116,14 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-4xl font-semibold">Administración</h1>
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
+        <div>
+          <p className="eyebrow">Gestión Interna</p>
+          <h1 className="mt-1 font-display text-4xl text-sand">Administración</h1>
+        </div>
         <button
           onClick={onLogout}
-          className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium smooth-button hover:border-destructive hover:text-destructive"
+          className="btn-outline-gold !px-5 !py-2 text-xs"
         >
           <LogOut className="h-4 w-4" /> Salir
         </button>
@@ -128,10 +134,10 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`rounded-full border px-6 py-2.5 text-[13px] font-medium capitalize smooth-button ${
+            className={`px-6 py-2.5 text-[0.65rem] font-bold tracking-[0.2em] uppercase transition-colors ${
               tab === t
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border text-muted-foreground hover:border-primary hover:text-primary"
+                ? "border border-gold bg-gold text-primary-foreground"
+                : "border border-border text-muted-foreground hover:border-gold hover:text-gold"
             }`}
           >
             {t}

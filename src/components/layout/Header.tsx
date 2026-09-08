@@ -1,189 +1,112 @@
-import { Link, NavLink } from "react-router-dom";
-import { Menu, ShoppingBag, X, Search } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Menu, X, Phone, ShoppingBag } from "lucide-react";
+import { SITE, whatsappLink } from "@config/site";
 import { useCart } from "@domain/cart/use-cart";
+import logo from "@assets/beirut-logo.png";
 
-const navLinks = [
-  { to: "/", label: "INICIO", end: true },
-  { to: "/tienda", label: "TIENDA", end: false },
-  { to: "/contacto", label: "CONTACTO", end: false },
-] as const;
+const NAV = [
+  { to: "/", label: "Inicio" },
+  { to: "/tienda", label: "Tienda" },
+  { to: "/contacto", label: "Visítanos" },
+];
 
 export function Header() {
-  const { count } = useCart();
   const [open, setOpen] = useState(false);
+  const { count } = useCart();
 
   return (
-    <>
-      {/* Top announcement bar — cream background */}
-      <div
-        className="hidden md:flex items-center justify-center gap-1 px-5 py-2 text-center"
-        style={{
-          background: "var(--dk-cream)",
-          borderBottom: "1px solid rgba(61,26,10,0.1)",
-          fontSize: "0.68rem",
-          fontWeight: 700,
-          letterSpacing: "0.18em",
-          textTransform: "uppercase",
-          color: "var(--dk-brown)",
-        }}
-      >
-        <span>✦</span>
-        <span className="mx-3">¡Delicias artesanales premium, elaboradas con tradición!</span>
-        <span>✦</span>
+    <header className="sticky top-0 z-50 border-b border-border bg-card/92 backdrop-blur-md">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5">
+        <Link to="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
+          <img src={logo} alt={SITE.brandFull} className="h-11 w-auto" />
+          <span className="leading-none">
+            <span className="block font-display text-xl tracking-[0.3em] text-gold">BEIRUT</span>
+            <span className="block text-[0.55rem] font-semibold tracking-[0.28em] text-muted-foreground uppercase">
+              Delikatessen
+            </span>
+          </span>
+        </Link>
+
+        <nav className="hidden items-center gap-10 md:flex">
+          {NAV.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="text-[0.7rem] font-bold tracking-[0.22em] uppercase text-muted-foreground transition-colors hover:text-gold"
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Link
+            to="/carrito"
+            aria-label="Ver carrito"
+            className="relative inline-flex text-muted-foreground transition-colors hover:text-gold"
+          >
+            <ShoppingBag className="h-5 w-5" />
+            {count > 0 && (
+              <span className="absolute -right-2.5 -top-2 flex h-5 min-w-[1.15rem] items-center justify-center rounded-full bg-gold px-1 text-[0.6rem] font-bold text-primary-foreground">
+                {count}
+              </span>
+            )}
+          </Link>
+          <a
+            href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-outline-gold !px-5 !py-2.5"
+          >
+            <Phone className="h-3.5 w-3.5" /> Pedir
+          </a>
+        </nav>
+
+        <div className="flex items-center gap-2 md:hidden">
+          <Link
+            to="/carrito"
+            aria-label="Ver carrito"
+            className="relative inline-flex text-muted-foreground transition-colors hover:text-gold"
+          >
+            <ShoppingBag className="h-5 w-5" />
+            {count > 0 && (
+              <span className="absolute -right-2.5 -top-2 flex h-5 min-w-[1.15rem] items-center justify-center rounded-full bg-gold px-1 text-[0.6rem] font-bold text-primary-foreground">
+                {count}
+              </span>
+            )}
+          </Link>
+          <button
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Abrir menú"
+            className="text-gold"
+          >
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
-      {/* Main nav bar — dark brown */}
-      <header
-        className="sticky top-0 z-50"
-        style={{
-          background: "var(--dk-brown)",
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
-          boxShadow: "0 2px 16px rgba(0,0,0,0.35)",
-        }}
-      >
-        <div className="mx-auto flex h-[3.8rem] max-w-7xl items-center justify-between px-5">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex flex-col items-start leading-none shrink-0"
-            onClick={() => setOpen(false)}
-          >
-            <span
-              className="font-display font-black uppercase"
-              style={{
-                fontSize: "clamp(1.4rem,3vw,1.9rem)",
-                letterSpacing: "0.18em",
-                color: "var(--dk-gold)",
-              }}
-            >
-              BEIRUT
-            </span>
-            <span
-              className="font-sans font-bold uppercase"
-              style={{
-                fontSize: "0.46rem",
-                letterSpacing: "0.38em",
-                color: "rgba(229,196,120,0.7)",
-                marginTop: "-1px",
-              }}
-            >
-              DELIKATESSEN
-            </span>
-          </Link>
-
-          {/* Desktop nav — centered */}
-          <nav className="hidden md:flex items-center gap-0">
-            {navLinks.map((l) => (
-              <NavLink
-                key={`${l.to}-${l.label}`}
-                to={l.to}
-                end={l.end}
-                className={({ isActive }) =>
-                  `relative px-4 py-2 text-[10.5px] font-sans font-black uppercase tracking-[0.2em] transition-colors duration-200 ${
-                    isActive ? "text-dk-gold" : "text-white/60 hover:text-white/90"
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    {l.label}
-                    {isActive && (
-                      <span
-                        className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 h-[2px] w-2/3 rounded-full"
-                        style={{
-                          background:
-                            "linear-gradient(90deg, transparent, var(--dk-gold), transparent)",
-                        }}
-                      />
-                    )}
-                  </>
-                )}
-              </NavLink>
-            ))}
-          </nav>
-
-          {/* Right actions */}
-          <div className="flex items-center gap-2">
-            {/* Search */}
-            <button
-              aria-label="Buscar"
-              className="hidden md:inline-flex h-9 w-9 items-center justify-center transition-transform hover:-translate-y-0.5"
-              style={{ color: "rgba(255,255,255,0.5)" }}
-            >
-              <Search className="h-4 w-4" />
-            </button>
-
-            {/* Cart */}
-            <Link
-              to="/carrito"
-              aria-label="Ver carrito"
-              className="relative inline-flex h-9 w-9 items-center justify-center transition-transform hover:-translate-y-0.5"
-              style={{ color: "rgba(255,255,255,0.7)" }}
-            >
-              <ShoppingBag className="h-[18px] w-[18px]" />
-              {count > 0 && (
-                <span
-                  className="absolute -right-1 -top-1 flex h-4.5 min-w-[1.1rem] items-center justify-center rounded-full px-1 text-[9px] font-black"
-                  style={{
-                    background: "var(--dk-gold)",
-                    color: "var(--dk-brown)",
-                  }}
-                >
-                  {count}
-                </span>
-              )}
-            </Link>
-
-            {/* Mobile hamburger */}
-            <button
-              className="inline-flex h-9 w-9 items-center justify-center md:hidden"
-              style={{ color: "rgba(255,255,255,0.7)" }}
-              onClick={() => setOpen((v) => !v)}
-              aria-label="Abrir menú"
-            >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        {open && (
-          <nav
-            className="border-t md:hidden"
-            style={{
-              borderColor: "rgba(255,255,255,0.1)",
-              background: "var(--dk-brown-deep)",
-            }}
-          >
-            {navLinks.map((l) => (
-              <NavLink
-                key={`mobile-${l.to}-${l.label}`}
-                to={l.to}
-                end={l.end}
+      {open && (
+        <nav className="border-t border-border bg-card px-5 py-5 shadow-lg md:hidden">
+          <div className="flex flex-col gap-4">
+            {NAV.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
                 onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  `block px-6 py-3.5 text-[10.5px] font-black uppercase tracking-[0.2em] border-b transition-colors ${
-                    isActive
-                      ? "text-dk-gold"
-                      : "text-white/55 hover:text-white/85"
-                  }`
-                }
-                style={{ borderColor: "rgba(255,255,255,0.07)" }}
+                className="text-[0.72rem] font-bold tracking-[0.22em] uppercase text-muted-foreground hover:text-gold"
               >
-                {l.label}
-              </NavLink>
+                {item.label}
+              </Link>
             ))}
-            <NavLink
-              to="/carrito"
-              onClick={() => setOpen(false)}
-              className="block px-6 py-3.5 text-[10.5px] font-black uppercase tracking-[0.2em] text-white/55 hover:text-white/85"
+            <a
+              href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-gold mt-2"
             >
-              CARRITO {count > 0 && `(${count})`}
-            </NavLink>
-          </nav>
-        )}
-      </header>
-    </>
+              Pedir por WhatsApp
+            </a>
+          </div>
+        </nav>
+      )}
+    </header>
   );
 }

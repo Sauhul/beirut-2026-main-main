@@ -1,84 +1,77 @@
-import { Link } from "react-router-dom";
-import { MapPin, MessageCircle, Clock, Mail, Instagram } from "lucide-react";
+import { Clock, Instagram, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { SITE, whatsappLink } from "@config/site";
 import { usePageTitle } from "@hooks/usePageTitle";
 
 export function ContactPage() {
-  usePageTitle("Contacto · Beirut");
+  usePageTitle("Visítanos en Barranquilla | Delikatessen Beyrouth");
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-16">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">Contacto</p>
-      <h1 className="mt-3 text-4xl font-semibold md:text-5xl">Ven a la tienda o escríbenos</h1>
+    <div className="route-page">
+      <section className="arabesque border-b border-border py-16 text-center">
+        <p className="eyebrow">Ven a la tienda</p>
+        <h1 className="mt-3 font-display text-5xl text-sand md:text-6xl">Visítanos</h1>
+        <div className="rule-gold mt-5" />
+      </section>
 
-      <div className="mt-12 grid gap-12 md:grid-cols-2">
-        <div className="space-y-7">
-          <div className="flex gap-4">
-            <MapPin className="mt-1 h-5 w-5 shrink-0 text-primary" />
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-[0.12em]">Dirección</h2>
-              <p className="mt-2 text-[15px] text-muted-foreground">{SITE.address}</p>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <Clock className="mt-1 h-5 w-5 shrink-0 text-primary" />
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-[0.12em]">Horario</h2>
-              <p className="mt-2 text-[15px] text-muted-foreground">{SITE.hours}</p>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <Mail className="mt-1 h-5 w-5 shrink-0 text-primary" />
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-[0.12em]">Correo</h2>
-              <p className="mt-2 text-[15px] text-muted-foreground">{SITE.email}</p>
-            </div>
+      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-2">
+        <div className="space-y-8">
+          <div className="card-onyx p-7">
+            <p className="eyebrow flex items-center gap-2">
+              <MapPin className="h-4 w-4" /> Dirección
+            </p>
+            <p className="mt-3 font-display text-2xl text-sand">{SITE.address}</p>
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">
+              Barrio El Prado, a una cuadra de la Calle 84. Parqueo sobre la vía.
+            </p>
           </div>
 
-          <a
-            href={whatsappLink("Hola Beirut, tengo una consulta.")}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02]"
-          >
-            <MessageCircle className="h-4 w-4" /> Escribir por WhatsApp
-          </a>
+          <div className="card-onyx p-7">
+            <p className="eyebrow flex items-center gap-2">
+              <Clock className="h-4 w-4" /> Horarios
+            </p>
+            <p className="mt-3 text-sm leading-8 text-sand">
+              {SITE.hoursWeek}
+              <br />
+              {SITE.hoursSunday}
+            </p>
+          </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="card-onyx p-7">
+            <p className="eyebrow">Contacto directo</p>
+            <ul className="mt-3 space-y-3 text-sm text-muted-foreground">
+              <li className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-gold" /> {SITE.phoneDisplay}
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-gold" /> {SITE.email}
+              </li>
+              <li className="flex items-center gap-2">
+                <Instagram className="h-4 w-4 text-gold" />
+                <a href={SITE.instagram} target="_blank" rel="noreferrer" className="hover:text-gold">
+                  {SITE.instagramHandle}
+                </a>
+              </li>
+            </ul>
             <a
-              href={SITE.instagram}
+              href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
               target="_blank"
               rel="noreferrer"
-              aria-label="Instagram"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border hover:border-primary hover:text-primary"
+              className="btn-gold mt-6 w-full"
             >
-              <Instagram className="h-4 w-4" />
+              <MessageCircle className="h-4 w-4" /> Escribir por WhatsApp
             </a>
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-3xl border border-border">
+        <div className="min-h-[420px] border border-border">
           <iframe
-            title="Ubicación de Beirut"
+            title="Mapa de Delikatessen Beyrouth"
             src={SITE.mapEmbed}
-            className="h-[420px] w-full"
+            className="h-full min-h-[420px] w-full"
             loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
           />
         </div>
-      </div>
-
-      <div className="mt-20 rounded-3xl bg-cream p-12 text-center">
-        <p className="font-script text-4xl text-primary md:text-5xl">
-          Te esperamos con café y cardamomo
-        </p>
-        <Link
-          to="/tienda"
-          className="mt-7 inline-block rounded-full border border-primary px-8 py-4 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-        >
-          Ver productos
-        </Link>
-      </div>
+      </section>
     </div>
   );
 }

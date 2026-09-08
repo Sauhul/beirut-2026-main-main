@@ -110,7 +110,7 @@ export function ProductsManager() {
     <div>
       <button
         onClick={() => setEditing({ ...emptyProduct })}
-        className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground smooth-button"
+        className="btn-gold mb-6 !py-2.5 !px-5"
       >
         <Plus className="h-4 w-4" /> Nuevo producto
       </button>
@@ -118,9 +118,9 @@ export function ProductsManager() {
       {loading ? (
         <p className="text-sm text-muted-foreground">Cargando…</p>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-border">
+        <div className="overflow-x-auto border border-border bg-card">
           <table className="w-full text-left text-sm">
-            <thead className="bg-cream text-xs uppercase tracking-wider text-muted-foreground">
+            <thead className="bg-muted text-[0.62rem] font-bold uppercase tracking-[0.18em] text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">Producto</th>
                 <th className="px-4 py-3">Categoría</th>
@@ -131,9 +131,9 @@ export function ProductsManager() {
             </thead>
             <tbody className="divide-y divide-border">
               {products.map((p) => (
-                <tr key={p.id}>
+                <tr key={p.id} className="hover:bg-onyx/50">
                   <td className="px-4 py-3">
-                    <span className="font-semibold">{p.name}</span>
+                    <span className="font-bold text-sand">{p.name}</span>
                     <span className="ml-2 text-xs text-muted-foreground">
                       {formatPresentation(p.unit)}
                     </span>
@@ -142,10 +142,10 @@ export function ProductsManager() {
                   <td className="px-4 py-3 text-muted-foreground">
                     {categories.find((c) => c.id === p.category_id)?.name ?? "—"}
                   </td>
-                  <td className="px-4 py-3">{formatCOP(p.price)}</td>
+                  <td className="px-4 py-3 font-display text-gold">{formatCOP(p.price)}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`text-xs font-semibold ${p.in_stock ? "text-primary" : "text-destructive"}`}
+                      className={`text-xs font-semibold ${p.in_stock ? "text-gold" : "text-destructive"}`}
                     >
                       {p.in_stock ? "Disponible" : "Agotado"}
                     </span>
@@ -155,14 +155,14 @@ export function ProductsManager() {
                       <button
                         onClick={() => setEditing(p)}
                         aria-label="Editar"
-                        className="hover:text-primary"
+                        className="text-muted-foreground hover:text-gold"
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setDeleting(p)}
                         aria-label="Eliminar"
-                        className="hover:text-destructive"
+                        className="text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -194,20 +194,20 @@ export function ProductsManager() {
 
       {deleting && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
           onClick={() => !deletingBusy && setDeleting(null)}
         >
           <div
-            className="w-full max-w-sm rounded-2xl border border-border bg-background p-7 text-center"
+            className="w-full max-w-sm border border-border bg-card p-7 text-center shadow-[var(--shadow-lift)]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
               <Trash2 className="h-5 w-5 text-destructive" />
             </div>
-            <h2 className="mt-4 text-lg font-semibold">¿Eliminar producto?</h2>
+            <h2 className="mt-4 font-display text-2xl text-sand">¿Eliminar producto?</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Vas a eliminar{" "}
-              <span className="font-semibold text-foreground">"{deleting.name}"</span>. Los pedidos
+              <span className="font-bold text-sand">"{deleting.name}"</span>. Los pedidos
               anteriores conservarán su historial.
             </p>
             <div className="mt-6 flex justify-center gap-3">
@@ -215,7 +215,7 @@ export function ProductsManager() {
                 type="button"
                 onClick={() => setDeleting(null)}
                 disabled={deletingBusy}
-                className="rounded-full border border-border px-6 py-2.5 text-sm font-semibold disabled:opacity-50"
+                className="btn-outline-gold !px-5 !py-2 text-xs"
               >
                 Cancelar
               </button>
@@ -223,7 +223,7 @@ export function ProductsManager() {
                 type="button"
                 onClick={() => void remove(deleting)}
                 disabled={deletingBusy}
-                className="rounded-full bg-destructive px-6 py-2.5 text-sm font-semibold text-white smooth-button disabled:opacity-50"
+                className="btn-gold !bg-destructive !text-destructive-foreground !px-5 !py-2 text-xs"
               >
                 {deletingBusy ? "Eliminando…" : "Eliminar"}
               </button>
@@ -300,13 +300,13 @@ function ProductForm({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-background p-7">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto border border-border bg-card p-7 shadow-[var(--shadow-lift)]">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">
+          <h2 className="font-display text-2xl text-sand">
             {value.id ? "Editar producto" : "Nuevo producto"}
           </h2>
-          <button onClick={onCancel} aria-label="Cerrar">
+          <button onClick={onCancel} aria-label="Cerrar" className="text-muted-foreground hover:text-gold">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -318,7 +318,7 @@ function ProductForm({
           }}
           className="mt-6 grid gap-4"
         >
-          <label className="block text-sm font-medium">
+          <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Nombre
             <input
               required
@@ -328,7 +328,7 @@ function ProductForm({
               className={`mt-1 ${inputClass}`}
             />
           </label>
-          <label className="block text-sm font-medium">
+          <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Descripción
             <textarea
               rows={3}
@@ -338,7 +338,7 @@ function ProductForm({
             />
           </label>
           <div className="grid grid-cols-2 gap-4">
-            <label className="block text-sm font-medium">
+            <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Precio (COP)
               <input
                 required
@@ -349,7 +349,7 @@ function ProductForm({
                 className={`mt-1 ${inputClass}`}
               />
             </label>
-            <label className="block text-sm font-medium">
+            <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Presentación
               <select
                 value={isStandardUnit(value.unit) ? normalizeUnit(value.unit) : "otra"}
@@ -366,7 +366,7 @@ function ProductForm({
             </label>
           </div>
           {!isStandardUnit(value.unit) && (
-            <label className="block text-sm font-medium">
+            <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Presentación personalizada (se normaliza al guardar)
               <input
                 placeholder='Ej. "750g", "libra", "1.5kg"…'
@@ -377,7 +377,7 @@ function ProductForm({
               />
             </label>
           )}
-          <label className="block text-sm font-medium">
+          <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Categoría
             <select
               value={value.category_id ?? ""}
@@ -392,22 +392,22 @@ function ProductForm({
               ))}
             </select>
           </label>
-          <div className="block text-sm font-medium">
+          <div className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Imagen del producto (opcional)
-            <div className="mt-1 flex items-center gap-4">
+            <div className="mt-2 flex items-center gap-4">
               {previewUrl ? (
                 <img
                   src={previewUrl}
                   alt="Vista previa"
-                  className="h-20 w-20 rounded-xl border border-border bg-cream object-contain p-1"
+                  className="h-20 w-20 border border-border bg-onyx object-contain p-1"
                 />
               ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-xl border border-dashed border-border bg-cream text-xs text-muted-foreground">
+                <div className="flex h-20 w-20 items-center justify-center border border-dashed border-border bg-onyx text-[0.6rem] uppercase tracking-wider text-muted-foreground">
                   Sin foto
                 </div>
               )}
               <div className="flex flex-col gap-2">
-                <label className="inline-flex cursor-pointer items-center justify-center rounded-full border border-border px-5 py-2 text-sm font-semibold hover:border-primary hover:text-primary">
+                <label className="btn-outline-gold cursor-pointer !px-4 !py-2 text-xs">
                   {imageFile ? "Cambiar imagen" : "Elegir imagen"}
                   <input
                     type="file"
@@ -417,7 +417,7 @@ function ProductForm({
                     onChange={(e) => void selectImage(e.target.files?.[0])}
                   />
                 </label>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-[0.65rem] text-muted-foreground">
                   {processingImage
                     ? "Optimizando imagen…"
                     : "JPG, PNG o WebP · se comprime automáticamente"}
@@ -425,38 +425,38 @@ function ProductForm({
               </div>
             </div>
           </div>
-          <div className="flex gap-6 text-sm">
-            <label className="flex items-center gap-2 font-medium">
+          <div className="flex gap-6 text-xs text-muted-foreground uppercase font-bold tracking-wider">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={value.featured ?? false}
                 onChange={(e) => set("featured", e.target.checked)}
-                className="h-4 w-4 accent-[var(--primary)]"
+                className="h-4 w-4 accent-gold"
               />
               Destacado
             </label>
-            <label className="flex items-center gap-2 font-medium">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={value.in_stock ?? true}
                 onChange={(e) => set("in_stock", e.target.checked)}
-                className="h-4 w-4 accent-[var(--primary)]"
+                className="h-4 w-4 accent-gold"
               />
               Disponible
             </label>
           </div>
-          <div className="mt-2 flex justify-end gap-3">
+          <div className="mt-4 flex justify-end gap-3">
             <button
               type="button"
               onClick={onCancel}
-              className="rounded-full border border-border px-6 py-2.5 text-sm font-semibold"
+              className="btn-outline-gold !px-5 !py-2 text-xs"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={processingImage}
-              className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground smooth-button disabled:opacity-50"
+              className="btn-gold !px-5 !py-2 text-xs"
             >
               {processingImage ? "Procesando…" : "Guardar"}
             </button>
