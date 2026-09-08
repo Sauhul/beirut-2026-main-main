@@ -22,7 +22,7 @@ export function categoryImage(slug: string | null | undefined, productImageUrl?:
 /** Normaliza la ruta de imagen de un producto.
  *  - URL completa (http/https) → se usa tal cual.
  *  - Nombre simple (ej. "aceite-oliva.jpg") → se sirve desde /product-images/ (fallback local). */
-export function productImageSrc(imageUrl?: string | null, fallbackUrl = "/product-images/baklawa-pistacho.jpg") {
+export function productImageSrc(imageUrl?: string | null, fallbackUrl = "/fallback/baklawa-pistacho.jpg") {
   if (!imageUrl) return fallbackUrl;
   if (/^https?:\/\//i.test(imageUrl)) return imageUrl;
   return `/product-images/${encodeURIComponent(imageUrl)}`;

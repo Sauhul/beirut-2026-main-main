@@ -164,7 +164,7 @@ export function HomePage() {
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src =
-                          "/product-images/baklawa-pistacho.jpg";
+                          "/fallback/baklawa-pistacho.jpg";
                       }}
                     />
                   </Link>
@@ -346,7 +346,7 @@ export function HomePage() {
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src =
-                          "/product-images/baklawa-pistacho.jpg";
+                          "/fallback/baklawa-pistacho.jpg";
                       }}
                     />
                   </Link>

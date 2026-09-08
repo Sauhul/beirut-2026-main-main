@@ -38,3 +38,19 @@ dist-ssr
 
 # Local Netlify folder
 .netlify
+
+# Imágenes de productos (ya están en Supabase Storage)
+public/product-images/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Scripts de procesamiento (no son parte de la app)
+*.py
+
+# Archivos de datos temporales
+products_import.json
+gemini-process-log.json
+n8n/
