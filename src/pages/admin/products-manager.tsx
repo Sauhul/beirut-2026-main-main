@@ -30,6 +30,7 @@ const emptyProduct: Omit<ProductRow, "id"> = {
 
 export function ProductsManager() {
   const [products, setProducts] = useState<ProductRow[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState<CategoryRow[]>([]);
   const [editing, setEditing] = useState<(Partial<ProductRow> & { id?: string }) | null>(null);
   const [deleting, setDeleting] = useState<ProductRow | null>(null);
@@ -108,12 +109,21 @@ export function ProductsManager() {
 
   return (
     <div>
-      <button
-        onClick={() => setEditing({ ...emptyProduct })}
-        className="btn-gold mb-6 !py-2.5 !px-5"
-      >
-        <Plus className="h-4 w-4" /> Nuevo producto
-      </button>
+      <div className="mb-6 flex gap-4">
+        <button
+          onClick={() => setEditing({ ...emptyProduct })}
+          className="btn-gold !py-2.5 !px-5"
+        >
+          <Plus className="h-4 w-4" /> Nuevo producto
+        </button>
+        <input
+          type="text"
+          placeholder="Buscar productos..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={`${inputClass} max-w-xs`}
+        />
+      </div>
 
       {loading ? (
         <p className="text-sm text-muted-foreground">Cargando…</p>
@@ -130,50 +140,54 @@ export function ProductsManager() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {products.map((p) => (
-                <tr key={p.id} className="hover:bg-onyx/50">
-                  <td className="px-4 py-3">
-                    <span className="font-bold text-sand">{p.name}</span>
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      {formatPresentation(p.unit)}
-                    </span>
-                    {p.featured && <span className="ml-2 text-xs text-gold">★</span>}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {categories.find((c) => c.id === p.category_id)?.name ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 font-display text-gold">{formatCOP(p.price)}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`text-xs font-semibold ${p.in_stock ? "text-gold" : "text-destructive"}`}
-                    >
-                      {p.in_stock ? "Disponible" : "Agotado"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => setEditing(p)}
-                        aria-label="Editar"
-                        className="text-muted-foreground hover:text-gold"
+              {products
+                .filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                .map((p) => (
+                  <tr key={p.id} className="hover:bg-onyx/50">
+                    <td className="px-4 py-3">
+                      <span className="font-bold text-sand">{p.name}</span>
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        {formatPresentation(p.unit)}
+                      </span>
+                      {p.featured && <span className="ml-2 text-xs text-gold">★</span>}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {categories.find((c) => c.id === p.category_id)?.name ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 font-display text-gold">{formatCOP(p.price)}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`text-xs font-semibold ${p.in_stock ? "text-gold" : "text-destructive"}`}
                       >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => setDeleting(p)}
-                        aria-label="Eliminar"
-                        className="text-muted-foreground hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {products.length === 0 && (
+                        {p.in_stock ? "Disponible" : "Agotado"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => setEditing(p)}
+                          aria-label="Editar"
+                          className="text-muted-foreground hover:text-gold"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeleting(p)}
+                          aria-label="Eliminar"
+                          className="text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              {products
+                .filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                .length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
-                    No hay productos todavía.
+                    {products.length === 0 ? "No hay productos todavía." : "No se encontraron productos con esa búsqueda."}
                   </td>
                 </tr>
               )}

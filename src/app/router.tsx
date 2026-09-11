@@ -19,8 +19,11 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-    requestAnimationFrame(() => ScrollTrigger.refresh());
+    // Solo hace scroll al top si NO estamos entrando a un producto
+    if (!pathname.includes("/producto/")) {
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+    }
   }, [pathname]);
 
   return null;
@@ -99,7 +102,7 @@ function AnimatedRoutes() {
   return (
     <div ref={pageRef} className="relative">
       <div className="route-wipe pointer-events-none fixed inset-0 z-40 bg-primary" />
-      <Routes location={location} key={`${location.pathname}${location.search}`}>
+      <Routes location={location}>
         <Route path="/" element={<HomePage />} />
         <Route path="/tienda" element={<StorePage />} />
         <Route path="/producto/:slug" element={<ProductDetailPage />} />

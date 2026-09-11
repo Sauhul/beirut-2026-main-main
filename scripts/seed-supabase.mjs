@@ -122,7 +122,14 @@ const PRODUCTS = [
 
 // ── Helpers ──
 function getPublicUrl(slug) {
-  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${slug}.jpg`;
+  const files = fs.readdirSync(IMAGES_DIR);
+  // Buscamos un archivo que coincida con el slug, ignorando guiones y extensiones
+  const normalizedSlug = slug.replace(/-/g, '').toLowerCase();
+  const foundFile = files.find(f => f.toLowerCase().replace(/-/g, '').startsWith(normalizedSlug));
+  
+  if (!foundFile) return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${slug}.jpg`; 
+
+  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${foundFile}`;
 }
 
 function sleep(ms) {
@@ -212,18 +219,22 @@ async function uploadImages() {
   let ok = 0;
   let fail = 0;
   let skip = 0;
+  const files = fs.readdirSync(IMAGES_DIR);
 
   for (const p of PRODUCTS) {
-    const localPath = path.join(IMAGES_DIR, `${p.slug}.jpg`);
+    const normalizedSlug = p.slug.replace(/-/g, '').toLowerCase();
+    const foundFile = files.find(f => f.toLowerCase().replace(/-/g, '').startsWith(normalizedSlug));
 
-    if (!fs.existsSync(localPath)) {
-      console.log(`  SKIP (no local): ${p.slug}.jpg`);
-      skip++;
-      continue;
+    if (!foundFile) {
+        console.log(`  SKIP (no local found for ${p.slug})`);
+        skip++;
+        continue;
     }
+    
+    const localPath = path.join(IMAGES_DIR, foundFile);
 
     const fileData = fs.readFileSync(localPath);
-    const storagePath = `${p.slug}.jpg`;
+    const storagePath = foundFile; // Usar el nombre del archivo redimensionado
 
     const { error } = await supabase.storage
       .from(BUCKET)
@@ -233,7 +244,7 @@ async function uploadImages() {
       });
 
     if (error) {
-      console.error(`  ERROR subiendo ${p.slug}:`, error.message);
+      console.error(`  ERROR subiendo ${foundFile}:`, error.message);
       fail++;
     } else {
       ok++;

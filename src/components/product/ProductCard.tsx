@@ -13,16 +13,17 @@ export function ProductCard({ product }: { product: Product }) {
   const name = titleCase(product.name);
 
   return (
-    <article className="card-onyx group flex flex-col overflow-hidden">
-      <Link
+    <article className="card-onyx group flex flex-col overflow-hidden rounded-2xl">
+            <Link
         to={`/producto/${product.slug}`}
-        className="relative block aspect-square overflow-hidden bg-background"
+        className="relative block aspect-[5/6] overflow-hidden rounded-t-2xl"
+        style={{ backgroundColor: '#f5f0dc' }}
       >
         <img
           src={categoryImage(product.category_slug, product.image_url)}
           alt={name}
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-105"
         />
         <span className="absolute top-3 left-3 bg-background/80 px-2 py-1 text-[0.55rem] font-bold tracking-[0.18em] uppercase text-gold">
           {product.category_name}

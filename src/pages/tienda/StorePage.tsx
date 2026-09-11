@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
@@ -6,11 +7,23 @@ import { ProductCard } from "@components/product/ProductCard";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
 
+// Utilizar un objeto simple fuera del componente para persistir el estado de la categoría
+const storeState = {
+  activeCat: "todos"
+};
+
 export function StorePage() {
   usePageTitle("Nuestra Tienda | Delikatessen Beyrouth");
-  const [searchParams, setSearchParams] = useSearchParams();
-  const cat = searchParams.get("categoria") ?? "todos";
-  const q = searchParams.get("q") ?? "";
+  const [, setSearchParams] = useSearchParams();
+  
+  // Inicializar estado usando el valor persistido si existe
+  const [cat, setCat] = useState(storeState.activeCat);
+  const [q, setQ] = useState("");
+
+  // Actualizar el estado global al cambiar
+  useEffect(() => {
+    storeState.activeCat = cat;
+  }, [cat]);
 
   const { data } = useQuery(catalogQuery);
   const categories = useMemo(
@@ -23,26 +36,32 @@ export function StorePage() {
 
   const list = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("es-CO");
-    return (data?.products ?? []).filter(
-      (p) =>
-        (cat === "todos" || p.category_slug === cat) &&
-        (term === "" || p.name.toLocaleLowerCase("es-CO").includes(term)),
-    );
+
+    return (data?.products ?? []).filter((p) => {
+        const matchesSearch = term === "" || p.name.toLocaleLowerCase("es-CO").includes(term);
+        
+        if (cat === "todos") return matchesSearch;
+        
+        // Simplemente usamos el category_slug tal cual viene, 
+        // ya que el servicio se encarga de asignarlo correctamente
+        return p.category_slug === cat && matchesSearch;
+    });
   }, [data, cat, q]);
 
-  function setCat(next: string) {
-    const nextParams = new URLSearchParams(searchParams);
-    if (next === "todos") nextParams.delete("categoria");
-    else nextParams.set("categoria", next);
-    setSearchParams(nextParams, { replace: true });
+  function setCategoria(next: string) {
+    setCat(next);
   }
 
-  function setQ(next: string) {
-    const nextParams = new URLSearchParams(searchParams);
-    if (next === "") nextParams.delete("q");
-    else nextParams.set("q", next);
-    setSearchParams(nextParams, { replace: true });
-  }
+  const allCategories = useMemo(() => [
+    { slug: "todos", name: "Todos" },
+    { slug: "aceites", name: "Aceites" },
+    { slug: "cafe-y-te", name: "Café y Té" },
+    { slug: "panaderia-y-dulces", name: "Panadería y Dulces" },
+    { slug: "lacteos-y-aderezos", name: "Lácteos y Aderezos" },
+    { slug: "especias-y-aderezos", name: "Especias y Aderezos" },
+    { slug: "accesorios", name: "Accesorios" },
+    { slug: "otros", name: "Otros" }
+  ], []);
 
   return (
     <div className="route-page">
@@ -68,10 +87,10 @@ export function StorePage() {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
-          {[{ slug: "todos", name: "Todos" }, ...categories].map((c) => (
+          {allCategories.map((c) => (
             <button
               key={c.slug}
-              onClick={() => setCat(c.slug)}
+              onClick={() => setCategoria(c.slug)}
               className={`border px-4 py-2 text-[0.62rem] font-bold tracking-[0.18em] uppercase transition-colors ${
                 cat === c.slug
                   ? "border-gold bg-gold text-primary-foreground"

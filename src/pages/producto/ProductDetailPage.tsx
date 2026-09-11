@@ -83,11 +83,11 @@ export function ProductDetailPage() {
 
       <div className="mt-10 grid gap-10 md:grid-cols-[1fr_1.1fr]">
         <div className="detail-image detail-motion">
-          <div className="card-onyx p-8">
+          <div className="card-onyx p-8 rounded-2xl">
             <img
               src={categoryImage(product.category_slug, product.image_url)}
               alt={name}
-              className="mx-auto aspect-square w-full max-w-md object-contain"
+              className="mx-auto w-full max-w-xl object-contain rounded-xl"
             />
             <span className="mt-6 inline-flex border border-gold/50 px-3 py-1.5 text-[0.6rem] font-bold tracking-[0.2em] uppercase text-gold">
               {product.category_name}

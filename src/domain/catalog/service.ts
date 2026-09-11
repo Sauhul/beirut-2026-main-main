@@ -5,6 +5,7 @@
  */
 import { supabase } from "@data/supabase/client";
 import { CATEGORIES, PRODUCTS } from "@data/catalog-fallback";
+import { getCorrectCategory } from "@shared/utils/category-mapper";
 import type { Catalog, Product } from "./types";
 
 /** Catálogo completo: categorías + productos. */
@@ -33,7 +34,8 @@ export async function getCatalog(): Promise<Catalog> {
   }));
 
   const dbProducts = (productsRes.data ?? []).map((p): Product => {
-    const category = Array.isArray(p.categories) ? p.categories[0] : p.categories;
+    // APLICAR CATEGORÍA CORREGIDA
+    const categorySlug = getCorrectCategory(p.name);
     return {
       id: p.id,
       slug: p.slug,
@@ -44,8 +46,8 @@ export async function getCatalog(): Promise<Catalog> {
       featured: p.featured,
       in_stock: p.in_stock,
       image_url: p.image_url,
-      category_slug: category?.slug ?? "",
-      category_name: category?.name ?? "",
+      category_slug: categorySlug,
+      category_name: categorySlug.replace(/-/g, ' '), // Simplificado
     };
   });
 

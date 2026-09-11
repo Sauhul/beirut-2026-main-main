@@ -25,5 +25,5 @@ export function categoryImage(slug: string | null | undefined, productImageUrl?:
 export function productImageSrc(imageUrl?: string | null, fallbackUrl = "/fallback/baklawa-pistacho.jpg") {
   if (!imageUrl) return fallbackUrl;
   if (/^https?:\/\//i.test(imageUrl)) return imageUrl;
-  return `/product-images/${encodeURIComponent(imageUrl)}`;
+  return `/products/${encodeURIComponent(imageUrl)}`;
 }
