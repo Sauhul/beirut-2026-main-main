@@ -149,9 +149,6 @@ export function CheckoutPage() {
           });
 
           if (result.status === "UNKNOWN" && !result.transactionId) {
-            toast.info(
-              "Cerraste la pasarela de pago. Tu pedido sigue guardado, puedes intentar de nuevo.",
-            );
             return;
           }
 
@@ -167,21 +164,12 @@ export function CheckoutPage() {
             navigate(`/pedido-confirmado?numero=${order.orderNumber}`);
           } else {
             sendToWebhook(order, "rechazado", result.transactionId);
-            toast.error(`El pago no fue aprobado (${result.status}). Tu pedido quedó registrado.`);
             navigate(`/pedido-confirmado?numero=${order.orderNumber}`);
           }
           return;
         } catch (error) {
           console.error("[Wompi checkout error]", error);
-          setSubmitting(false); // <--- Asegurar que se habilita el botón
-          const msg = error instanceof Error ? error.message : "";
-          if (msg.includes("REACT_APP_WOMPI_PUBLIC_KEY")) {
-            toast.error("LA PASARELA DE PAGO NO ESTÁ CONFIGURADA.");
-          } else if (msg.includes("403")) {
-            toast.error("Wompi rechazó la conexión (403). Verifica dominios autorizados en Dashboard.");
-          } else {
-            toast.error(`Error al abrir pago: ${msg}`);
-          }
+          setSubmitting(false);
           return;
         }
       }
