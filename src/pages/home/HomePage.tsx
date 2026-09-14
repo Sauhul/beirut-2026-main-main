@@ -209,12 +209,12 @@ export function HomePage() {
             <div className="rule-gold mt-5" />
           </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-          {tiles.map((t) => (
+        <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3 justify-center">
+          {tiles.slice(0, 6).map((t) => (                
             <Link
               key={t.slug}
               to={`/tienda?categoria=${t.slug}`}
-              className="card-onyx group flex flex-col overflow-hidden rounded-2xl"
+              className="card-onyx group flex flex-col overflow-hidden rounded-2xl max-w-sm w-full mx-auto"
             >
               <div className="relative block aspect-[5/6] overflow-hidden rounded-t-2xl" style={{ backgroundColor: "#f5f0dc" }}>
                 <img
