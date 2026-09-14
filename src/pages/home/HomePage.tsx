@@ -188,7 +188,7 @@ export function HomePage() {
             </h2>
             <div className="rule-gold mt-5" />
           </div>
-          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS.map((p) => (
               <div key={p.title} className="border-t border-gold/40 pt-6">
                 <p.icon className="h-7 w-7 text-gold" />
