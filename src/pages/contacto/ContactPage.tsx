@@ -1,4 +1,5 @@
-import { Clock, Instagram, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Clock, Instagram, Mail, MapPin, MessageCircle, Phone, Store } from "lucide-react";
+import { Link } from "react-router-dom";
 import { SITE, whatsappLink } from "@config/site";
 import { usePageTitle } from "@hooks/usePageTitle";
 
