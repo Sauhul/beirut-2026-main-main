@@ -4,18 +4,19 @@ import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { ProductCard } from "@components/product/ProductCard";
+import { Product } from "@domain/catalog/types";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
 
 // Utilizar un objeto simple fuera del componente para persistir el estado de la categoría
 const storeState = {
-  activeCat: "todos"
+  activeCat: "todos",
 };
 
 export function StorePage() {
   usePageTitle("Nuestra Tienda | Delikatessen Beyrouth");
   const [, setSearchParams] = useSearchParams();
-  
+
   // Inicializar estado usando el valor persistido si existe
   const [cat, setCat] = useState(storeState.activeCat);
   const [q, setQ] = useState("");
@@ -34,34 +35,45 @@ export function StorePage() {
     [data],
   );
 
-  const list = useMemo(() => {
-    const term = q.trim().toLocaleLowerCase("es-CO");
+  const navCategories = useMemo(() => [
+    { slug: "todos", name: "Todos" },
+    ...(data?.categories ?? []),
+  ], [data?.categories]);
 
-    return (data?.products ?? []).filter((p) => {
-        const matchesSearch = term === "" || p.name.toLocaleLowerCase("es-CO").includes(term);
-        
-        if (cat === "todos") return matchesSearch;
-        
-        // Simplemente usamos el category_slug tal cual viene, 
-        // ya que el servicio se encarga de asignarlo correctamente
-        return p.category_slug === cat && matchesSearch;
+  const groupedList = useMemo(() => {
+    const term = q.trim().toLocaleLowerCase("es-CO");
+    const filteredProducts = (data?.products ?? []).filter((p) => {
+      const matchesSearch = term === "" || p.name.toLocaleLowerCase("es-CO").includes(term);
+      if (cat === "todos") return matchesSearch;
+      return p.category_slug === cat && matchesSearch;
     });
-  }, [data, cat, q]);
+
+    if (cat !== "todos") {
+      return [
+        {
+          slug: cat,
+          name: navCategories.find((c) => c.slug === cat)?.name || cat,
+          products: filteredProducts,
+        },
+      ];
+    }
+
+    // Group by category if "todos"
+    const groups: { slug: string; name: string; products: Product[] }[] = [];
+    navCategories.forEach((c) => {
+      if (c.slug === "todos") return;
+      const productsInCategory = filteredProducts.filter((p) => p.category_slug === c.slug);
+      if (productsInCategory.length > 0) {
+        groups.push({ slug: c.slug, name: c.name, products: productsInCategory });
+      }
+    });
+
+    return groups;
+  }, [data, cat, q, navCategories]);
 
   function setCategoria(next: string) {
     setCat(next);
   }
-
-  const allCategories = useMemo(() => [
-    { slug: "todos", name: "Todos" },
-    { slug: "aceites", name: "Aceites" },
-    { slug: "cafe-y-te", name: "Café y Té" },
-    { slug: "panaderia-y-dulces", name: "Panadería y Dulces" },
-    { slug: "lacteos-y-aderezos", name: "Lácteos y Aderezos" },
-    { slug: "especias-y-aderezos", name: "Especias y Aderezos" },
-    { slug: "accesorios", name: "Accesorios" },
-    { slug: "otros", name: "Otros" }
-  ], []);
 
   return (
     <div className="route-page">
@@ -87,7 +99,7 @@ export function StorePage() {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
-          {allCategories.map((c) => (
+          {navCategories.map((c) => (
             <button
               key={c.slug}
               onClick={() => setCategoria(c.slug)}
@@ -102,17 +114,20 @@ export function StorePage() {
           ))}
         </div>
 
-        <p className="mt-8 text-[0.65rem] tracking-[0.2em] uppercase text-muted-foreground">
-          {list.length} productos
-        </p>
-
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {list.map((p) => (
-            <ProductCard key={p.id} product={p} />
+        <div className="mt-12 space-y-16">
+          {groupedList.map((group) => (
+            <div key={group.slug}>
+              <h2 className="mb-6 font-display text-2xl text-sand">{group.name}</h2>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {group.products.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
 
-        {list.length === 0 && (
+        {groupedList.length === 0 && (
           <p className="py-20 text-center text-sm text-muted-foreground">
             No encontramos productos con esa búsqueda.
           </p>

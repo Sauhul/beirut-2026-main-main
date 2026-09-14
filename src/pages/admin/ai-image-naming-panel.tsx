@@ -11,7 +11,16 @@
  */
 
 import { useCallback, useRef, useState } from "react";
-import { Bot, CheckCircle2, ChevronDown, ChevronUp, Loader2, Sparkles, X, XCircle } from "lucide-react";
+import {
+  Bot,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  Sparkles,
+  X,
+  XCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   generateImageName,
@@ -38,13 +47,7 @@ type PanelState = "idle" | "processing" | "preview" | "done";
    Botón individual por producto
 ───────────────────────────────────────── */
 
-export function AiNameButton({
-  product,
-  onDone,
-}: {
-  product: ProductRow;
-  onDone?: () => void;
-}) {
+export function AiNameButton({ product, onDone }: { product: ProductRow; onDone?: () => void }) {
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
@@ -79,18 +82,10 @@ export function AiNameButton({
     <button
       onClick={handleClick}
       disabled={loading || !product.image_url}
-      title={
-        !product.image_url
-          ? "Sin imagen"
-          : "Generar nombre con IA"
-      }
+      title={!product.image_url ? "Sin imagen" : "Generar nombre con IA"}
       className="inline-flex items-center gap-1 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-40"
     >
-      {loading ? (
-        <Loader2 className="h-3 w-3 animate-spin" />
-      ) : (
-        <Sparkles className="h-3 w-3" />
-      )}
+      {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
       IA
     </button>
   );
@@ -116,7 +111,11 @@ export function AiImageNamingPanel({
   const abortRef = useRef<AbortController | null>(null);
 
   const productsWithImage = products.filter((p) => p.image_url);
-  const unprocessed = productsWithImage.filter((p) => !(p as ProductForNaming & { image_filename_generated_at?: string | null }).image_filename_generated_at);
+  const unprocessed = productsWithImage.filter(
+    (p) =>
+      !(p as ProductForNaming & { image_filename_generated_at?: string | null })
+        .image_filename_generated_at,
+  );
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -197,24 +196,19 @@ export function AiImageNamingPanel({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Bot className="h-5 w-5 text-amber-600" />
-          <h3 className="text-base font-semibold text-amber-900">
-            Nombrado de imágenes con IA
-          </h3>
+          <h3 className="text-base font-semibold text-amber-900">Nombrado de imágenes con IA</h3>
           <span className="rounded-full bg-amber-200 px-2 py-0.5 text-[11px] font-bold text-amber-800">
             {unprocessed.length} sin procesar / {productsWithImage.length} con imagen
           </span>
         </div>
-        <button
-          onClick={() => setExpanded(false)}
-          className="text-amber-500 hover:text-amber-800"
-        >
+        <button onClick={() => setExpanded(false)} className="text-amber-500 hover:text-amber-800">
           <ChevronUp className="h-4 w-4" />
         </button>
       </div>
 
       <p className="mt-1 text-xs text-amber-700">
-        Genera nombres de archivo limpios y descriptivos para las imágenes de tus productos usando IA.
-        Los nombres ya procesados no se vuelven a enviar a la IA.
+        Genera nombres de archivo limpios y descriptivos para las imágenes de tus productos usando
+        IA. Los nombres ya procesados no se vuelven a enviar a la IA.
       </p>
 
       {/* Estado: idle */}
@@ -246,7 +240,9 @@ export function AiImageNamingPanel({
           {productsWithImage.length > 0 && (
             <div className="max-h-48 overflow-y-auto rounded-xl border border-amber-200 bg-white">
               {productsWithImage.map((p) => {
-                const processed = !!(p as ProductForNaming & { image_filename_generated_at?: string | null }).image_filename_generated_at;
+                const processed = !!(
+                  p as ProductForNaming & { image_filename_generated_at?: string | null }
+                ).image_filename_generated_at;
                 return (
                   <label
                     key={p.id}
@@ -259,11 +255,15 @@ export function AiImageNamingPanel({
                       disabled={processed}
                       className="h-4 w-4 accent-amber-600"
                     />
-                    <span className={`flex-1 font-medium ${processed ? "text-muted-foreground line-through" : ""}`}>
+                    <span
+                      className={`flex-1 font-medium ${processed ? "text-muted-foreground line-through" : ""}`}
+                    >
                       {p.name}
                     </span>
                     {processed && (
-                      <span className="text-[10px] font-semibold text-green-600">✓ ya procesado</span>
+                      <span className="text-[10px] font-semibold text-green-600">
+                        ✓ ya procesado
+                      </span>
                     )}
                   </label>
                 );

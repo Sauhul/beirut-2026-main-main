@@ -79,7 +79,8 @@
   );
   --shadow-gold: 0 18px 60px -24px oklch(0.55 0.1 82 / 0.32);
   --shadow-soft: 0 1px 2px rgba(22, 18, 10, 0.05), 0 18px 48px -28px oklch(0.31 0.07 160 / 0.32);
-  --shadow-lift: 0 16px 44px -22px oklch(0.22 0.055 160 / 0.5), 0 34px 70px -38px oklch(0.22 0.055 160 / 0.42);
+  --shadow-lift:
+    0 16px 44px -22px oklch(0.22 0.055 160 / 0.5), 0 34px 70px -38px oklch(0.22 0.055 160 / 0.42);
 }
 
 @layer base {
@@ -176,7 +177,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.9rem 2rem;
+  padding: 0.75rem 1.6rem;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -195,7 +196,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.9rem 2rem;
+  padding: 0.75rem 1.6rem;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -241,7 +242,16 @@
 }
 
 /* ── Scrollbar en tono dorado ───────────────────────────── */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: oklch(0.955 0.025 82); }
-::-webkit-scrollbar-thumb { background: oklch(0.73 0.13 85 / 45%); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: oklch(0.73 0.13 85 / 70%); }
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: oklch(0.955 0.025 82);
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(0.73 0.13 85 / 45%);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.73 0.13 85 / 70%);
+}

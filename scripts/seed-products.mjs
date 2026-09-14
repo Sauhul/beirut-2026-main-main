@@ -15,15 +15,69 @@ const OUTPUT_UPLOAD = path.resolve("scripts/upload-images.mjs");
 
 // ── Categorías ─────────────────────────────────────────────────
 const CATEGORIES = [
-  { id: "cat-1", slug: "frutos-secos",     name: "Frutos Secos y Frutas Secas", description: "Almendras, nueces, dátiles, higos y más",             sort_order: 1 },
-  { id: "cat-2", slug: "panaderia",        name: "Panadería",                   description: "Pan árabe, pita, tostado, empanadas",                 sort_order: 2 },
-  { id: "cat-3", slug: "lacteos",          name: "Lácteos y Derivados",         description: "Labneh, queso y productos lácteos",                   sort_order: 3 },
-  { id: "cat-4", slug: "cafe-te",          name: "Café y Té",                   description: "Café molido, granos y té",                            sort_order: 4 },
-  { id: "cat-5", slug: "especias-hierbas", name: "Especias y Hierbas",          description: "Especias, hierbas aromáticas y sazonadores",         sort_order: 5 },
-  { id: "cat-6", slug: "legumbres-granos", name: "Legumbres y Granos",          description: "Lentejas, garbanzos, bulgur, semola",                sort_order: 6 },
-  { id: "cat-7", slug: "snacks",           name: "Snacks",                      description: "Crunchy, chips y snacks",                            sort_order: 7 },
-  { id: "cat-8", slug: "preparados",       name: "Productos Preparados",        description: "Empanadas, falafel, baklawa",                       sort_order: 8 },
-  { id: "cat-9", slug: "salsas-condimentos", name: "Salsas y Condimentos",     description: "Tahine, zaatar, sal de limón",                      sort_order: 9 },
+  {
+    id: "cat-1",
+    slug: "frutos-secos",
+    name: "Frutos Secos y Frutas Secas",
+    description: "Almendras, nueces, dátiles, higos y más",
+    sort_order: 1,
+  },
+  {
+    id: "cat-2",
+    slug: "panaderia",
+    name: "Panadería",
+    description: "Pan árabe, pita, tostado, empanadas",
+    sort_order: 2,
+  },
+  {
+    id: "cat-3",
+    slug: "lacteos",
+    name: "Lácteos y Derivados",
+    description: "Labneh, queso y productos lácteos",
+    sort_order: 3,
+  },
+  {
+    id: "cat-4",
+    slug: "cafe-te",
+    name: "Café y Té",
+    description: "Café molido, granos y té",
+    sort_order: 4,
+  },
+  {
+    id: "cat-5",
+    slug: "especias-hierbas",
+    name: "Especias y Hierbas",
+    description: "Especias, hierbas aromáticas y sazonadores",
+    sort_order: 5,
+  },
+  {
+    id: "cat-6",
+    slug: "legumbres-granos",
+    name: "Legumbres y Granos",
+    description: "Lentejas, garbanzos, bulgur, semola",
+    sort_order: 6,
+  },
+  {
+    id: "cat-7",
+    slug: "snacks",
+    name: "Snacks",
+    description: "Crunchy, chips y snacks",
+    sort_order: 7,
+  },
+  {
+    id: "cat-8",
+    slug: "preparados",
+    name: "Productos Preparados",
+    description: "Empanadas, falafel, baklawa",
+    sort_order: 8,
+  },
+  {
+    id: "cat-9",
+    slug: "salsas-condimentos",
+    name: "Salsas y Condimentos",
+    description: "Tahine, zaatar, sal de limón",
+    sort_order: 9,
+  },
 ];
 
 // ── Palabras clave para categorizar ────────────────────────────
@@ -40,8 +94,11 @@ const CATEGORY_KEYWORDS = {
 
 // ── Mapeo de unidades ──────────────────────────────────────────
 const UNIT_MAP = {
-  libra: "libra", lb: "libra", libras: "libra",
-  kilo: "kilo", kilos: "kilo",
+  libra: "libra",
+  lb: "libra",
+  libras: "libra",
+  kilo: "kilo",
+  kilos: "kilo",
   unidad: "unidad",
 };
 
@@ -157,7 +214,9 @@ function main() {
   }
 
   // Ordenar
-  products.sort((a, b) => a.category_id.localeCompare(b.category_id) || a.name.localeCompare(b.name));
+  products.sort(
+    (a, b) => a.category_id.localeCompare(b.category_id) || a.name.localeCompare(b.name),
+  );
 
   // Generar slugs únicos
   const seenSlugs = new Set();

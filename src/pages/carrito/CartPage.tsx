@@ -222,7 +222,10 @@ export function CartPage() {
               Esta acción no se puede deshacer. Perderás {items.length} artículo(s) de tu carrito.
             </p>
             <div className="mt-8 flex gap-4">
-              <button onClick={() => setShowConfirmDialog(false)} className="btn-outline-gold flex-1">
+              <button
+                onClick={() => setShowConfirmDialog(false)}
+                className="btn-outline-gold flex-1"
+              >
                 Cancelar
               </button>
               <button

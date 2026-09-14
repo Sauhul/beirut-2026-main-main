@@ -91,7 +91,7 @@ function fallbackFilename(productName: string): string {
 ───────────────────────────────────────── */
 
 const AI_API_URL = Deno.env.get("AI_API_URL") ?? "https://api.openai.com/v1";
-const AI_MODEL   = Deno.env.get("AI_MODEL")   ?? "gpt-4o";
+const AI_MODEL = Deno.env.get("AI_MODEL") ?? "gpt-4o";
 const AI_TIMEOUT_MS = 20_000;
 
 const SYSTEM_PROMPT = `You are a file naming assistant for an e-commerce product catalog.
@@ -139,7 +139,7 @@ async function callAIWithRetry(
         method: "POST",
         signal: controller.signal,
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -195,7 +195,6 @@ async function callAIWithRetry(
 
       const filename = normalizeFilename(raw.trim());
       return { filename, usedFallback: false };
-
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
 
@@ -232,7 +231,11 @@ async function uniqueFilename(
     .eq("id", productId)
     .single();
 
-  const currentFilename = self?.image_url?.split("/").pop()?.replace(/\.[^.]+$/, "") ?? null;
+  const currentFilename =
+    self?.image_url
+      ?.split("/")
+      .pop()
+      ?.replace(/\.[^.]+$/, "") ?? null;
   if (currentFilename === base) return base; // ya tiene este nombre
 
   // Buscar conflictos con otros productos
@@ -244,8 +247,12 @@ async function uniqueFilename(
 
   const existingNames = new Set(
     (conflicts ?? [])
-      .map((p: { image_url: string | null }) =>
-        p.image_url?.split("/").pop()?.replace(/\.[^.]+$/, "") ?? ""
+      .map(
+        (p: { image_url: string | null }) =>
+          p.image_url
+            ?.split("/")
+            .pop()
+            ?.replace(/\.[^.]+$/, "") ?? "",
       )
       .filter(Boolean),
   );
@@ -284,12 +291,15 @@ Deno.serve(async (req: Request): Promise<Response> => {
   /* ── Autenticación: solo admins ─── */
   const authHeader = req.headers.get("Authorization") ?? "";
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-  const serviceKey  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const anonKey     = req.headers.get("apikey") ?? authHeader.replace("Bearer ", "");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const anonKey = req.headers.get("apikey") ?? authHeader.replace("Bearer ", "");
 
   // Verificar que el token pertenece a un admin
   const userClient = createClient(supabaseUrl, anonKey);
-  const { data: { user }, error: authError } = await userClient.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await userClient.auth.getUser();
 
   if (authError || !user?.email) {
     return jsonResponse({ success: false, error: "Unauthorized" }, 401);
@@ -361,7 +371,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   /* ── Renombrar archivo en Storage ─── */
   const currentPath = imageUrl.includes("/product-images/")
-    ? imageUrl.split("/product-images/").pop() ?? ""
+    ? (imageUrl.split("/product-images/").pop() ?? "")
     : "";
 
   if (currentPath) {
@@ -400,10 +410,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   if (updateError) {
     console.error("[DB] Update error:", updateError.message);
-    return jsonResponse(
-      { success: false, error: `DB update failed: ${updateError.message}` },
-      500,
-    );
+    return jsonResponse({ success: false, error: `DB update failed: ${updateError.message}` }, 500);
   }
 
   const result: GenerateResult = {

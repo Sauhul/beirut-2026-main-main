@@ -110,10 +110,7 @@ export function ProductsManager() {
   return (
     <div>
       <div className="mb-6 flex gap-4">
-        <button
-          onClick={() => setEditing({ ...emptyProduct })}
-          className="btn-gold !py-2.5 !px-5"
-        >
+        <button onClick={() => setEditing({ ...emptyProduct })} className="btn-gold !py-2.5 !px-5">
           <Plus className="h-4 w-4" /> Nuevo producto
         </button>
         <input
@@ -182,12 +179,13 @@ export function ProductsManager() {
                     </td>
                   </tr>
                 ))}
-              {products
-                .filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+              {products.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
                 .length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
-                    {products.length === 0 ? "No hay productos todavía." : "No se encontraron productos con esa búsqueda."}
+                    {products.length === 0
+                      ? "No hay productos todavía."
+                      : "No se encontraron productos con esa búsqueda."}
                   </td>
                 </tr>
               )}
@@ -220,9 +218,8 @@ export function ProductsManager() {
             </div>
             <h2 className="mt-4 font-display text-2xl text-sand">¿Eliminar producto?</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Vas a eliminar{" "}
-              <span className="font-bold text-sand">"{deleting.name}"</span>. Los pedidos
-              anteriores conservarán su historial.
+              Vas a eliminar <span className="font-bold text-sand">"{deleting.name}"</span>. Los
+              pedidos anteriores conservarán su historial.
             </p>
             <div className="mt-6 flex justify-center gap-3">
               <button
@@ -320,7 +317,11 @@ function ProductForm({
           <h2 className="font-display text-2xl text-sand">
             {value.id ? "Editar producto" : "Nuevo producto"}
           </h2>
-          <button onClick={onCancel} aria-label="Cerrar" className="text-muted-foreground hover:text-gold">
+          <button
+            onClick={onCancel}
+            aria-label="Cerrar"
+            className="text-muted-foreground hover:text-gold"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>

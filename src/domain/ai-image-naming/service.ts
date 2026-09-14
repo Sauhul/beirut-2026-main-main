@@ -84,9 +84,7 @@ export function normalizeFilenameClient(raw: string): string {
  * Genera el nombre de archivo para un producto usando IA.
  * Si la Edge Function no está disponible, usa el fallback de normalización.
  */
-export async function generateImageName(
-  product: ProductForNaming,
-): Promise<GenerateNameResult> {
+export async function generateImageName(product: ProductForNaming): Promise<GenerateNameResult> {
   if (!supabase || !product.image_url) {
     // Fallback local: normalizar nombre del producto
     const filename = normalizeFilenameClient(product.name) + ".jpg";
@@ -101,7 +99,9 @@ export async function generateImageName(
 
   try {
     // Obtener token de sesión del admin
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) throw new Error("No authenticated session");
 
     const supabaseUrl = process.env.REACT_APP_SUPABASE_URL!;
@@ -111,8 +111,8 @@ export async function generateImageName(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${session.access_token}`,
-        "apikey": session.access_token,
+        Authorization: `Bearer ${session.access_token}`,
+        apikey: session.access_token,
       },
       body: JSON.stringify({
         productId: product.id,
@@ -127,7 +127,7 @@ export async function generateImageName(
       throw new Error(err.error ?? `HTTP ${response.status}`);
     }
 
-    return await response.json() as GenerateNameResult;
+    return (await response.json()) as GenerateNameResult;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`[AI Naming] Error for product ${product.id}:`, message);

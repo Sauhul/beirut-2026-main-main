@@ -41,7 +41,13 @@ function main() {
   const problematic = [];
   for (const file of files) {
     if (file.startsWith(".trashed-")) {
-      problematic.push({ filename: file, missing: ["Archivo eliminado (trashed)"], hasName: false, hasPrice: false, hasWeight: false });
+      problematic.push({
+        filename: file,
+        missing: ["Archivo eliminado (trashed)"],
+        hasName: false,
+        hasPrice: false,
+        hasWeight: false,
+      });
       continue;
     }
     const analysis = analyzeFile(file);
@@ -51,7 +57,9 @@ function main() {
   }
 
   // Ordenar: primero las que más les falta
-  problematic.sort((a, b) => b.missing.length - a.missing.length || a.filename.localeCompare(b.filename));
+  problematic.sort(
+    (a, b) => b.missing.length - a.missing.length || a.filename.localeCompare(b.filename),
+  );
 
   console.log(`Fotos con información faltante: ${problematic.length}`);
 
@@ -63,9 +71,15 @@ function main() {
   doc.pipe(stream);
 
   // Portada
-  doc.fontSize(22).font("Helvetica-Bold").text("Fotos sin Información Completa", { align: "center" });
+  doc
+    .fontSize(22)
+    .font("Helvetica-Bold")
+    .text("Fotos sin Información Completa", { align: "center" });
   doc.moveDown(0.5);
-  doc.fontSize(11).font("Helvetica").text(`Total: ${problematic.length} fotos`, { align: "center" });
+  doc
+    .fontSize(11)
+    .font("Helvetica")
+    .text(`Total: ${problematic.length} fotos`, { align: "center" });
   doc.text(`Fecha: ${new Date().toISOString().slice(0, 10)}`, { align: "center" });
   doc.moveDown(1);
 
@@ -154,7 +168,10 @@ function main() {
   doc.addPage();
   doc.fontSize(16).font("Helvetica-Bold").text("Formulario para Llenar", { align: "center" });
   doc.moveDown(0.5);
-  doc.fontSize(9).font("Helvetica").text("Completa la información de cada producto:", { align: "center" });
+  doc
+    .fontSize(9)
+    .font("Helvetica")
+    .text("Completa la información de cada producto:", { align: "center" });
   doc.moveDown(1);
 
   const FORM_COL_NUM = 40;
@@ -196,13 +213,27 @@ function main() {
     const p = problematic[i];
     doc.fillColor("#666666");
     doc.text(String(i + 1), FORM_COL_NUM, fy, { width: 30 });
-    doc.text(p.filename.length > 25 ? p.filename.slice(0, 22) + "..." : p.filename, FORM_COL_ARCHIVO, fy, { width: 130 });
+    doc.text(
+      p.filename.length > 25 ? p.filename.slice(0, 22) + "..." : p.filename,
+      FORM_COL_ARCHIVO,
+      fy,
+      { width: 130 },
+    );
     // Línea para escribir nombre
-    doc.moveTo(FORM_COL_NOMBRE, fy + 10).lineTo(FORM_COL_NOMBRE + 130, fy + 10).stroke();
+    doc
+      .moveTo(FORM_COL_NOMBRE, fy + 10)
+      .lineTo(FORM_COL_NOMBRE + 130, fy + 10)
+      .stroke();
     // Línea para escribir precio
-    doc.moveTo(FORM_COL_PRECIO, fy + 10).lineTo(FORM_COL_PRECIO + 90, fy + 10).stroke();
+    doc
+      .moveTo(FORM_COL_PRECIO, fy + 10)
+      .lineTo(FORM_COL_PRECIO + 90, fy + 10)
+      .stroke();
     // Línea para escribir gramaje
-    doc.moveTo(FORM_COL_GRAMAJE, fy + 10).lineTo(FORM_COL_GRAMAJE + 90, fy + 10).stroke();
+    doc
+      .moveTo(FORM_COL_GRAMAJE, fy + 10)
+      .lineTo(FORM_COL_GRAMAJE + 90, fy + 10)
+      .stroke();
     doc.fillColor("#000000");
 
     fy += FORM_ROW_H;

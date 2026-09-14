@@ -17,11 +17,30 @@ export async function getCatalog(): Promise<Catalog> {
     supabase.from("products").select("*, categories(slug, name)").order("name"),
   ]);
 
+  /* 
+  console.log("[Catálogo] Resultados Supabase:", {
+      categories: categoriesRes.data?.length,
+      products: productsRes.data?.length,
+      errCat: categoriesRes.error,
+      errProd: productsRes.error
+    });
+    */
+
+  /* 
+  console.log("[Catálogo] Resultados Supabase:", {
+      categories: categoriesRes.data?.length,
+      products: productsRes.data?.length,
+      errCat: categoriesRes.error,
+      errProd: productsRes.error
+    });
+    */
   if (categoriesRes.error || productsRes.error) {
     console.error("[Catálogo] Error leyendo de Supabase:", {
       categories: categoriesRes.error?.message,
       products: productsRes.error?.message,
     });
+    // LOG DETAILED ERROR
+    console.log("[Catálogo] Detailed:", { categoriesRes, productsRes });
     return { categories: CATEGORIES, products: PRODUCTS };
   }
 
@@ -34,8 +53,10 @@ export async function getCatalog(): Promise<Catalog> {
   }));
 
   const dbProducts = (productsRes.data ?? []).map((p): Product => {
-    // APLICAR CATEGORÍA CORREGIDA
-    const categorySlug = getCorrectCategory(p.name);
+    // Intentar usar la categoría asignada en BD, si no, usar el mapper
+    const categoryName = p.categories?.name ?? "Otros";
+    const categorySlug = p.categories?.slug ?? getCorrectCategory(p.name);
+    
     return {
       id: p.id,
       slug: p.slug,
@@ -47,7 +68,7 @@ export async function getCatalog(): Promise<Catalog> {
       in_stock: p.in_stock,
       image_url: p.image_url,
       category_slug: categorySlug,
-      category_name: categorySlug.replace(/-/g, ' '), // Simplificado
+      category_name: categoryName,
     };
   });
 

@@ -18,19 +18,21 @@ export const checkoutSchema = z
     customer_email: z
       .string()
       .trim()
-      .email("Correo inválido")
-      .max(255)
-      .optional()
-      .or(z.literal("")),
+      .email("Ingresa un correo válido")
+      .min(1, "Ingresa tu correo"),
     delivery_method: z.enum(["domicilio", "recogida"]),
-    address: z.string().trim().max(200).optional().or(z.literal("")),
-    city: z.string().trim().max(100).optional().or(z.literal("")),
+    address: z.string().trim().min(1, "Ingresa tu dirección"),
+    city: z.string().trim().min(1, "Ingresa tu ciudad"),
     notes: z.string().trim().max(500).optional().or(z.literal("")),
     payment_method: z.enum(["wompi", "transferencia"]),
   })
   .refine((data) => data.delivery_method !== "domicilio" || (data.address?.length ?? 0) > 0, {
     message: "Ingresa la dirección de entrega",
     path: ["address"],
+  })
+  .refine((data) => data.delivery_method !== "domicilio" || (data.city?.length ?? 0) > 0, {
+    message: "Ingresa la ciudad",
+    path: ["city"],
   });
 
 export type CheckoutForm = z.infer<typeof checkoutSchema>;

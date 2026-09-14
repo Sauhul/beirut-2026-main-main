@@ -47,19 +47,19 @@ export function ContactPage() {
               </li>
               <li className="flex items-center gap-2">
                 <Instagram className="h-4 w-4 text-gold" />
-                <a href={SITE.instagram} target="_blank" rel="noreferrer" className="hover:text-gold">
+                <a
+                  href={SITE.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-gold"
+                >
                   {SITE.instagramHandle}
                 </a>
               </li>
             </ul>
-            <a
-              href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-gold mt-6 w-full"
-            >
-              <MessageCircle className="h-4 w-4" /> Escribir por WhatsApp
-            </a>
+          <Link to="/tienda" className="btn-gold mt-8">
+            <Store className="h-4 w-4" /> Ver tienda
+          </Link>
           </div>
         </div>
 

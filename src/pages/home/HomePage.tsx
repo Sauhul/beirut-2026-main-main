@@ -24,7 +24,15 @@ export function HomePage() {
     .map((c) => {
       const sample = products.find((p) => p.category_slug === c.slug && p.image_url);
       const count = products.filter((p) => p.category_slug === c.slug).length;
-      return { slug: c.slug, name: c.name, image: productImageSrc(sample?.image_url), count };
+      
+      console.log("DEBUG: Category Tile:", c.slug, "Sample product:", sample?.name, "Count:", count);
+      
+      return { 
+        slug: c.slug, 
+        name: c.name, 
+        image: productImageSrc(sample?.image_url), 
+        count 
+      };
     });
 
   const PILLARS = [
@@ -39,21 +47,28 @@ export function HomePage() {
       text: "Puedes venir, oler las especias, probar el café y pedir consejo sobre cada producto.",
     },
     {
-      icon: Sparkles,
-      title: "Asesoría de cocina",
-      text: "Te explicamos cómo usar el zaatar, el tahine o el agua de azahar en recetas de casa.",
-    },
-    {
       icon: Truck,
-      title: "Domicilios en Barranquilla",
-      text: "Coordinamos entrega el mismo día por WhatsApp y envíos al resto del país.",
+      title: "Domicilios en Barranquilla y toda Colombia",
+      text: "Coordinamos entregas y envíos al resto del país.",
     },
   ];
 
   const STEPS = [
-    { n: "01", title: "Elige tus productos", text: "Explora el catálogo por categoría o búscalo por nombre." },
-    { n: "02", title: "Confirma tu pedido", text: "Agrégalo al carrito y paga en línea con Wompi, o escríbenos por WhatsApp." },
-    { n: "03", title: "Recibe o recoge", text: "Domicilio en Barranquilla o recogida en la tienda el mismo día." },
+    {
+      n: "01",
+      title: "Elige tus productos",
+      text: "Explora el catálogo por categoría o búscalo por nombre.",
+    },
+    {
+      n: "02",
+      title: "Confirma tu pedido",
+      text: "Agrégalo al carrito y paga en línea con Wompi, o escríbenos por WhatsApp.",
+    },
+    {
+      n: "03",
+      title: "Recibe o recoge",
+      text: "Domicilio en Barranquilla o recogida en la tienda el mismo día.",
+    },
   ];
 
   return (
@@ -79,16 +94,8 @@ export function HomePage() {
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link to="/tienda" className="btn-gold">
-                Ver el catálogo
+                <Store className="h-4 w-4" /> Comprar ahora
               </Link>
-              <a
-                href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-outline-gold"
-              >
-                <MessageCircle className="h-4 w-4" /> Pedir por WhatsApp
-              </a>
             </div>
             <div className="mt-14 grid grid-cols-2 gap-6 border-t border-border pt-7 sm:grid-cols-3">
               <div>
@@ -122,24 +129,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* CIFRAS */}
-      <section className="border-b border-border bg-secondary text-secondary-foreground">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 divide-gold/20 px-5 md:grid-cols-4 md:divide-x">
-          {[
-            { k: `${SITE.stats.years}`, v: "años en Barranquilla" },
-            { k: `${Math.max(SITE.stats.products, products.length)}+`, v: "productos importados" },
-            { k: `${Math.max(categories.length, 1)}`, v: "categorías en tienda" },
-            { k: `${SITE.stats.families}`, v: "generaciones de recetas" },
-          ].map((s) => (
-            <div key={s.v} className="px-4 py-10 text-center">
-              <p className="font-display text-5xl text-gold">{s.k}</p>
-              <p className="mt-2 text-[0.62rem] font-semibold tracking-[0.22em] uppercase text-secondary-foreground/65">
-                {s.v}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      
 
       {/* HISTORIA */}
       <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-24 lg:grid-cols-2">
@@ -193,7 +183,9 @@ export function HomePage() {
         <div className="mx-auto max-w-7xl px-5">
           <div className="text-center">
             <p className="eyebrow">Por qué comprarnos</p>
-            <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">La tienda, en corto</h2>
+            <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">
+              La tienda, en corto
+            </h2>
             <div className="rule-gold mt-5" />
           </div>
           <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -209,25 +201,32 @@ export function HomePage() {
       </section>
 
       {/* CATEGORÍAS */}
-      <section className="mx-auto max-w-7xl px-5 py-24">
-        <div className="text-center">
-          <p className="eyebrow">Qué encuentras</p>
-          <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">Nuestras categorías</h2>
-          <div className="rule-gold mt-5" />
-        </div>
+      <section className="border-y border-border bg-muted py-24">
+        <div className="mx-auto max-w-7xl px-5">
+          <div className="text-center">
+            <p className="eyebrow">Qué encuentras</p>
+            <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">Nuestras categorías</h2>
+            <div className="rule-gold mt-5" />
+          </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-5 md:grid-cols-3">
+        <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
           {tiles.map((t) => (
-            <Link key={t.slug} to={`/tienda?categoria=${t.slug}`} className="group relative block overflow-hidden">
-              <img
-                src={t.image}
-                alt={t.name}
-                loading="lazy"
-                className="aspect-4/3 w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="veil absolute inset-0" />
-              <div className="absolute inset-x-0 bottom-0 p-5">
-                <p className="font-display text-2xl text-sand">{t.name}</p>
+            <Link
+              key={t.slug}
+              to={`/tienda?categoria=${t.slug}`}
+              className="card-onyx group flex flex-col overflow-hidden rounded-2xl"
+            >
+              <div className="relative block aspect-[5/6] overflow-hidden rounded-t-2xl" style={{ backgroundColor: "#f5f0dc" }}>
+                <img
+                  src={t.image}
+                  alt={t.name}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-secondary/80 to-transparent transition-opacity duration-300 group-hover:from-secondary/90" />
+              </div>
+              <div className="flex flex-1 flex-col p-5">
+                <p className="font-display text-xl text-sand">{t.name}</p>
                 <p className="mt-1 text-[0.58rem] font-bold tracking-[0.2em] uppercase text-gold">
                   {t.count} productos
                 </p>
@@ -235,11 +234,12 @@ export function HomePage() {
             </Link>
           ))}
         </div>
+        </div>
       </section>
 
       {/* DESTACADOS */}
       <section className="border-y border-border bg-muted py-24">
-        <div className="mx-auto max-w-7xl px-5">
+        <div className="mx-auto max-w-7xl px-5">1
           <div className="text-center">
             <p className="eyebrow">Selección de la casa</p>
             <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">Los más pedidos</h2>
@@ -257,7 +257,7 @@ export function HomePage() {
           )}
           <div className="mt-12 text-center">
             <Link to="/tienda" className="btn-gold">
-              Ver los {Math.max(SITE.stats.products, products.length)}+ productos
+              Ver más de 100 productos
             </Link>
           </div>
         </div>
@@ -321,14 +321,9 @@ export function HomePage() {
                 </span>
               </li>
             </ul>
-            <a
-              href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-gold mt-10"
-            >
-              <MessageCircle className="h-4 w-4" /> Escríbenos por WhatsApp
-            </a>
+            <Link to="/tienda" className="btn-gold mt-10">
+              <Store className="h-4 w-4" /> Ir a la tienda
+            </Link>
           </div>
 
           <div className="min-h-[380px] border border-border">

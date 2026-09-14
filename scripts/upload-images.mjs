@@ -12,7 +12,10 @@ import "dotenv/config";
 
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_KEY;
-if (!url || !key) { console.error("Faltan SUPABASE_URL y SUPABASE_SERVICE_KEY"); process.exit(1); }
+if (!url || !key) {
+  console.error("Faltan SUPABASE_URL y SUPABASE_SERVICE_KEY");
+  process.exit(1);
+}
 const supabase = createClient(url, key);
 
 const PHOTOS = "/media/Guest/FOTOS DELIK/FOTOS ALMACEN PRODUCTOS PRECIO/FOTOS ALMACEN";
@@ -99,16 +102,26 @@ const products = [
 ];
 
 async function uploadAll() {
-  let ok = 0, fail = 0;
+  let ok = 0,
+    fail = 0;
   for (const p of products) {
     const filePath = path.join(PHOTOS, p.file);
-    if (!fs.existsSync(filePath)) { console.log("⚠️  No existe:", p.file); fail++; continue; }
+    if (!fs.existsSync(filePath)) {
+      console.log("⚠️  No existe:", p.file);
+      fail++;
+      continue;
+    }
     const data = fs.readFileSync(filePath);
     const { error } = await supabase.storage
       .from(BUCKET)
       .upload(`${p.slug}.jpg`, data, { contentType: "image/jpeg", upsert: true });
-    if (error) { console.error("❌", p.slug, error.message); fail++; }
-    else { ok++; process.stdout.write("."); }
+    if (error) {
+      console.error("❌", p.slug, error.message);
+      fail++;
+    } else {
+      ok++;
+      process.stdout.write(".");
+    }
   }
   console.log(`\n✅ Subidas: ${ok}, Errores: ${fail}`);
 }

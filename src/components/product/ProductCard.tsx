@@ -14,10 +14,10 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <article className="card-onyx group flex flex-col overflow-hidden rounded-2xl">
-            <Link
+      <Link
         to={`/producto/${product.slug}`}
         className="relative block aspect-[5/6] overflow-hidden rounded-t-2xl"
-        style={{ backgroundColor: '#f5f0dc' }}
+        style={{ backgroundColor: "#f5f0dc" }}
       >
         <img
           src={categoryImage(product.category_slug, product.image_url)}
@@ -59,19 +59,10 @@ export function ProductCard({ product }: { product: Product }) {
               toast.success(`${name} agregado al carrito`);
             }}
             aria-label={`Agregar ${name} al carrito`}
-            className="btn-gold flex-1 !py-3 !text-[0.62rem]"
+            className="btn-gold w-full !py-3 !text-[0.62rem]"
           >
-            <ShoppingCart className="h-3.5 w-3.5" /> Agregar
+            <ShoppingCart className="h-3.5 w-3.5" /> Agregar al carrito
           </button>
-          <a
-            href={whatsappLink(`Hola, me interesa ${name} (${formatCOP(product.price)}).`)}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`Pedir ${name} por WhatsApp`}
-            className="btn-outline-gold !px-3.5 !py-3"
-          >
-            <MessageCircle className="h-3.5 w-3.5" />
-          </a>
         </div>
       </div>
     </article>

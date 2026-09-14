@@ -10,5 +10,8 @@ export function formatCOP(value: number) {
 export function titleCase(value: string) {
   return value
     .toLocaleLowerCase("es-CO")
-    .replace(/(^|\s|\(|-|\/)([\p{L}])/gu, (_m, p1, p2: string) => p1 + p2.toLocaleUpperCase("es-CO"));
+    .replace(
+      /(^|\s|\(|-|\/)([\p{L}])/gu,
+      (_m, p1, p2: string) => p1 + p2.toLocaleUpperCase("es-CO"),
+    );
 }

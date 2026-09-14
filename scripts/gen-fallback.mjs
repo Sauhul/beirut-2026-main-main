@@ -16,11 +16,18 @@ const catRegex = /VALUES \('(cat-\d+)', '([^']+)', '([^']+)', '([^']+)', (\d+)\)
 const categories = [];
 let m;
 while ((m = catRegex.exec(sql)) !== null) {
-  categories.push({ id: m[1], slug: m[2], name: m[3], description: m[4], sort_order: Number(m[5]) });
+  categories.push({
+    id: m[1],
+    slug: m[2],
+    name: m[3],
+    description: m[4],
+    sort_order: Number(m[5]),
+  });
 }
 
 // Extraer productos
-const prodRegex = /VALUES \('(cat-\d+)', '([^']+)', '([^']+)', '([^']+)', (\d+), '([^']+)', '([^']+)', (true|false), (true|false)\)/g;
+const prodRegex =
+  /VALUES \('(cat-\d+)', '([^']+)', '([^']+)', '([^']+)', (\d+), '([^']+)', '([^']+)', (true|false), (true|false)\)/g;
 const products = [];
 while ((m = prodRegex.exec(sql)) !== null) {
   products.push({

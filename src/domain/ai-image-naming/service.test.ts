@@ -71,9 +71,7 @@ describe("normalizeFilenameClient — casos básicos", () => {
   });
 
   it("preserva números", () => {
-    expect(normalizeFilenameClient("Crunchy Lat Morada 340GR")).toBe(
-      "crunchy-lat-morada-340gr",
-    );
+    expect(normalizeFilenameClient("Crunchy Lat Morada 340GR")).toBe("crunchy-lat-morada-340gr");
   });
 
   it("manejo correcto de texto en MAYÚSCULAS con signos", () => {
@@ -119,11 +117,7 @@ describe("normalizeFilenameClient — seguridad", () => {
   });
 
   it("no produce nombres vacíos ante entradas maliciosas", () => {
-    const cases = [
-      "../../../../",
-      "\u0000\u0001\u0002",
-      "   \t\n\r   ",
-    ];
+    const cases = ["../../../../", "\u0000\u0001\u0002", "   \t\n\r   "];
     for (const c of cases) {
       expect(normalizeFilenameClient(c)).toBeTruthy();
       expect(normalizeFilenameClient(c).length).toBeGreaterThan(0);
@@ -271,9 +265,7 @@ describe("generateImageNamesBatch — cancelación", () => {
 
 describe("generateImageNamesBatch — callback de progreso", () => {
   it("llama onProgress con datos correctos", async () => {
-    const products = Array.from({ length: 3 }, (_, i) =>
-      makeProduct(`p${i}`, `Producto ${i}`),
-    );
+    const products = Array.from({ length: 3 }, (_, i) => makeProduct(`p${i}`, `Producto ${i}`));
 
     const progressUpdates: number[] = [];
     await generateImageNamesBatch(products, {
@@ -297,13 +289,7 @@ describe("Fallback cuando IA no está disponible", () => {
   });
 
   it("el fallback nunca produce cadena vacía", () => {
-    const names = [
-      "Producto",
-      "A",
-      "123",
-      "Tahine 454 GR",
-      "Café Maatouk 450gr",
-    ];
+    const names = ["Producto", "A", "123", "Tahine 454 GR", "Café Maatouk 450gr"];
     for (const name of names) {
       const result = normalizeFilenameClient(name);
       expect(result.length).toBeGreaterThan(0);

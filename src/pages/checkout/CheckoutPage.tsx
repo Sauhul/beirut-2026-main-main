@@ -28,28 +28,16 @@ const PAYMENT_OPTIONS: {
   sub: string;
 }[] = [
   { value: "wompi", label: "Pago en línea", sub: "Tarjeta, PSE, Nequi — procesado por Wompi" },
-  {
-    value: "transferencia",
-    label: "Transferencia / Nequi",
-    sub: "Te enviamos los datos por WhatsApp",
-  },
-];
+    {
+      value: "transferencia",
+      label: "Transferencia / Nequi",
+      sub: "Te contactaremos para finalizar",
+    },
+  ];
 
-function finalizeByWhatsapp(order: CreatedOrder, data: CheckoutForm, extra?: string) {
-  const message = buildOrderMessage({
-    orderNumber: order.orderNumber,
-    name: data.customer_name,
-    phone: data.customer_phone,
-    deliveryMethod: data.delivery_method,
-    address: data.address || undefined,
-    city: data.city || undefined,
-    notes: [data.notes, extra].filter(Boolean).join(" · ") || undefined,
-    paymentMethod: data.payment_method,
-    lines: order.lines,
-    total: order.total,
-  });
-
-  window.open(whatsappLink(message), "_blank", "noopener");
+function finalize(order: CreatedOrder, data: CheckoutForm) {
+  // Logic for finalizing order if not through WhatsApp
+  // e.g. navigate directly
 }
 
 export function CheckoutPage() {
@@ -66,14 +54,16 @@ export function CheckoutPage() {
     formState: { errors },
   } = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
-    defaultValues: {
-      delivery_method: "domicilio",
-      payment_method: "wompi",
-      address: "",
-      city: "",
-      customer_email: "",
-      notes: "",
-    },
+      defaultValues: {
+        delivery_method: "domicilio",
+        payment_method: "wompi",
+        address: "Calle Falsa 123",
+        city: "Barranquilla",
+        customer_name: "Cliente de Prueba",
+        customer_phone: "3001234567",
+        customer_email: "test@ejemplo.com",
+        notes: "",
+      },
   });
 
   const delivery = watch("delivery_method");
@@ -159,7 +149,9 @@ export function CheckoutPage() {
           });
 
           if (result.status === "UNKNOWN" && !result.transactionId) {
-            toast.info("Cerraste la pasarela de pago. Tu pedido sigue guardado, puedes intentar de nuevo.");
+            toast.info(
+              "Cerraste la pasarela de pago. Tu pedido sigue guardado, puedes intentar de nuevo.",
+            );
             return;
           }
 
@@ -167,15 +159,11 @@ export function CheckoutPage() {
 
           if (result.status === "APPROVED") {
             sendToWebhook(order, "aprobado", result.transactionId);
-            finalizeByWhatsapp(order, data, `Transacción Wompi: ${result.transactionId}`);
+            
             navigate(`/pedido-confirmado?numero=${order.orderNumber}`);
           } else if (result.status === "PENDING") {
             sendToWebhook(order, "pendiente", result.transactionId);
-            finalizeByWhatsapp(
-              order,
-              data,
-              `Pago pendiente en Wompi (transacción ${result.transactionId})`,
-            );
+            
             navigate(`/pedido-confirmado?numero=${order.orderNumber}`);
           } else {
             sendToWebhook(order, "rechazado", result.transactionId);
@@ -185,13 +173,14 @@ export function CheckoutPage() {
           return;
         } catch (error) {
           console.error("[Wompi checkout error]", error);
+          setSubmitting(false); // <--- Asegurar que se habilita el botón
           const msg = error instanceof Error ? error.message : "";
           if (msg.includes("REACT_APP_WOMPI_PUBLIC_KEY")) {
-            toast.error("LA PASARELA DE PAGO NO ESTÁ CONFIGURADA. CONTACTA AL ADMINISTRADOR.");
-          } else if (msg.includes("widget de Wompi")) {
-            toast.error("NO SE PUDO CARGAR LA PASARELA DE PAGO. VERIFICA TU CONEXIÓN E INTENTA DE NUEVO.");
+            toast.error("LA PASARELA DE PAGO NO ESTÁ CONFIGURADA.");
+          } else if (msg.includes("403")) {
+            toast.error("Wompi rechazó la conexión (403). Verifica dominios autorizados en Dashboard.");
           } else {
-            toast.error("NO PUDIMOS ABRIR LA PASARELA DE PAGO. INTENTA DE NUEVO.");
+            toast.error(`Error al abrir pago: ${msg}`);
           }
           return;
         }
@@ -199,7 +188,7 @@ export function CheckoutPage() {
 
       clear();
       sendToWebhook(order, "pendiente");
-      finalizeByWhatsapp(order, data);
+      
       navigate(`/pedido-confirmado?numero=${order.orderNumber}`);
     } catch (error) {
       console.error(error);
@@ -233,7 +222,7 @@ export function CheckoutPage() {
             <legend className="px-2 eyebrow">Tus datos</legend>
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Nombre completo
+                Nombre completo *
                 <input {...register("customer_name")} maxLength={100} className={inputClass} />
                 {errors.customer_name && (
                   <span className="mt-1 block text-xs text-destructive">
@@ -242,7 +231,7 @@ export function CheckoutPage() {
                 )}
               </label>
               <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Teléfono / WhatsApp
+                Teléfono / WhatsApp *
                 <input {...register("customer_phone")} maxLength={30} className={inputClass} />
                 {errors.customer_phone && (
                   <span className="mt-1 block text-xs text-destructive">
@@ -251,7 +240,7 @@ export function CheckoutPage() {
                 )}
               </label>
               <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2">
-                Correo electrónico (opcional)
+                Correo electrónico *
                 <input
                   {...register("customer_email")}
                   type="email"
@@ -295,7 +284,7 @@ export function CheckoutPage() {
               {delivery === "domicilio" && (
                 <>
                   <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2">
-                    Dirección
+                    Dirección *
                     <input {...register("address")} maxLength={200} className={inputClass} />
                     {errors.address && (
                       <span className="mt-1 block text-xs text-destructive">
@@ -304,10 +293,12 @@ export function CheckoutPage() {
                     )}
                   </label>
                   <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Ciudad
+                    Ciudad *
                     <input {...register("city")} maxLength={100} className={inputClass} />
                     {errors.city && (
-                      <span className="mt-1 block text-xs text-destructive">{errors.city.message}</span>
+                      <span className="mt-1 block text-xs text-destructive">
+                        {errors.city.message}
+                      </span>
                     )}
                   </label>
                 </>
@@ -390,7 +381,6 @@ export function CheckoutPage() {
                 </>
               ) : (
                 <>
-                  <MessageCircle className="h-4 w-4" />
                   Confirmar y pagar
                 </>
               )}

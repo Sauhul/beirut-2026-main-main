@@ -16,7 +16,7 @@ const SLUG_TO_FILE = {
   "baklawa-kilo": "BAKLAWA KILO (180.000) .jpg",
   "baklawa-hojaldre": "BAKLAWA HOJALDRE (15.000) .jpg",
   "berenjena-con-tahine": "BERENJENA CON TAHINE(12.000).jpg",
-  "bordon": "BORDON (25.000).jpg",
+  bordon: "BORDON (25.000).jpg",
   "bulgur-trigo-blanco-1": "BULGUR TRIGO BLANCO 1 (16.000) .jpg",
   "cafe-maatouk-450gr": "CAFE MAATOUK 450GR  (55.000).jpg",
   "cafe-maatuk-200gr": "CAFE MAATUK 200GR (30.000) .jpg",
@@ -25,7 +25,7 @@ const SLUG_TO_FILE = {
   "castania-azul-lat": "CASTANIA AZUL LAT (50.000).jpg",
   "castania-sin-sal": "CASTANIA SIN SAL(75.000).jpg",
   "castania-verde-lat": "CASTANIA VERDE LAT(65.000).jpg",
-  "chanclis": "chanclis (38000).jpg",
+  chanclis: "chanclis (38000).jpg",
   "crunchy-170gr": "CRUNCHY 170GR (30.000).jpg",
   "crunchy-bite-80gr": "CRUNCHY BITE 80GR (15.000) .jpg",
   "crunchy-bites-80gr": "CRUNCHY BITES 80GR (15.000) .jpg",
@@ -53,17 +53,17 @@ const SLUG_TO_FILE = {
   "especias-7-pimienta-454gr": "ESPECIAS 7 PIMIENTA 454GR (.jpg",
   "especias-falafel-454gr": "ESPECIAS FALAFEL 454GR (70.000) .jpg",
   "especias-kebbe454gr": "ESPECIAS KEBBE454GR (70.000) .jpg",
-  "falafel": "FALAFEL (20.000) .jpg",
+  falafel: "FALAFEL (20.000) .jpg",
   "garbanzo-amarillo": "GARBANZO AMARILLO (12.000) .jpg",
-  "ghraybeh": "GHRAYBEH (14.000).jpg",
+  ghraybeh: "GHRAYBEH (14.000).jpg",
   "habas-lata-400gr": "HABAS LATA 400GR (7.000) .jpg",
   "hierbabuena-seca-200gr": "HIERBABUENA SECA 200GR (55.000) .jpg",
-  "hierbamate": "HIERBAMATE (16.000) .jpg",
+  hierbamate: "HIERBAMATE (16.000) .jpg",
   "hierbamate-2": "HIERBAMATE(16.000).jpg",
   "higos-secos-125gr": "HIGOS SECOS 125GR (17.000) .jpg",
-  "labne": "labne(38.000).jpg",
+  labne: "labne(38.000).jpg",
   "lentejas-rojas": "LENTEJAS ROJAS (22.000) .jpg",
-  "manguera": "MANGUERA (30.000) .jpg",
+  manguera: "MANGUERA (30.000) .jpg",
   "nuez-250": "NUEZ 250(30.000).jpg",
   "pan-ajonjoli-x3": "PAN AJONJOLI X3(6.000).jpg",
   "pan-arabe": "PAN ARABE(8.000).jpg",
@@ -71,7 +71,7 @@ const SLUG_TO_FILE = {
   "pan-integral": "PAN INTEGRAL(7.000).jpg",
   "pan-mini": "PAN MINI (7.000).jpg",
   "pan-tostado": "PAN TOSTADO(5.000).jpg",
-  "pinones": "piñones(85.000).jpg",
+  pinones: "piñones(85.000).jpg",
   "sal-de-limon-libra": "SAL DE LIMON LB (20.000) .jpg",
   "semola-fina": "SEMOLA FINA(22.000).jpg",
   "semola-gruesa": "SEMOLA GRUESA (22.000).jpg",
@@ -92,7 +92,8 @@ const SLUG_TO_FILE = {
 
 fs.mkdirSync(DEST_DIR, { recursive: true });
 
-let ok = 0, fail = 0;
+let ok = 0,
+  fail = 0;
 for (const [slug, filename] of Object.entries(SLUG_TO_FILE)) {
   const src = path.join(PHOTOS_DIR, filename);
   const dest = path.join(DEST_DIR, `${slug}.jpg`);

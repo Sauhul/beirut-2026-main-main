@@ -62,12 +62,12 @@ export function Footer() {
             <li className="flex gap-2">
               <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
               <a
-                href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
+                href="https://instagram.com/delikatessenbeyrouth"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-gold"
+                className="text-xs text-muted-foreground hover:text-gold"
               >
-                {SITE.phoneDisplay}
+                Instagram
               </a>
             </li>
             <li className="flex gap-2">

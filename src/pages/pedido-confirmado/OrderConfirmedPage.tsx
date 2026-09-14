@@ -60,14 +60,9 @@ export function OrderConfirmedPage() {
             Revisa WhatsApp para confirmar los detalles de entrega.
           </p>
         </div>
-        <a
-          href={whatsappLink(`Hola Beirut, quiero confirmar mi pedido #${numero}.`)}
-          target="_blank"
-          rel="noreferrer"
-          className="btn-gold"
-        >
-          <MessageCircle className="h-4 w-4" /> Abrir WhatsApp
-        </a>
+          <Link to="/" className="btn-gold mt-8">
+            Volver al inicio
+          </Link>
         <Link to="/tienda" className="btn-outline-gold">
           Seguir comprando
         </Link>

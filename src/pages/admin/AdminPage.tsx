@@ -97,11 +97,7 @@ function LoginForm() {
             className={`mt-1 ${inputClass}`}
           />
         </label>
-        <button
-          type="submit"
-          disabled={loading}
-          className="btn-gold w-full mt-4 !py-3"
-        >
+        <button type="submit" disabled={loading} className="btn-gold w-full mt-4 !py-3">
           {loading ? "Ingresando…" : "Ingresar"}
         </button>
       </form>
@@ -121,10 +117,7 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
           <p className="eyebrow">Gestión Interna</p>
           <h1 className="mt-1 font-display text-4xl text-sand">Administración</h1>
         </div>
-        <button
-          onClick={onLogout}
-          className="btn-outline-gold !px-5 !py-2 text-xs"
-        >
+        <button onClick={onLogout} className="btn-outline-gold !px-5 !py-2 text-xs">
           <LogOut className="h-4 w-4" /> Salir
         </button>
       </div>

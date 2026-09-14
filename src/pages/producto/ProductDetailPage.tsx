@@ -130,31 +130,21 @@ export function ProductDetailPage() {
             </div>
             <button
               onClick={() => {
-                for (let i = 0; i < qty; i += 1) {
-                  add({
-                    id: product.id,
-                    slug: product.slug,
-                    name: product.name,
-                    price: product.price,
-                    unit: product.unit,
-                    categorySlug: product.category_slug,
-                    imageUrl: product.image_url,
-                  });
-                }
+                addToCart({
+                  id: product.id,
+                  slug: product.slug,
+                  name: product.name,
+                  price: product.price,
+                  unit: product.unit,
+                  categorySlug: product.category_slug,
+                  imageUrl: product.image_url,
+                });
                 toast.success(`${name} agregado al carrito`);
               }}
               className="btn-gold flex-1 sm:flex-none"
             >
               <CheckCircle2 className="h-4 w-4" /> Agregar al carrito
             </button>
-            <a
-              href={whatsappLink(`Hola, me interesa ${name} (${formatCOP(product.price)}).`)}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-outline-gold !px-5"
-            >
-              <MessageCircle className="h-4 w-4" /> WhatsApp
-            </a>
           </div>
 
           <ul className="detail-meta detail-motion mt-12 space-y-3 border-t border-border pt-8 text-sm text-muted-foreground">

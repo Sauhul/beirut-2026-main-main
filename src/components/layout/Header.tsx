@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Phone, ShoppingBag } from "lucide-react";
-import { SITE, whatsappLink } from "@config/site";
+import { Menu, X, ShoppingBag, Instagram } from "lucide-react";
+import { SITE } from "@config/site";
 import { useCart } from "@domain/cart/use-cart";
 import logo from "@assets/beirut-logo.png";
 
@@ -51,12 +51,12 @@ export function Header() {
             )}
           </Link>
           <a
-            href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
+            href="https://www.instagram.com/delikatessenbeyrouth_84?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
             target="_blank"
             rel="noreferrer"
-            className="btn-outline-gold !px-5 !py-2.5"
+            className="text-muted-foreground hover:text-gold transition-colors"
           >
-            <Phone className="h-3.5 w-3.5" /> Pedir
+            <Instagram className="h-5 w-5" />
           </a>
         </nav>
 
@@ -73,11 +73,7 @@ export function Header() {
               </span>
             )}
           </Link>
-          <button
-            onClick={() => setOpen((v) => !v)}
-            aria-label="Abrir menú"
-            className="text-gold"
-          >
+          <button onClick={() => setOpen((v) => !v)} aria-label="Abrir menú" className="text-gold">
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
@@ -96,14 +92,7 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
-            <a
-              href={whatsappLink("Hola, quiero hacer un pedido en Delikatessen Beyrouth.")}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-gold mt-2"
-            >
-              Pedir por WhatsApp
-            </a>
+            {/* Remove WhatsApp Button */}
           </div>
         </nav>
       )}

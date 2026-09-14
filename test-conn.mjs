@@ -7,8 +7,10 @@ async function checkConnection() {
   }
 
   console.log("Probando conexión a Supabase...");
-  
-  const { data, error } = await supabase.from("products").select("count", { count: 'exact', head: true });
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("count", { count: "exact", head: true });
 
   if (error) {
     console.error("❌ Error de conexión:", error.message);
