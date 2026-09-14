@@ -199,10 +199,10 @@ export function CheckoutPage() {
   }
 
   return (
-    <div ref={containerRef} className="route-page mx-auto max-w-7xl px-5 pb-24 pt-10">
-      <div className="checkout-title checkout-motion border-b border-border pb-8 mb-10">
+    <div ref={containerRef} className="route-page mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 md:px-10">
+      <div className="checkout-title checkout-motion border-b border-border pb-6 mb-6">
         <p className="eyebrow">Paso final</p>
-        <h1 className="mt-3 font-display text-5xl text-sand">Finalizar compra</h1>
+        <h1 className="mt-2 font-display text-4xl text-sand sm:text-5xl">Finalizar compra</h1>
       </div>
 
       <form
@@ -215,37 +215,37 @@ export function CheckoutPage() {
           }
         })}
         noValidate
-        className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]"
+        className="mt-8 grid gap-8 lg:grid-cols-[1.5fr_1fr]"
       >
         <div className="space-y-6">
-          <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
+          <fieldset className="checkout-fieldset checkout-motion card-onyx p-4 sm:p-6">
             <legend className="px-2 eyebrow">Tus datos</legend>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground w-full">
                 Nombre completo *
-                <input {...register("customer_name")} maxLength={100} className={inputClass} />
+                <input {...register("customer_name")} maxLength={100} className={`${inputClass} mt-1`} />
                 {errors.customer_name && (
                   <span className="mt-1 block text-xs text-destructive">
                     {errors.customer_name.message}
                   </span>
                 )}
               </label>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground w-full">
                 Teléfono / WhatsApp *
-                <input {...register("customer_phone")} maxLength={30} className={inputClass} />
+                <input {...register("customer_phone")} maxLength={30} className={`${inputClass} mt-1`} />
                 {errors.customer_phone && (
                   <span className="mt-1 block text-xs text-destructive">
                     {errors.customer_phone.message}
                   </span>
                 )}
               </label>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2 w-full">
                 Correo electrónico *
                 <input
                   {...register("customer_email")}
                   type="email"
                   maxLength={150}
-                  className={inputClass}
+                  className={`${inputClass} mt-1`}
                 />
                 {errors.customer_email && (
                   <span className="mt-1 block text-xs text-destructive">
