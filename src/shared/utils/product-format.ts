@@ -95,10 +95,13 @@ function cleanUnitText(value: string) {
     .trim();
 }
 
-/** Etiqueta lista para mostrar: "unidad" → "Por unidad"; "500 g" → "500 g". */
+/** Etiqueta lista para mostrar: si es "unidad", "unid" o vacío, retorna "" para no forzar peso. */
 export function formatPresentation(unit: string | null | undefined) {
+  if (!unit) return "";
+  const clean = unit.trim().toLowerCase();
+  if (clean === "unidad" || clean === "unid" || clean === "und" || clean === "piezas") return "";
   const normalized = normalizeUnit(unit);
-  return normalized === "unidad" ? "Por unidad" : normalized;
+  return normalized === "unidad" ? "" : normalized;
 }
 
 /** ¿La presentación es una de las estándar? Para saber si mostrar input libre. */

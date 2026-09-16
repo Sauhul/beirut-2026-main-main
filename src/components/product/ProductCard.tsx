@@ -34,9 +34,11 @@ export function ProductCard({ product }: { product: Product }) {
         <Link to={`/producto/${product.slug}`}>
           <h3 className="font-display text-xl leading-tight text-sand">{name}</h3>
         </Link>
-        <p className="mt-2 text-[0.65rem] font-semibold tracking-[0.18em] uppercase text-muted-foreground">
-          {formatPresentation(product.unit)}
-        </p>
+        {formatPresentation(product.unit) ? (
+          <p className="mt-2 text-[0.65rem] font-semibold tracking-[0.18em] uppercase text-muted-foreground">
+            {formatPresentation(product.unit)}
+          </p>
+        ) : null}
         <p className="mt-2 line-clamp-2 text-xs leading-6 text-muted-foreground">
           {product.description}
         </p>

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@data/supabase/client";
 import { formatCOP } from "@shared/utils/format";
 import {
@@ -29,6 +30,7 @@ const emptyProduct: Omit<ProductRow, "id"> = {
 /* ── Productos ─────────────────────────────────────────────── */
 
 export function ProductsManager() {
+  const queryClient = useQueryClient();
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState<CategoryRow[]>([]);
@@ -40,10 +42,12 @@ export function ProductsManager() {
   const load = useCallback(async () => {
     if (!supabase) return;
     setLoading(true);
-    const [{ data: prods }, { data: cats }] = await Promise.all([
+    const [{ data: prods, error: errP }, { data: cats, error: errC }] = await Promise.all([
       supabase.from("products").select("*").order("name"),
       supabase.from("categories").select("*").order("sort_order"),
     ]);
+    if (errP) console.error("Error cargando productos de Supabase:", errP);
+    if (errC) console.error("Error cargando categorías de Supabase:", errC);
     setProducts((prods as ProductRow[]) ?? []);
     setCategories((cats as CategoryRow[]) ?? []);
     setLoading(false);
@@ -56,6 +60,10 @@ export function ProductsManager() {
   async function save(imageFile?: File | null) {
     if (!supabase || !editing) return;
     const name = normalizeProductName(editing.name ?? "");
+    if (!name) {
+      toast.error("El nombre del producto es obligatorio");
+      return;
+    }
     let image_url = editing.image_url || null;
 
     if (imageFile) {
@@ -71,25 +79,31 @@ export function ProductsManager() {
       image_url = supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
     }
 
-    const values = {
-      ...editing,
+    const cleanValues = {
       name,
       slug: editing.slug || slugify(name),
-      unit: normalizeUnit(editing.unit),
-      price: Number(editing.price),
+      description: editing.description ?? "Producto auténtico árabe importado de alta calidad",
+      price: Number(editing.price || 0),
+      unit: editing.unit ? editing.unit.trim() : "unidad",
       image_url,
+      featured: Boolean(editing.featured),
+      in_stock: editing.in_stock !== false,
       category_id: editing.category_id || null,
     };
+
     const query = editing.id
-      ? supabase.from("products").update(values).eq("id", editing.id)
-      : supabase.from("products").insert(values);
+      ? supabase.from("products").update(cleanValues).eq("id", editing.id)
+      : supabase.from("products").insert(cleanValues);
     const { error } = await query;
     if (error) {
       toast.error(`No se pudo guardar: ${error.message}`);
       return;
     }
-    toast.success(editing.id ? "Producto actualizado" : "Producto creado");
+
+    toast.success(editing.id ? "Producto actualizado en Supabase" : "Producto creado en Supabase");
     setEditing(null);
+    await queryClient.invalidateQueries({ queryKey: ["catalog"] });
+    await queryClient.invalidateQueries({ queryKey: ["product"] });
     void load();
   }
 
@@ -104,6 +118,8 @@ export function ProductsManager() {
     }
     toast.success("Producto eliminado");
     setDeleting(null);
+    await queryClient.invalidateQueries({ queryKey: ["catalog"] });
+    await queryClient.invalidateQueries({ queryKey: ["product"] });
     void load();
   }
 
@@ -365,33 +381,45 @@ function ProductForm({
               />
             </label>
             <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Presentación
-              <select
-                value={isStandardUnit(value.unit) ? normalizeUnit(value.unit) : "otra"}
-                onChange={(e) => set("unit", e.target.value === "otra" ? "" : e.target.value)}
-                className={`mt-1 ${inputClass}`}
-              >
-                {UNIT_OPTIONS.map((u) => (
-                  <option key={u} value={u}>
-                    {formatPresentation(u)}
-                  </option>
-                ))}
-                <option value="otra">Otra…</option>
-              </select>
-            </label>
-          </div>
-          {!isStandardUnit(value.unit) && (
-            <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Presentación personalizada (se normaliza al guardar)
+              Presentación (Texto libre)
               <input
-                placeholder='Ej. "750g", "libra", "1.5kg"…'
+                type="text"
+                list="unit-suggestions"
+                placeholder='Ej. "250 g", "Lata 340 g", "unidad", "1 kg"…'
                 value={value.unit ?? ""}
                 onChange={(e) => set("unit", e.target.value)}
-                onBlur={(e) => set("unit", normalizeUnit(e.target.value))}
                 className={`mt-1 ${inputClass}`}
               />
+              <datalist id="unit-suggestions">
+                {UNIT_OPTIONS.map((u) => (
+                  <option key={u} value={u} />
+                ))}
+                <option value="Lata 340 g" />
+                <option value="Frasco 450 g" />
+                <option value="Caja por 12" />
+                <option value="Libra (500 g)" />
+              </datalist>
             </label>
-          )}
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[0.65rem] text-muted-foreground font-semibold uppercase tracking-wider mr-1">
+              Atajos rápidos:
+            </span>
+            {["unidad", "100 g", "250 g", "500 g", "1 kg", "250 ml", "500 ml", "1 L", "Lata 340 g"].map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => set("unit", preset)}
+                className={`text-[0.65rem] px-2.5 py-1 rounded-md border transition-all ${
+                  value.unit === preset
+                    ? "bg-gold text-black border-gold font-bold shadow-sm"
+                    : "bg-secondary/30 text-muted-foreground border-border hover:border-gold/50 hover:text-sand"
+                }`}
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
           <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Categoría
             <select
