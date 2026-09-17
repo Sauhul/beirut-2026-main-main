@@ -14,7 +14,9 @@ import { createOrder, type PaymentMethod, type CreatedOrder } from "@domain/orde
 import { openWompiCheckout } from "@domain/payments/wompi";
 import { notifyOrderWebhook } from "@domain/orders/order-webhook";
 import { buildOrderMessage } from "@domain/whatsapp/order-message";
-import { whatsappLink } from "@config/site";
+import { SITE, whatsappLink } from "@config/site";
+import { sendOrderConfirmationEmail } from "@domain/notifications/email-service";
+import { sendOrderWhatsAppNotification } from "@domain/notifications/whatsapp-service";
 import { inputClass } from "@shared/utils/input-class";
 import { checkoutSchema, type CheckoutForm } from "./checkout.schema";
 import { usePageTitle } from "@hooks/usePageTitle";
@@ -27,13 +29,14 @@ const PAYMENT_OPTIONS: {
   label: string;
   sub: string;
 }[] = [
+  { value: "test", label: "Prueba Rápida (Test)", sub: "Crea el pedido inmediatamente sin redirigir ni procesar pasarelas" },
   { value: "wompi", label: "Pago en línea", sub: "Tarjeta, PSE, Nequi — procesado por Wompi" },
-    {
-      value: "transferencia",
-      label: "Transferencia / Nequi",
-      sub: "Te contactaremos para finalizar",
-    },
-  ];
+  {
+    value: "transferencia",
+    label: "Transferencia / Nequi",
+    sub: "Te contactaremos para finalizar",
+  },
+];
 
 function finalize(order: CreatedOrder, data: CheckoutForm) {
   // Logic for finalizing order if not through WhatsApp
@@ -56,7 +59,7 @@ export function CheckoutPage() {
     resolver: zodResolver(checkoutSchema),
       defaultValues: {
         delivery_method: "domicilio",
-        payment_method: "wompi",
+        payment_method: "test",
         address: "Calle Falsa 123",
         city: "Barranquilla",
         customer_name: "Cliente de Prueba",
@@ -128,6 +131,40 @@ export function CheckoutPage() {
       });
     };
 
+    const dispatchNotifications = (order: CreatedOrder) => {
+      // 1. Enviar correo al cliente desde confirmacion@beirutmarket.co
+      if (data.customer_email) {
+        sendOrderConfirmationEmail({
+          orderNumber: order.orderNumber,
+          customerEmail: data.customer_email,
+          customerName: data.customer_name,
+          customerPhone: data.customer_phone,
+          deliveryMethod: data.delivery_method,
+          address: data.address || undefined,
+          city: data.city || undefined,
+          notes: data.notes || undefined,
+          paymentMethod: data.payment_method,
+          lines: order.lines,
+          total: order.total,
+        }).catch((err) => console.error("[Notification Error - Email]", err));
+      }
+
+      // 2. Enviar notificación directa por WhatsApp al dueño en segundo plano (573128527325)
+      sendOrderWhatsAppNotification({
+        orderNumber: order.orderNumber,
+        name: data.customer_name,
+        phone: data.customer_phone,
+        email: data.customer_email || undefined,
+        deliveryMethod: data.delivery_method,
+        address: data.address || undefined,
+        city: data.city || undefined,
+        notes: data.notes || undefined,
+        paymentMethod: data.payment_method,
+        lines: order.lines,
+        total: order.total,
+      }).catch((err) => console.error("[Notification Error - WhatsApp]", err));
+    };
+
     try {
       const order = await createOrder({
         ...data,
@@ -153,19 +190,19 @@ export function CheckoutPage() {
           }
 
           clear();
+          dispatchNotifications(order);
 
           if (result.status === "APPROVED") {
             sendToWebhook(order, "aprobado", result.transactionId);
-            
-            navigate(`/pedido-confirmado?numero=${order.orderNumber}`);
           } else if (result.status === "PENDING") {
             sendToWebhook(order, "pendiente", result.transactionId);
-            
-            navigate(`/pedido-confirmado?numero=${order.orderNumber}`);
           } else {
             sendToWebhook(order, "rechazado", result.transactionId);
-            navigate(`/pedido-confirmado?numero=${order.orderNumber}`);
           }
+
+          navigate(`/pedido-confirmado?numero=${order.orderNumber}`, {
+            state: { orderNumber: order.orderNumber, customerEmail: data.customer_email },
+          });
           return;
         } catch (error) {
           console.error("[Wompi checkout error]", error);
@@ -176,8 +213,11 @@ export function CheckoutPage() {
 
       clear();
       sendToWebhook(order, "pendiente");
-      
-      navigate(`/pedido-confirmado?numero=${order.orderNumber}`);
+      dispatchNotifications(order);
+
+      navigate(`/pedido-confirmado?numero=${order.orderNumber}`, {
+        state: { orderNumber: order.orderNumber, customerEmail: data.customer_email },
+      });
     } catch (error) {
       console.error(error);
       toast.error("No pudimos registrar tu pedido. Intenta de nuevo.");

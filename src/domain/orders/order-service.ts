@@ -16,7 +16,7 @@ export type OrderLine = {
   lineTotal: number;
 };
 
-export type PaymentMethod = "wompi" | "transferencia";
+export type PaymentMethod = "wompi" | "transferencia" | "test";
 
 export type CreateOrderInput = {
   customer_name: string;

@@ -88,6 +88,7 @@ export function CartPage() {
                   src={categoryImage(item.categorySlug, item.imageUrl)}
                   alt={item.name}
                   loading="lazy"
+                  crossOrigin="anonymous"
                   width={900}
                   height={900}
                   className="h-24 w-24 bg-background object-contain p-2"

@@ -23,6 +23,7 @@ export function ProductCard({ product }: { product: Product }) {
           src={categoryImage(product.category_slug, product.image_url)}
           alt={name}
           loading="lazy"
+          crossOrigin="anonymous"
           className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-105"
         />
         <span className="absolute top-3 left-3 bg-background/80 px-2 py-1 text-[0.55rem] font-bold tracking-[0.18em] uppercase text-gold">

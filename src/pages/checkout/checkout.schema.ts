@@ -24,7 +24,7 @@ export const checkoutSchema = z
     address: z.string().trim().min(1, "Ingresa tu dirección"),
     city: z.string().trim().min(1, "Ingresa tu ciudad"),
     notes: z.string().trim().max(500).optional().or(z.literal("")),
-    payment_method: z.enum(["wompi", "transferencia"]),
+    payment_method: z.enum(["wompi", "transferencia", "test"]),
   })
   .refine((data) => data.delivery_method !== "domicilio" || (data.address?.length ?? 0) > 0, {
     message: "Ingresa la dirección de entrega",

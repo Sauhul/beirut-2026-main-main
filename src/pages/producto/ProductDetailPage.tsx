@@ -87,6 +87,7 @@ export function ProductDetailPage() {
             <img
               src={categoryImage(product.category_slug, product.image_url)}
               alt={name}
+              crossOrigin="anonymous"
               className="mx-auto w-full max-w-xl object-contain rounded-xl"
             />
             <span className="mt-6 inline-flex border border-gold/50 px-3 py-1.5 text-[0.6rem] font-bold tracking-[0.2em] uppercase text-gold">

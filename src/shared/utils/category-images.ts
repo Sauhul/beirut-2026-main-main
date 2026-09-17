@@ -28,5 +28,6 @@ export function productImageSrc(
 ) {
   if (!imageUrl) return fallbackUrl;
   if (/^https?:\/\//i.test(imageUrl)) return imageUrl;
-  return `/products/${encodeURIComponent(imageUrl)}`;
+  const cleanPath = imageUrl.replace(/^\/?(products|product-images)\//i, "");
+  return `/products/${encodeURIComponent(cleanPath)}`;
 }

@@ -23,6 +23,7 @@ export type OrderRow = {
   created_at: string;
   customer_name: string;
   customer_phone: string;
+  customer_email: string | null;
   delivery_method: string;
   address: string | null;
   city: string | null;

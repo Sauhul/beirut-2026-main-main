@@ -4,7 +4,8 @@ export type OrderMessageInput = {
   orderNumber: number;
   name: string;
   phone: string;
-  deliveryMethod: "domicilio" | "recogida";
+  email?: string;
+  deliveryMethod: "domicilio" | "recogida" | "tienda";
   address?: string;
   city?: string;
   notes?: string;
@@ -39,11 +40,12 @@ export function buildOrderMessage(o: OrderMessageInput) {
     "*Cliente*",
     `Nombre: ${o.name}`,
     `Teléfono: ${o.phone}`,
+    o.email ? `Correo: ${o.email}` : "",
     entrega,
     `Pago: ${PAYMENT_LABELS[o.paymentMethod] ?? o.paymentMethod}`,
     o.notes ? `Notas: ${o.notes}` : "",
     "",
-    "Pedido generado desde beirut.com",
+    "Pedido generado desde beirutmarket.co",
   ]
     .filter(Boolean)
     .join("\n");

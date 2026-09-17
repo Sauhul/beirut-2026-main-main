@@ -442,6 +442,7 @@ function ProductForm({
                 <img
                   src={previewUrl}
                   alt="Vista previa"
+                  crossOrigin="anonymous"
                   className="h-20 w-20 border border-border bg-onyx object-contain p-1"
                 />
               ) : (
