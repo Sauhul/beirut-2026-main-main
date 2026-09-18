@@ -12,8 +12,7 @@ import { formatCOP, titleCase } from "@shared/utils/format";
 import { formatPresentation } from "@shared/utils/product-format";
 import { createOrder, type PaymentMethod, type CreatedOrder } from "@domain/orders/order-service";
 import { openWompiCheckout } from "@domain/payments/wompi";
-import { notifyOrderWebhook } from "@domain/orders/order-webhook";
-import { buildOrderMessage } from "@domain/whatsapp/order-message";
+import { sendOrderConfirmationEmail } from "@domain/notifications/email-service";
 import { SITE, whatsappLink } from "@config/site";
 import { inputClass } from "@shared/utils/input-class";
 import { checkoutSchema, type CheckoutForm } from "./checkout.schema";
@@ -101,45 +100,6 @@ export function CheckoutPage() {
 
   async function onSubmit(data: CheckoutForm) {
     setSubmitting(true);
-    const sendToWebhook = (
-      order: CreatedOrder,
-      paymentStatus: "aprobado" | "pendiente" | "rechazado",
-      wompiTransactionId?: string | null,
-    ) => {
-      notifyOrderWebhook({
-        orderId: order.orderId,
-        orderNumber: order.orderNumber,
-        createdAt: new Date().toISOString(),
-        customer: {
-          name: data.customer_name,
-          phone: data.customer_phone,
-          email: data.customer_email || undefined,
-        },
-        delivery: {
-          method: data.delivery_method,
-          address: data.address || undefined,
-          city: data.city || undefined,
-          notes: data.notes || undefined,
-        },
-        paymentMethod: data.payment_method,
-        paymentStatus,
-        wompiTransactionId: wompiTransactionId ?? null,
-        total: order.total,
-        formattedTotal: new Intl.NumberFormat("es-CO", {
-          style: "currency",
-          currency: "COP",
-          maximumFractionDigits: 0,
-        }).format(order.total),
-        lines: order.lines.map((l) => ({
-          ...l,
-          formattedLineTotal: new Intl.NumberFormat("es-CO", {
-            style: "currency",
-            currency: "COP",
-            maximumFractionDigits: 0,
-          }).format(l.lineTotal),
-        })),
-      });
-    };
 
     try {
       const order = await createOrder({
@@ -150,6 +110,23 @@ export function CheckoutPage() {
         notes: data.notes || undefined,
         items: items.map((i) => ({ id: i.id, quantity: i.quantity })),
       });
+
+      // Enviar correo de confirmación al cliente vía Resend
+      if (data.customer_email) {
+        sendOrderConfirmationEmail({
+          orderNumber: order.orderNumber,
+          customerEmail: data.customer_email,
+          customerName: data.customer_name,
+          customerPhone: data.customer_phone,
+          deliveryMethod: data.delivery_method,
+          address: data.address || undefined,
+          city: data.city || undefined,
+          notes: data.notes || undefined,
+          paymentMethod: data.payment_method,
+          lines: order.lines,
+          total: order.total,
+        }).catch((err) => console.error("[Email Error]", err));
+      }
 
       if (data.payment_method === "wompi") {
         try {
@@ -167,14 +144,6 @@ export function CheckoutPage() {
 
           clear();
 
-          if (result.status === "APPROVED") {
-            sendToWebhook(order, "aprobado", result.transactionId);
-          } else if (result.status === "PENDING") {
-            sendToWebhook(order, "pendiente", result.transactionId);
-          } else {
-            sendToWebhook(order, "rechazado", result.transactionId);
-          }
-
           navigate(`/pedido-confirmado?numero=${order.orderNumber}`, {
             state: { orderNumber: order.orderNumber, customerEmail: data.customer_email },
           });
@@ -187,7 +156,6 @@ export function CheckoutPage() {
       }
 
       clear();
-      sendToWebhook(order, "pendiente");
 
       navigate(`/pedido-confirmado?numero=${order.orderNumber}`, {
         state: { orderNumber: order.orderNumber, customerEmail: data.customer_email },
