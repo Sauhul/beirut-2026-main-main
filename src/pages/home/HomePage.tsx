@@ -113,7 +113,7 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="relative min-h-[52vh] overflow-hidden rounded-t-[9rem] lg:min-h-full lg:rounded-t-none lg:rounded-l-[12rem]">
+          <div className="relative min-h-[52vh] overflow-hidden lg:min-h-full">
             <img
               src={hero}
               alt="Mesa luminosa con hummus, baklava, dátiles, especias y café libanés"
