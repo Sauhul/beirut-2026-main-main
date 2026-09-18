@@ -21,8 +21,6 @@ export type StatusUpdateEmailInput = {
   newStatus: string;
 };
 
-const SENDER_EMAIL = "Almacén Beirut <onboarding@resend.dev>";
-
 const STATUS_LABELS: Record<string, string> = {
   pendiente: "Pendiente",
   preparando: "En Preparación",
@@ -200,34 +198,23 @@ function generateStatusUpdateEmailHtml(input: StatusUpdateEmailInput): string {
   `;
 }
 
-/** Envía un correo usando Resend API. */
+/** Envía un correo usando nuestra API route (Vercel serverless). */
 async function resendFetch(subject: string, html: string, to: string): Promise<boolean> {
-  const apiKey = process.env.REACT_APP_RESEND_API_KEY;
-  if (!apiKey) return false;
-
   try {
-    const res = await fetch("https://api.resend.com/emails", {
+    const res = await fetch("/api/send-email", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: SENDER_EMAIL,
-        to: [to],
-        subject,
-        html,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to, subject, html }),
     });
 
     if (res.ok) {
-      console.log(`[Email] Correo enviado a ${to} vía Resend`);
+      console.log(`[Email] Correo enviado a ${to}`);
       return true;
     }
     const err = await res.json();
-    console.warn("[Email Resend Error]", err);
+    console.warn("[Email API Error]", err);
   } catch (err) {
-    console.error("[Email Resend exception]", err);
+    console.error("[Email API exception]", err);
   }
   return false;
 }
