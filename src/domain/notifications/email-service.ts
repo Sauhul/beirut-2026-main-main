@@ -21,7 +21,7 @@ export type StatusUpdateEmailInput = {
   newStatus: string;
 };
 
-const SENDER_EMAIL = "Almacén Beirut <confirmacion@beirutmarket.co>";
+const SENDER_EMAIL = "Almacén Beirut <onboarding@resend.dev>";
 
 const STATUS_LABELS: Record<string, string> = {
   pendiente: "Pendiente",
