@@ -17,12 +17,21 @@ export type OrderWebhookPayload = {
     city?: string;
     notes?: string;
   };
-  paymentMethod: "wompi" | "transferencia";
+  paymentMethod: "wompi" | "transferencia" | "test";
   paymentStatus: "aprobado" | "pendiente" | "rechazado";
   wompiTransactionId?: string | null;
   total: number;
-  lines: { name: string; quantity: number; lineTotal: number }[];
+  formattedTotal: string;
+  lines: { name: string; quantity: number; lineTotal: number; formattedLineTotal: string }[];
 };
+
+function formatCOP(amount: number): string {
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
 
 export function notifyOrderWebhook(payload: OrderWebhookPayload): Promise<boolean> {
   const url = process.env.REACT_APP_ORDER_WEBHOOK_URL;

@@ -15,8 +15,6 @@ import { openWompiCheckout } from "@domain/payments/wompi";
 import { notifyOrderWebhook } from "@domain/orders/order-webhook";
 import { buildOrderMessage } from "@domain/whatsapp/order-message";
 import { SITE, whatsappLink } from "@config/site";
-import { sendOrderConfirmationEmail } from "@domain/notifications/email-service";
-import { sendOrderWhatsAppNotification } from "@domain/notifications/whatsapp-service";
 import { inputClass } from "@shared/utils/input-class";
 import { checkoutSchema, type CheckoutForm } from "./checkout.schema";
 import { usePageTitle } from "@hooks/usePageTitle";
@@ -127,42 +125,20 @@ export function CheckoutPage() {
         paymentStatus,
         wompiTransactionId: wompiTransactionId ?? null,
         total: order.total,
-        lines: order.lines,
+        formattedTotal: new Intl.NumberFormat("es-CO", {
+          style: "currency",
+          currency: "COP",
+          maximumFractionDigits: 0,
+        }).format(order.total),
+        lines: order.lines.map((l) => ({
+          ...l,
+          formattedLineTotal: new Intl.NumberFormat("es-CO", {
+            style: "currency",
+            currency: "COP",
+            maximumFractionDigits: 0,
+          }).format(l.lineTotal),
+        })),
       });
-    };
-
-    const dispatchNotifications = (order: CreatedOrder) => {
-      // 1. Enviar correo al cliente desde confirmacion@beirutmarket.co
-      if (data.customer_email) {
-        sendOrderConfirmationEmail({
-          orderNumber: order.orderNumber,
-          customerEmail: data.customer_email,
-          customerName: data.customer_name,
-          customerPhone: data.customer_phone,
-          deliveryMethod: data.delivery_method,
-          address: data.address || undefined,
-          city: data.city || undefined,
-          notes: data.notes || undefined,
-          paymentMethod: data.payment_method,
-          lines: order.lines,
-          total: order.total,
-        }).catch((err) => console.error("[Notification Error - Email]", err));
-      }
-
-      // 2. Enviar notificación directa por WhatsApp al dueño en segundo plano (573128527325)
-      sendOrderWhatsAppNotification({
-        orderNumber: order.orderNumber,
-        name: data.customer_name,
-        phone: data.customer_phone,
-        email: data.customer_email || undefined,
-        deliveryMethod: data.delivery_method,
-        address: data.address || undefined,
-        city: data.city || undefined,
-        notes: data.notes || undefined,
-        paymentMethod: data.payment_method,
-        lines: order.lines,
-        total: order.total,
-      }).catch((err) => console.error("[Notification Error - WhatsApp]", err));
     };
 
     try {
@@ -190,7 +166,6 @@ export function CheckoutPage() {
           }
 
           clear();
-          dispatchNotifications(order);
 
           if (result.status === "APPROVED") {
             sendToWebhook(order, "aprobado", result.transactionId);
