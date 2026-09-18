@@ -188,7 +188,6 @@ export function CheckoutPage() {
 
       clear();
       sendToWebhook(order, "pendiente");
-      dispatchNotifications(order);
 
       navigate(`/pedido-confirmado?numero=${order.orderNumber}`, {
         state: { orderNumber: order.orderNumber, customerEmail: data.customer_email },
