@@ -24,20 +24,8 @@ export default defineConfig({
       "process.env.REACT_APP_WOMPI_PUBLIC_KEY": JSON.stringify(
         process.env.REACT_APP_WOMPI_PUBLIC_KEY ?? "",
       ),
-      "process.env.REACT_APP_WOMPI_INTEGRITY_SECRET": JSON.stringify(
-        process.env.REACT_APP_WOMPI_INTEGRITY_SECRET ?? "",
-      ),
-      "process.env.REACT_APP_ORDER_WEBHOOK_URL": JSON.stringify(
-        process.env.REACT_APP_ORDER_WEBHOOK_URL ?? "",
-      ),
-      "process.env.REACT_APP_WHATSAPP_WEBHOOK_URL": JSON.stringify(
-        process.env.REACT_APP_WHATSAPP_WEBHOOK_URL ?? "",
-      ),
       "process.env.REACT_APP_RESEND_API_KEY": JSON.stringify(
         process.env.REACT_APP_RESEND_API_KEY ?? "",
-      ),
-      "process.env.REACT_APP_EMAIL_WEBHOOK_URL": JSON.stringify(
-        process.env.REACT_APP_EMAIL_WEBHOOK_URL ?? "",
       ),
       "process.env.REACT_APP_SUPABASE_URL": JSON.stringify(
         process.env.REACT_APP_SUPABASE_URL ?? "",
