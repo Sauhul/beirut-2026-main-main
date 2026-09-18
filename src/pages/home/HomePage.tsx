@@ -113,15 +113,17 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="relative min-h-[52vh] overflow-hidden lg:min-h-full">
-            <img
-              src={hero}
-              alt="Mesa luminosa con hummus, baklava, dátiles, especias y café libanés"
-              width={1024}
-              height={1408}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-secondary/35 via-transparent to-transparent lg:bg-linear-to-r lg:from-card/40 lg:to-transparent" />
+          <div className="relative flex items-center justify-center py-6 lg:py-8 lg:min-h-full">
+            <div className="relative w-[90%] lg:w-[85%] h-[42vh] lg:h-[80%] overflow-hidden rounded-2xl shadow-2xl">
+              <img
+                src={hero}
+                alt="Mesa luminosa con hummus, baklava, dátiles, especias y café libanés"
+                width={1024}
+                height={1408}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-secondary/35 via-transparent to-transparent lg:bg-linear-to-r lg:from-card/40 lg:to-transparent" />
+            </div>
           </div>
         </div>
       </section>
