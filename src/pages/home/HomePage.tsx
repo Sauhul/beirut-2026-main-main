@@ -122,9 +122,6 @@ export function HomePage() {
               className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-linear-to-t from-secondary/35 via-transparent to-transparent lg:bg-linear-to-r lg:from-card/40 lg:to-transparent" />
-            <div className="absolute top-8 right-8 flex h-28 w-28 items-center justify-center rounded-full border border-card/70 bg-secondary/55 p-4 text-center text-[0.6rem] font-semibold tracking-[0.18em] text-secondary-foreground uppercase backdrop-blur-sm md:top-12 md:right-12">
-              Tradición levantina original
-            </div>
           </div>
         </div>
       </section>
