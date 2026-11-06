@@ -229,6 +229,10 @@
   /* Transiciones de página (GSAP) */
   .route-wipe {
     pointer-events: none;
+    /* Oculto por defecto: GSAP lo muestra solo mientras corre la animación.
+       Si la animación no corre (reduced motion, error), nunca tapa la página. */
+    opacity: 0;
+    visibility: hidden;
   }
 
   .motion-ready,
@@ -238,6 +242,29 @@
   .confirm-motion,
   .cart-motion {
     visibility: hidden;
+  }
+}
+
+/* ── Accesibilidad: movimiento reducido ─────────────────── */
+/* Nunca ocultar contenido ni dejar el velo dorado sobre la página. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .route-wipe {
+    display: none !important;
+  }
+
+  .motion-ready,
+  .store-motion,
+  .detail-motion,
+  .checkout-motion,
+  .confirm-motion,
+  .cart-motion {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 

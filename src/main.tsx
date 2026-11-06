@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 
 import App from "./app/App";
 import { AppProviders } from "./app/providers";
+import { ErrorBoundary } from "./app/ErrorBoundary";
 import { initMotionQuality } from "@hooks/useAnimationQuality";
 import "./styles.css";
 
@@ -10,7 +11,9 @@ import "./styles.css";
 initMotionQuality();
 
 createRoot(document.getElementById("root")!).render(
-  <AppProviders>
-    <App />
-  </AppProviders>,
+  <ErrorBoundary>
+    <AppProviders>
+      <App />
+    </AppProviders>
+  </ErrorBoundary>,
 );
