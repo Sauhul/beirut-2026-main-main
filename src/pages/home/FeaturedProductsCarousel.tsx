@@ -44,11 +44,11 @@ export function FeaturedProductsCarousel({
   if (!products.length && !loading) return null;
 
   return (
-    <section className="featured-products" aria-labelledby="featured-products-title">
+    <section data-reveal-section className="featured-products" aria-labelledby="featured-products-title">
       <div className="mx-auto max-w-7xl px-5">
         <div className="featured-products-header">
-          <h2 id="featured-products-title" className="font-display text-4xl text-sand md:text-5xl">
-            Productos destacados
+          <h2 id="featured-products-title" className="beirut-hero-line font-display text-4xl text-sand md:text-5xl">
+            <span data-reveal-heading>Productos destacados</span>
           </h2>
           <div className="featured-products-controls">
             <button
@@ -74,7 +74,7 @@ export function FeaturedProductsCarousel({
 
         {loading && <p role="status" className="mt-6 text-muted-foreground">Cargando productos…</p>}
 
-        <ul id="featured-products-track" ref={trackRef} className="featured-products-track" onScroll={updateEdges}>
+        <ul data-reveal-item id="featured-products-track" ref={trackRef} className="featured-products-track" onScroll={updateEdges}>
           {products.map((product) => (
             <li key={product.id}>
               <ProductCard product={product} />

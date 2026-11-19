@@ -35,7 +35,7 @@ export function ProductCard({ product }: { product: Product }) {
         <p className="mt-2 line-clamp-2 text-xs leading-6 text-muted-foreground">
           {product.description}
         </p>
-        <div className="mt-4 flex items-end justify-between">
+        <div className="mt-auto flex items-end justify-between pt-4">
           <span className="font-display text-2xl text-gold">{formatCOP(product.price)}</span>
         </div>
 

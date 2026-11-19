@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight, Clock, MapPin, Phone, Ship, Store, Truck } from "lucide-react";
@@ -12,9 +13,10 @@ import { ProductPhoto } from "@components/product/ProductPhoto";
 import { SITE } from "@config/site";
 import { HeroVideo } from "./HeroVideo";
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export function HomePage() {
+  const pageRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
 
@@ -33,6 +35,29 @@ export function HomePage() {
   usePageTitle("Delikatessen Beyrouth | Tienda libanesa en Barranquilla");
 
   const { data, isPending } = useQuery(catalogQuery);
+  useGSAP(() => {
+    if (isPending) return;
+    const motion = gsap.matchMedia();
+
+    motion.add("(prefers-reduced-motion: no-preference)", () => {
+      const sections = pageRef.current?.querySelectorAll<HTMLElement>("[data-reveal-section]");
+      sections?.forEach((section) => {
+        const heading = section.querySelector("[data-reveal-heading]");
+        const items = section.querySelectorAll("[data-reveal-item]");
+        if (!heading || !items.length) return;
+
+        gsap.timeline({
+          defaults: { ease: "expo.out" },
+          scrollTrigger: { trigger: section, start: "clamp(top 88%)", once: true },
+        })
+          .from(heading, { yPercent: 105, duration: 0.85 })
+          .from(items, { y: 20, opacity: 0.7, duration: 0.65, stagger: 0.07 }, 0.15);
+      });
+    });
+
+    return () => motion.revert();
+  }, { scope: pageRef, dependencies: [isPending], revertOnUpdate: true });
+
   const products = data?.products ?? [];
   const categories = data?.categories ?? [];
 
@@ -94,7 +119,7 @@ export function HomePage() {
   ];
 
   return (
-    <div className="route-page">
+    <div ref={pageRef} className="route-page">
       <section ref={heroRef} className="beirut-hero">
         <div className="beirut-hero-inner">
           <div className="beirut-hero-copy">
@@ -147,31 +172,34 @@ export function HomePage() {
       </section>
 
       {/* CATEGORÍAS */}
-      <section className="border-y border-border bg-muted py-24">
+      <section data-reveal-section className="border-y border-border bg-muted py-24">
         <div className="mx-auto max-w-7xl px-5">
           <div className="text-center">
             <p className="eyebrow">Qué encuentras</p>
-            <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">Nuestras categorías</h2>
+            <h2 className="beirut-hero-line mt-3 font-display text-4xl text-sand md:text-5xl">
+              <span data-reveal-heading>Nuestras categorías</span>
+            </h2>
             <div className="rule-gold mt-5" />
           </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3 justify-center">
-          {tiles.slice(0, 6).map((t) => (                
-            <Link
-              key={t.slug}
-              to={`/tienda?categoria=${t.slug}`}
-              className="card-onyx group flex flex-col overflow-hidden rounded-2xl max-w-sm w-full mx-auto"
-            >
-              <ProductPhoto imageUrl={t.image} alt="" />
-              <div className="flex flex-1 flex-col p-5">
-                <p className="font-display text-xl text-sand">{t.name}</p>
-                <p className="mt-1 text-[0.58rem] font-bold tracking-[0.2em] uppercase text-gold">
-                  {t.count} productos
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
+          <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3">
+            {tiles.map((tile) => (
+              <Link
+                data-reveal-item
+                key={tile.slug}
+                to={`/tienda?categoria=${tile.slug}`}
+                className="card-onyx mx-auto flex w-full max-w-sm flex-col overflow-hidden rounded-2xl"
+              >
+                <ProductPhoto imageUrl={tile.image} alt="" />
+                <div className="flex flex-1 flex-col p-5">
+                  <p className="font-display text-xl text-sand">{tile.name}</p>
+                  <p className="mt-1 text-[0.58rem] font-bold tracking-[0.2em] uppercase text-gold">
+                    {tile.count} productos
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
