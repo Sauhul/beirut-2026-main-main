@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { ProductCard } from "@components/product/ProductCard";
@@ -8,37 +7,19 @@ import { Product } from "@domain/catalog/types";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
 
-// Utilizar un objeto simple fuera del componente para persistir el estado de la categoría
-const storeState = {
-  activeCat: "todos",
-};
-
 export function StorePage() {
   usePageTitle("Nuestra Tienda | Delikatessen Beyrouth");
-  const [, setSearchParams] = useSearchParams();
 
-  // Inicializar estado usando el valor persistido si existe
-  const [cat, setCat] = useState(storeState.activeCat);
+  const [params, setParams] = useSearchParams();
   const [q, setQ] = useState("");
-
-  // Actualizar el estado global al cambiar
-  useEffect(() => {
-    storeState.activeCat = cat;
-  }, [cat]);
-
   const { data } = useQuery(catalogQuery);
-  const categories = useMemo(
-    () =>
-      (data?.categories ?? []).filter((c) =>
-        (data?.products ?? []).some((p) => p.category_slug === c.slug),
-      ),
-    [data],
-  );
-
   const navCategories = useMemo(() => [
     { slug: "todos", name: "Todos" },
     ...(data?.categories ?? []),
   ], [data?.categories]);
+
+  const requestedCategory = params.get("categoria");
+  const cat = navCategories.find((category) => category.slug === requestedCategory)?.slug ?? "todos";
 
   const groupedList = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("es-CO");
@@ -47,6 +28,8 @@ export function StorePage() {
       if (cat === "todos") return matchesSearch;
       return p.category_slug === cat && matchesSearch;
     });
+
+    if (!filteredProducts.length) return [];
 
     if (cat !== "todos") {
       return [
@@ -72,7 +55,12 @@ export function StorePage() {
   }, [data, cat, q, navCategories]);
 
   function setCategoria(next: string) {
-    setCat(next);
+    setParams((previous) => {
+      const updated = new URLSearchParams(previous);
+      if (next === "todos") updated.delete("categoria");
+      else updated.set("categoria", next);
+      return updated;
+    });
   }
 
   return (
@@ -103,6 +91,7 @@ export function StorePage() {
             <button
               key={c.slug}
               onClick={() => setCategoria(c.slug)}
+              aria-pressed={cat === c.slug}
               className={`border px-4 py-2 text-[0.62rem] font-bold tracking-[0.18em] uppercase transition-colors ${
                 cat === c.slug
                   ? "border-gold bg-gold text-primary-foreground"

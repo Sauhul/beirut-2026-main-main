@@ -65,9 +65,10 @@ function AnimatedRoutes() {
   const motion = getMotionQuality();
   const location = useLocation();
   const pageRef = useRef<HTMLDivElement>(null);
+  const animateRoute = motion !== "minimal" && location.pathname !== "/";
 
   useEffect(() => {
-    if (motion === "minimal") return;
+    if (!animateRoute) return;
 
     const ctx = gsap.context(() => {
       if (motion === "full") {
@@ -97,11 +98,11 @@ function AnimatedRoutes() {
     }, pageRef);
 
     return () => ctx.revert();
-  }, [location.pathname, location.search, motion]);
+  }, [animateRoute, location.pathname, motion]);
 
   return (
     <div ref={pageRef} className="relative">
-      {motion !== "minimal" && (
+      {animateRoute && (
         <div className="route-wipe pointer-events-none fixed inset-0 z-40 bg-primary" />
       )}
       <Routes location={location}>

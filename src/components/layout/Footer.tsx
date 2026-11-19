@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Mail, MapPin, Phone, Clock } from "lucide-react";
 import { SITE } from "@config/site";
-import { whatsappLink } from "@config/site";
 
 export function Footer() {
   return (

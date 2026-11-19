@@ -10,11 +10,23 @@
  * nunca en el navegador.
  */
 
+type WompiWidget = new (options: {
+  currency: "COP";
+  amountInCents: number;
+  reference: string;
+  publicKey: string;
+  redirectUrl: string;
+  customerEmail?: string;
+  customerData?: { fullName?: string; phoneNumber?: string; phoneNumberPrefix: string };
+}) => {
+  open(callback: (result?: { transaction?: { status?: string; id?: string } }) => void): void;
+};
+
 declare global {
   interface Window {
-    WidgetCheckout?: any;
-    WompiCheckout?: any;
-    Wompi?: any;
+    WidgetCheckout?: WompiWidget;
+    WompiCheckout?: WompiWidget;
+    Wompi?: { WidgetCheckout?: WompiWidget };
   }
 }
 
@@ -37,24 +49,23 @@ function loadWompiScript(): Promise<void> {
   if (scriptPromise) return scriptPromise;
 
   scriptPromise = new Promise((resolve, reject) => {
-    const existing = document.querySelector<HTMLScriptElement>(`script[src="${WOMPI_SCRIPT_URL}"]`);
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => {
-        scriptPromise = null;
-        reject(new Error("No se pudo cargar el widget de Wompi"));
-      });
-      return;
-    }
-
     const script = document.createElement("script");
-    script.src = WOMPI_SCRIPT_URL;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => {
+    const timeout = window.setTimeout(fail, 12000);
+
+    function fail() {
+      window.clearTimeout(timeout);
+      script.remove();
       scriptPromise = null;
       reject(new Error("No se pudo cargar el widget de Wompi"));
+    }
+
+    script.src = WOMPI_SCRIPT_URL;
+    script.async = true;
+    script.onload = () => {
+      window.clearTimeout(timeout);
+      resolve();
     };
+    script.onerror = fail;
     document.head.appendChild(script);
   });
   return scriptPromise;
@@ -86,12 +97,6 @@ function toValidReference(reference: string): string {
 
 /** Abre el widget modal y resuelve cuando Wompi reporta el resultado. */
 export async function openWompiCheckout(input: WompiPaymentInput): Promise<WompiWidgetResult> {
-  // MODO DESARROLLO: Simular pago si estamos en localhost
-  if (window.location.hostname === "localhost") {
-    console.warn("[Wompi] Modo desarrollo detectado: simulando pago exitoso inmediatamente...");
-    return { status: "APPROVED", transactionId: "SIMULATED_" + Date.now() };
-  }
-
   const publicKey = process.env.REACT_APP_WOMPI_PUBLIC_KEY;
   if (!publicKey) throw new Error("Falta configurar REACT_APP_WOMPI_PUBLIC_KEY");
 
@@ -99,92 +104,66 @@ export async function openWompiCheckout(input: WompiPaymentInput): Promise<Wompi
   const Widget = window.WidgetCheckout || window.WompiCheckout || window.Wompi?.WidgetCheckout;
   if (!Widget) throw new Error("El widget de Wompi no está disponible");
 
-  const amountInCents = Math.round(input.amountInCents);
-  const reference = toValidReference(input.reference);
-  console.log("[Wompi] Configuración:", { amountInCents, reference, publicKey });
+  const widget = new Widget({
+    currency: "COP",
+    amountInCents: Math.round(input.amountInCents),
+    reference: toValidReference(input.reference),
+    publicKey,
+    redirectUrl: window.location.origin + "/pedido-confirmado",
+    customerEmail: input.customerEmail,
+    customerData:
+      input.customerName || input.customerPhone
+        ? { fullName: input.customerName, phoneNumber: input.customerPhone, phoneNumberPrefix: "57" }
+        : undefined,
+  });
 
   return new Promise<WompiWidgetResult>((resolve, reject) => {
-    try {
-      console.log("[Wompi] Intentando instanciar Widget...");
-      const widget = new Widget({
-        currency: "COP",
-        amountInCents,
-        reference: toValidReference(input.reference),
-        publicKey,
-        redirectUrl: window.location.origin + "/pedido-confirmado",
-        // MODO DESARROLLO FORZADO: Si es localhost, intentamos forzar test
-        sandbox: window.location.hostname === "localhost" || publicKey.includes("test"),
-        customerEmail: input.customerEmail || undefined,
-        customerData:
-          input.customerName || input.customerPhone
-            ? {
-                fullName: input.customerName,
-                phoneNumber: input.customerPhone,
-                phoneNumberPrefix: "57",
-              }
-            : undefined,
-      });
+    let mounted = false;
+    const statuses: readonly string[] = ["APPROVED", "DECLINED", "VOIDED", "ERROR", "PENDING"];
 
-      console.log("[Wompi] Widget instanciado correctamente.");
+    const observer = new MutationObserver(checkWidget);
+    const startupTimeout = window.setTimeout(() => {
+      if (!mounted) finish({ status: "UNKNOWN", transactionId: null });
+    }, 12000);
+    let closeTimeout: number | undefined;
 
-      let resolved = false;
+    function cleanup() {
+      observer.disconnect();
+      window.clearTimeout(startupTimeout);
+      window.clearTimeout(closeTimeout);
+    }
 
-      // Timeout para evitar que se quede "cargando" indefinidamente
-      const timeout = setTimeout(() => {
-        if (!resolved) {
-          resolved = true;
-          observer.disconnect();
-          console.error("[Wompi] Error: Timeout alcanzado");
-          // Reemplazo de reject(error) por resolución silenciosa o similar para evitar el toast
-          resolve({ status: "UNKNOWN", transactionId: null });
-        }
-      }, 10000);
+    function finish(result: WompiWidgetResult) {
+      cleanup();
+      resolve(result);
+    }
 
-      const observer = new MutationObserver(() => {
-        if (resolved) return;
-        const backdrop = document.querySelector(".waybox-backdrop");
-        const iframe = document.querySelector(
-          "iframe.waybox-iframe, iframe[src*='checkout.wompi']",
-        );
-        if (!backdrop && !iframe) {
-          resolved = true;
-          observer.disconnect();
-          clearTimeout(timeout);
-          console.log("[Wompi] Widget cerrado sin acción");
-          resolve({ status: "UNKNOWN", transactionId: null });
-        }
-      });
-
-      console.log("[Wompi] Llamando a widget.open()...");
-      widget.open((result: any) => {
-        resolved = true;
-        observer.disconnect();
-        clearTimeout(timeout);
-        const transaction = result?.transaction;
-        const rawStatus = transaction?.status as string | undefined;
-        
-        console.log("[Wompi] Callback resultado (transacción):", transaction);
-        
-        const status = (
-          ["APPROVED", "DECLINED", "VOIDED", "ERROR", "PENDING"].includes(rawStatus ?? "")
-            ? rawStatus
-            : "UNKNOWN"
-        ) as WompiTransactionStatus;
-
-        resolve({ status, transactionId: transaction?.id ?? null });
-      });
-
-      setTimeout(() => {
-        observer.observe(document.body, { childList: true, subtree: true });
-      }, 1000);
-    } catch (err: any) {
-      console.error("[Wompi] Error crítico en Widget:", err);
-      // 🔥 FIX: Si es error de conexión/bloqueo (403), simulamos aprobación para poder seguir probando
-      if (err.message?.includes("403") || err.message?.includes("tardó demasiado")) {
-         console.warn("[Wompi] Error detectado (403/timeout), simulando aprobación para desarrollo...");
-         resolve({ status: "APPROVED", transactionId: "SIMULATED_" + Date.now() });
-      } else {
-         reject(err);
+    function checkWidget() {
+      const visible = Boolean(
+        document.querySelector(".waybox-backdrop, iframe.waybox-iframe, iframe[src*='checkout.wompi']"),
+      );
+      if (visible) {
+        mounted = true;
+        window.clearTimeout(closeTimeout);
+        closeTimeout = undefined;
+      } else if (mounted && closeTimeout === undefined) {
+        closeTimeout = window.setTimeout(() => finish({ status: "UNKNOWN", transactionId: null }), 1000);
       }
     }
-  });}
+
+    observer.observe(document.body, { childList: true, subtree: true });
+    try {
+      widget.open((result) => {
+        const transaction = result?.transaction;
+        const rawStatus = transaction?.status ?? "";
+        finish({
+          status: statuses.includes(rawStatus) ? (rawStatus as WompiTransactionStatus) : "UNKNOWN",
+          transactionId: transaction?.id ?? null,
+        });
+      });
+    } catch (error) {
+      cleanup();
+      reject(error);
+    }
+  });
+}

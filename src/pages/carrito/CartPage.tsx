@@ -5,7 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useCart } from "@domain/cart/use-cart";
-import { categoryImage } from "@shared/utils/category-images";
+import { ProductPhoto } from "@components/product/ProductPhoto";
 import { formatCOP, titleCase } from "@shared/utils/format";
 import { formatPresentation } from "@shared/utils/product-format";
 import { usePageTitle } from "@hooks/usePageTitle";
@@ -84,15 +84,8 @@ export function CartPage() {
                 key={item.id}
                 className="cart-item cart-motion flex flex-wrap gap-4 p-6 transition-all duration-300 hover:bg-foreground/5"
               >
-                <img
-                  src={categoryImage(item.categorySlug, item.imageUrl)}
-                  alt={item.name}
-                  loading="lazy"
-                  crossOrigin="anonymous"
-                  width={900}
-                  height={900}
-                  className="h-24 w-24 bg-background object-contain p-2"
-                />
+                <ProductPhoto imageUrl={item.imageUrl} alt={item.name} className="w-20 shrink-0" />
+
 
                 <div className="flex flex-1 flex-col justify-between">
                   <div className="flex items-start justify-between gap-4">

@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
-import { MessageCircle, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import type { Product } from "@domain/catalog/types";
-import { categoryImage } from "@shared/utils/category-images";
+import { ProductPhoto } from "./ProductPhoto";
 import { formatCOP, titleCase } from "@shared/utils/format";
 import { formatPresentation } from "@shared/utils/product-format";
 import { useCart } from "@domain/cart/use-cart";
-import { whatsappLink } from "@config/site";
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
@@ -16,16 +15,9 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="card-onyx group flex flex-col overflow-hidden rounded-2xl">
       <Link
         to={`/producto/${product.slug}`}
-        className="relative block aspect-[5/6] overflow-hidden rounded-t-2xl"
-        style={{ backgroundColor: "#f5f0dc" }}
+        className="relative block overflow-hidden"
       >
-        <img
-          src={categoryImage(product.category_slug, product.image_url)}
-          alt={name}
-          loading="lazy"
-          crossOrigin="anonymous"
-          className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-105"
-        />
+        <ProductPhoto imageUrl={product.image_url} alt={name} />
         <span className="absolute top-3 left-3 bg-background/80 px-2 py-1 text-[0.55rem] font-bold tracking-[0.18em] uppercase text-gold">
           {product.category_name}
         </span>

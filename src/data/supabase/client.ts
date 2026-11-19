@@ -6,8 +6,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
  *   REACT_APP_SUPABASE_URL=https://xxx.supabase.co
  *   REACT_APP_SUPABASE_ANON_KEY=eyJ...
  *
- * Si no están definidas, la app funciona igual con catálogo estático y
- * pedidos solo en localStorage (útil para desarrollo sin BD).
+ * Sin configuración, la app muestra el catálogo estático y deshabilita el checkout.
  */
 
 const url = process.env.REACT_APP_SUPABASE_URL;

@@ -103,8 +103,3 @@ export function formatPresentation(unit: string | null | undefined) {
   const normalized = normalizeUnit(unit);
   return normalized === "unidad" ? "" : normalized;
 }
-
-/** ¿La presentación es una de las estándar? Para saber si mostrar input libre. */
-export function isStandardUnit(unit: string | null | undefined) {
-  return (UNIT_OPTIONS as readonly string[]).includes(normalizeUnit(unit));
-}

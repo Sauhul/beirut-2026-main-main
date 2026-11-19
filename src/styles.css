@@ -282,3 +282,238 @@
 ::-webkit-scrollbar-thumb:hover {
   background: oklch(0.73 0.13 85 / 70%);
 }
+
+/* Editorial storefront */
+.beirut-hero {
+  background: #f5efdf;
+  color: #173c2b;
+  border-bottom: 1px solid var(--border);
+}
+
+.beirut-hero-inner {
+  width: min(100% - clamp(2.5rem, 9vw, 10rem), 86rem);
+  margin-inline: auto;
+  display: grid;
+  align-items: center;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 6vw, 7rem);
+  min-height: min(46rem, calc(100svh - 4rem));
+  padding-block: clamp(2rem, 5vw, 5rem);
+}
+
+.beirut-hero-title {
+  font: 400 clamp(4rem, 8.5vw, 8.75rem)/0.93 var(--font-display);
+  letter-spacing: -0.04em;
+}
+
+.beirut-hero-line {
+  display: block;
+  overflow: clip;
+  padding: 0 0.1em 0.15em 0;
+  margin-bottom: -0.15em;
+}
+
+.beirut-hero-line > * {
+  display: block;
+}
+
+.beirut-hero-title em {
+  color: #326348;
+}
+
+.beirut-hero-description {
+  max-width: 35ch;
+  margin-block: 2rem;
+  color: #405747;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.65;
+}
+
+.beirut-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  min-height: 3.25rem;
+  padding: 0.7rem 1.25rem;
+  background: #214a35;
+  color: #fff9ea;
+  font-weight: 600;
+}
+
+.beirut-hero-cta:focus-visible {
+  outline: 2px solid #214a35;
+  outline-offset: 4px;
+}
+
+.beirut-hero-photo {
+  aspect-ratio: 1.08;
+  overflow: hidden;
+  background: #dac9a2;
+}
+
+.beirut-hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 53%;
+}
+
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .beirut-hero-photo img {
+    height: 112%;
+    margin-top: -6%;
+  }
+}
+
+@media (max-width: 899px) {
+  .beirut-hero-inner {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 40rem;
+    padding-block: 2.5rem;
+  }
+
+  .beirut-hero-title {
+    font-size: clamp(3.4rem, 11vw, 6rem);
+  }
+
+  .beirut-hero-photo {
+    aspect-ratio: 1.18;
+  }
+
+  .beirut-hero-description {
+    margin-block: 1.25rem;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .beirut-hero-cta svg {
+    transition: transform 180ms ease-out;
+  }
+
+  .beirut-hero-cta:hover svg {
+    transform: translate(2px, -2px);
+  }
+}
+
+.featured-products {
+  background: var(--card);
+  padding-block: clamp(3rem, 7vw, 6.5rem);
+}
+
+.featured-products-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.featured-products-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.featured-products-controls button {
+  display: grid;
+  place-items: center;
+  width: 2.875rem;
+  height: 2.875rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.featured-products-controls button:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.featured-products-controls button:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+.featured-products-track {
+  --carousel-gap: 1rem;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(79%, 20rem);
+  gap: var(--carousel-gap);
+  margin-top: 1.5rem;
+  padding: 0.5rem 0 1rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x mandatory;
+}
+
+.featured-products-track > li {
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.featured-products-track article {
+  height: 100%;
+}
+
+.featured-products-track article:focus-within {
+  outline: 2px solid var(--foreground);
+  outline-offset: -2px;
+}
+
+@media (min-width: 640px) {
+  .featured-products-track {
+    grid-auto-columns: calc((100% - var(--carousel-gap)) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  .featured-products-track {
+    grid-auto-columns: calc((100% - 3 * var(--carousel-gap)) / 4);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .featured-products-controls button,
+  .featured-products-track article {
+    transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .featured-products-controls button:enabled:hover,
+  .featured-products-track article:hover {
+    transform: translateY(-2px);
+  }
+
+  .featured-products-controls button:enabled:active {
+    transform: scale(0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured-products-track img {
+    transition: none;
+    scale: none;
+  }
+}
+
+.product-photo {
+  position: relative;
+  aspect-ratio: 5 / 6;
+  overflow: hidden;
+  background: #e0d9c7;
+}
+
+.product-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.product-photo-placeholder {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: #625b49;
+}

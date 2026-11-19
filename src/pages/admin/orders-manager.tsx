@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Clock, PackageCheck, Truck, RefreshCw, Archive, FileText, Phone, MapPin, CreditCard, Trash2, X } from "lucide-react";
+import { Clock, Truck, RefreshCw, Archive, FileText, Phone, MapPin, CreditCard, Trash2, X } from "lucide-react";
 import { supabase } from "@data/supabase/client";
 import { formatCOP, titleCase } from "@shared/utils/format";
 import { sendStatusUpdateEmail } from "@domain/notifications/email-service";

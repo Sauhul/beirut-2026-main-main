@@ -7,9 +7,7 @@ import { formatCOP } from "@shared/utils/format";
 import {
   UNIT_OPTIONS,
   formatPresentation,
-  isStandardUnit,
   normalizeProductName,
-  normalizeUnit,
 } from "@shared/utils/product-format";
 import { inputClass } from "@shared/utils/input-class";
 import { slugify } from "@shared/utils/slugify";

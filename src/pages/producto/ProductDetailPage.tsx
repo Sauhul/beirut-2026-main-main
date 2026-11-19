@@ -1,17 +1,16 @@
 import { useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, MessageCircle, Minus, Plus, Truck } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Minus, Plus, Truck } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { toast } from "sonner";
 import { productQuery } from "@domain/catalog/queries";
-import { categoryImage } from "@shared/utils/category-images";
+import { ProductPhoto } from "@components/product/ProductPhoto";
 import { formatCOP, titleCase } from "@shared/utils/format";
 import { formatPresentation } from "@shared/utils/product-format";
 import { useCart } from "@domain/cart/use-cart";
-import { whatsappLink } from "@config/site";
 import { ProductCard } from "@components/product/ProductCard";
 import { usePageTitle } from "@hooks/usePageTitle";
 import { getMotionQuality } from "@hooks/useAnimationQuality";
@@ -84,12 +83,7 @@ export function ProductDetailPage() {
       <div className="mt-10 grid gap-10 md:grid-cols-[1fr_1.1fr]">
         <div className="detail-image detail-motion">
           <div className="card-onyx p-8 rounded-2xl">
-            <img
-              src={categoryImage(product.category_slug, product.image_url)}
-              alt={name}
-              crossOrigin="anonymous"
-              className="mx-auto w-full max-w-xl object-contain rounded-xl"
-            />
+            <ProductPhoto imageUrl={product.image_url} alt={name} className="mx-auto max-w-xl" loading="eager" />
             <span className="mt-6 inline-flex border border-gold/50 px-3 py-1.5 text-[0.6rem] font-bold tracking-[0.2em] uppercase text-gold">
               {product.category_name}
             </span>
@@ -131,15 +125,18 @@ export function ProductDetailPage() {
             </div>
             <button
               onClick={() => {
-                addToCart({
-                  id: product.id,
-                  slug: product.slug,
-                  name: product.name,
-                  price: product.price,
-                  unit: product.unit,
-                  categorySlug: product.category_slug,
-                  imageUrl: product.image_url,
-                });
+                add(
+                  {
+                    id: product.id,
+                    slug: product.slug,
+                    name: product.name,
+                    price: product.price,
+                    unit: product.unit,
+                    categorySlug: product.category_slug,
+                    imageUrl: product.image_url,
+                  },
+                  qty,
+                );
                 toast.success(`${name} agregado al carrito`);
               }}
               className="btn-gold flex-1 sm:flex-none"

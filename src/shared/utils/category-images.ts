@@ -1,3 +1,4 @@
+import catalogPhotoOverrides from "./catalog-photo-overrides.json";
 import especias from "@assets/cat-especias.jpg";
 import aceitunas from "@assets/cat-aceitunas.jpg";
 import quesos from "@assets/cat-quesos.jpg";
@@ -5,7 +6,9 @@ import dulces from "@assets/cat-dulces.jpg";
 import teCafe from "@assets/cat-te-cafe.jpg";
 import conservas from "@assets/cat-conservas.jpg";
 
-export const CATEGORY_IMAGES: Record<string, string> = {
+const refinedPhotos = new Map(Object.entries(catalogPhotoOverrides));
+
+const CATEGORY_IMAGES: Record<string, string> = {
   especias,
   aceitunas,
   quesos,
@@ -21,13 +24,18 @@ export function categoryImage(slug: string | null | undefined, productImageUrl?:
 
 /** Normaliza la ruta de imagen de un producto.
  *  - URL completa (http/https) → se usa tal cual.
- *  - Nombre simple (ej. "aceite-oliva.jpg") → se sirve desde /product-images/ (fallback local). */
+ *  - Nombre simple (ej. "aceite-oliva.jpg") → se sirve desde /products/ (fallback local). */
 export function productImageSrc(
   imageUrl?: string | null,
   fallbackUrl = "/fallback/baklawa-pistacho.jpg",
 ) {
   if (!imageUrl) return fallbackUrl;
+  const refined = refinedPhotos.get(imageUrl);
+  if (refined) return refined;
   if (/^https?:\/\//i.test(imageUrl)) return imageUrl;
+  if (imageUrl.startsWith("/") && !/^\/?(?:products|product-images)\//i.test(imageUrl)) {
+    return imageUrl;
+  }
   const cleanPath = imageUrl.replace(/^\/?(products|product-images)\//i, "");
-  return `/products/${encodeURIComponent(cleanPath)}`;
+  return refinedPhotos.get(cleanPath) ?? `/products/${encodeURIComponent(cleanPath)}`;
 }

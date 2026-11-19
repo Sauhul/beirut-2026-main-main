@@ -6,7 +6,6 @@
  * - Botón individual por producto: [✨ IA]
  * - Selección múltiple + procesamiento masivo
  * - Barra de progreso en tiempo real
- * - Vista previa antes de confirmar (modo preview)
  * - Resumen final con estadísticas
  */
 
@@ -27,7 +26,6 @@ import {
   generateImageNamesBatch,
   type BatchProgress,
   type BatchResult,
-  type GenerateNameResult,
   type ProductForNaming,
 } from "@domain/ai-image-naming/service";
 import type { ProductRow } from "./admin.types";
@@ -36,12 +34,7 @@ import type { ProductRow } from "./admin.types";
    Tipos
 ───────────────────────────────────────── */
 
-interface PreviewItem {
-  product: ProductForNaming;
-  result: GenerateNameResult;
-}
-
-type PanelState = "idle" | "processing" | "preview" | "done";
+type PanelState = "idle" | "processing" | "done";
 
 /* ─────────────────────────────────────────
    Botón individual por producto
@@ -106,7 +99,6 @@ export function AiImageNamingPanel({
   const [state, setState] = useState<PanelState>("idle");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [progress, setProgress] = useState<BatchProgress | null>(null);
-  const [preview, setPreview] = useState<PreviewItem[]>([]);
   const [batchResult, setBatchResult] = useState<BatchResult | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -173,7 +165,6 @@ export function AiImageNamingPanel({
     setState("idle");
     setProgress(null);
     setBatchResult(null);
-    setPreview([]);
     clearSelection();
   };
 
