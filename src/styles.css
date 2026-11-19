@@ -346,24 +346,38 @@
   outline-offset: 4px;
 }
 
-.beirut-hero-photo {
-  aspect-ratio: 1.08;
+.beirut-hero-video {
+  position: relative;
+  justify-self: center;
+  width: min(100%, 22.5rem);
+  aspect-ratio: 9 / 16;
   overflow: hidden;
-  background: #dac9a2;
+  background: #e4dcc4;
 }
 
-.beirut-hero-photo img {
+.beirut-hero-video video {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: 50% 53%;
+  object-fit: contain;
 }
 
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-  .beirut-hero-photo img {
-    height: 112%;
-    margin-top: -6%;
-  }
+.beirut-hero-video-control {
+  position: absolute;
+  inset-inline-end: 0.75rem;
+  inset-block-end: 0.75rem;
+  min-height: 2.75rem;
+  padding-inline: 0.75rem;
+  background: #214a35;
+  color: #fff9ea;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.beirut-hero-video-control:focus-visible {
+  outline: 2px solid #fff9ea;
+  outline-offset: -4px;
 }
 
 @media (max-width: 899px) {
@@ -375,10 +389,6 @@
 
   .beirut-hero-title {
     font-size: clamp(3.4rem, 11vw, 6rem);
-  }
-
-  .beirut-hero-photo {
-    aspect-ratio: 1.18;
   }
 
   .beirut-hero-description {

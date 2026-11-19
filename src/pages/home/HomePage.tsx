@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight, Clock, MapPin, Phone, Ship, Store, Truck } from "lucide-react";
@@ -11,14 +10,13 @@ import { usePageTitle } from "@hooks/usePageTitle";
 import { categoryImage } from "@shared/utils/category-images";
 import { ProductPhoto } from "@components/product/ProductPhoto";
 import { SITE } from "@config/site";
-import hero from "@assets/hero-levantine-light.jpg";
+import { HeroVideo } from "./HeroVideo";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP);
 
 export function HomePage() {
   const heroRef = useRef<HTMLElement>(null);
-  const photoRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     const motion = gsap.matchMedia();
@@ -26,21 +24,8 @@ export function HomePage() {
     motion.add("(prefers-reduced-motion: no-preference)", () => {
       gsap.timeline({ defaults: { ease: "expo.out" } })
         .from("[data-enter='line']", { yPercent: 105, stagger: 0.09, duration: 0.85 })
-        .from(photoRef.current, { y: 24, opacity: 0.65, duration: 0.75 }, 0.12)
+        .from(mediaRef.current, { y: 24, opacity: 0.65, duration: 0.75 }, 0.12)
         .from("[data-enter='detail']", { y: 10, duration: 0.42, stagger: 0.07 }, 0.18);
-    });
-
-    motion.add("(min-width: 900px) and (prefers-reduced-motion: no-preference)", () => {
-      gsap.to(imageRef.current, {
-        yPercent: 5,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
     });
 
     return () => motion.revert();
@@ -131,15 +116,8 @@ export function HomePage() {
               </Link>
             </div>
           </div>
-          <div ref={photoRef} className="beirut-hero-photo">
-            <img
-              ref={imageRef}
-              src={hero}
-              alt="Mesa con hummus, baklava, dátiles, especias y café libanés"
-              width={1024}
-              height={1408}
-              fetchPriority="high"
-            />
+          <div ref={mediaRef} className="beirut-hero-video">
+            <HeroVideo />
           </div>
         </div>
       </section>
