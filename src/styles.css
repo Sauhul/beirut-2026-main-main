@@ -351,6 +351,7 @@
   width: 100%;
   aspect-ratio: 16 / 15;
   overflow: hidden;
+  border-radius: 1rem;
   background: #e4dcc4;
 }
 
