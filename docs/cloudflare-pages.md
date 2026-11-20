@@ -1,5 +1,16 @@
 # Publicar Beirut en Cloudflare Pages
 
+## Proyecto existente en Cloudflare Workers
+
+La URL `beirut-2026-main-main.saulu053.workers.dev` corresponde a un Worker.
+Para publicar ahí, conecta el repositorio y la rama `main` en **Settings → Builds**.
+Usa `npm run build` como comando de compilación y `npx wrangler deploy` como
+comando de despliegue, desde la raíz del repositorio. `wrangler.jsonc` sirve
+`dist` y permite abrir directamente las rutas de React. Configura las variables
+públicas de Supabase y Wompi en **Build variables**.
+
+## Proyecto en Cloudflare Pages
+
 En **Workers & Pages → Create application → Pages → Connect to Git**, selecciona
 `Sauhul/beirut-2026-main-main` y la rama de producción `main`.
 
