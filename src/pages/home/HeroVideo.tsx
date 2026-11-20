@@ -5,6 +5,7 @@ const HERO_POSTER = "/media/beirut-hero-0548f127.webp";
 
 export function HeroVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const manualPlayback = useRef(false);
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
@@ -12,19 +13,32 @@ export function HeroVideo() {
     if (!video) return;
 
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!motion.matches) void video.play().catch(() => {});
+    let visible = false;
 
-    function pauseForReducedMotion() {
-      if (motion.matches) video?.pause();
+    function syncPlayback() {
+      if (!visible || motion.matches) video?.pause();
+      else if (!manualPlayback.current) void video?.play().catch(() => {});
     }
 
-    motion.addEventListener("change", pauseForReducedMotion);
-    return () => motion.removeEventListener("change", pauseForReducedMotion);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        syncPlayback();
+      },
+      { threshold: 0.45 },
+    );
+    observer.observe(video);
+    motion.addEventListener("change", syncPlayback);
+    return () => {
+      observer.disconnect();
+      motion.removeEventListener("change", syncPlayback);
+    };
   }, []);
 
   function togglePlayback() {
     const video = videoRef.current;
     if (!video) return;
+    manualPlayback.current = true;
     if (video.paused) void video.play().catch(() => {});
     else video.pause();
   }

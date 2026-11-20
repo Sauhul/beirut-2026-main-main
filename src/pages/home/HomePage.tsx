@@ -4,13 +4,16 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowUpRight, Clock, MapPin, Phone, Ship, Store, Truck } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Clock, MapPin, Phone, Ship, Store, Truck } from "lucide-react";
 import { FeaturedProductsCarousel } from "./FeaturedProductsCarousel";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
 import { categoryImage } from "@shared/utils/category-images";
 import { ProductPhoto } from "@components/product/ProductPhoto";
+import { Header } from "@components/layout/Header";
 import { SITE } from "@config/site";
+import coverPhoto from "@assets/hero-levantine-light.jpg";
+import logo from "@assets/beirut-logo.png";
 import { HeroVideo } from "./HeroVideo";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -18,7 +21,6 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 export function HomePage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
-  const mediaRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     const motion = gsap.matchMedia();
@@ -26,8 +28,7 @@ export function HomePage() {
     motion.add("(prefers-reduced-motion: no-preference)", () => {
       gsap.timeline({ defaults: { ease: "expo.out" } })
         .from("[data-enter='line']", { yPercent: 105, stagger: 0.09, duration: 0.85 })
-        .from(mediaRef.current, { y: 24, opacity: 0.65, duration: 0.75 }, 0.12)
-        .from("[data-enter='detail']", { y: 10, duration: 0.42, stagger: 0.07 }, 0.18);
+        .from("[data-enter='detail']", { y: 10, duration: 0.42 }, 0.18);
     });
 
     return () => motion.revert();
@@ -120,10 +121,14 @@ export function HomePage() {
 
   return (
     <div ref={pageRef} className="route-page">
-      <section ref={heroRef} className="beirut-hero">
-        <div className="beirut-hero-inner">
-          <div className="beirut-hero-copy">
-            <h1 className="beirut-hero-title">
+      <section ref={heroRef} className="beirut-cover" aria-labelledby="home-title">
+        <div className="beirut-cover-content">
+          <div className="beirut-cover-brand">
+            <img src={logo} width={48} height={48} alt="" />
+            <span>Delikatessen Beyrouth</span>
+          </div>
+          <div className="beirut-cover-copy">
+            <h1 id="home-title" className="beirut-cover-title">
               <span className="beirut-hero-line">
                 <span data-enter="line">Sabores</span>
               </span>
@@ -131,17 +136,41 @@ export function HomePage() {
                 <em data-enter="line">del Líbano.</em>
               </span>
             </h1>
-            <p data-enter="detail" className="beirut-hero-description">
-              Café con cardamomo, dulces de pistacho y especias del Mediterráneo.
-              Encuéntralos en Delikatessen Beyrouth, en Barranquilla.
+            <p data-enter="detail" className="beirut-cover-description">
+              Café con cardamomo, dulces de pistacho y especias del Mediterráneo, en Barranquilla.
             </p>
-            <div data-enter="detail">
-              <Link to="/tienda" className="beirut-hero-cta">
-                Explorar la tienda <ArrowUpRight size={19} aria-hidden="true" />
-              </Link>
-            </div>
           </div>
-          <div ref={mediaRef} className="beirut-hero-video">
+          <p className="beirut-cover-scroll">
+            <ArrowDown size={18} aria-hidden="true" />
+            Desliza para explorar
+          </p>
+        </div>
+        <div className="beirut-cover-photo">
+          <img
+            src={coverPhoto}
+            alt="Una mesa con pan árabe, dátiles, baklawa y hummus"
+            fetchPriority="high"
+          />
+        </div>
+      </section>
+
+      <Header />
+
+      <section className="beirut-home-intro" aria-labelledby="home-intro-title">
+        <div className="beirut-hero-inner">
+          <div>
+            <h2 id="home-intro-title" className="beirut-home-intro-title">
+              De nuestra tienda a tu mesa
+            </h2>
+            <p className="beirut-hero-description">
+              Encuentra aceitunas, panes y dulces para compartir, y los ingredientes para preparar
+              tus platos favoritos.
+            </p>
+            <Link to="/tienda" className="beirut-hero-cta">
+              Explorar la tienda <ArrowUpRight size={19} aria-hidden="true" />
+            </Link>
+          </div>
+          <div className="beirut-hero-video">
             <HeroVideo />
           </div>
         </div>

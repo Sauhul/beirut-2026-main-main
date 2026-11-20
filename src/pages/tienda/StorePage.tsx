@@ -6,6 +6,7 @@ import { ProductCard } from "@components/product/ProductCard";
 import { Product } from "@domain/catalog/types";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
+import { CategoryPreview } from "./CategoryPreview";
 
 export function StorePage() {
   usePageTitle("Nuestra Tienda | Delikatessen Beyrouth");
@@ -110,6 +111,9 @@ export function StorePage() {
           {groupedList.map((group) => (
             <div key={group.slug}>
               <h2 className="mb-6 font-display text-2xl text-sand">{group.name}</h2>
+              {cat !== "todos" && !q.trim() && (
+                <CategoryPreview slug={group.slug} products={group.products} />
+              )}
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {group.products.map((p) => (
                   <ProductCard key={p.id} product={p} />

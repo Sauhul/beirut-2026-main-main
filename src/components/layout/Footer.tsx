@@ -5,8 +5,8 @@ import { SITE } from "@config/site";
 export function Footer() {
   return (
     <footer className="arabesque border-t border-border bg-secondary text-secondary-foreground">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-4">
-        <div className="md:col-span-2">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="sm:col-span-2">
           <p className="font-display text-3xl tracking-[0.24em] text-gold">BEIRUT</p>
           <p className="mt-1 text-[0.6rem] font-semibold tracking-[0.3em] uppercase text-secondary-foreground/65">
             {SITE.brandFull}
@@ -71,11 +71,16 @@ export function Footer() {
             </li>
             <li className="flex gap-2">
               <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-              {SITE.email}
+              <span className="min-w-0 [overflow-wrap:anywhere]">{SITE.email}</span>
             </li>
             <li className="flex gap-2">
               <Instagram className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-              <a href={SITE.instagram} target="_blank" rel="noreferrer" className="hover:text-gold">
+              <a
+                href={SITE.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="min-w-0 [overflow-wrap:anywhere] hover:text-gold"
+              >
                 {SITE.instagramHandle}
               </a>
             </li>

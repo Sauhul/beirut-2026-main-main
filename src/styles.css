@@ -284,7 +284,72 @@
 }
 
 /* Editorial storefront */
-.beirut-hero {
+.beirut-cover {
+  display: grid;
+  grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.06fr);
+  min-height: 100svh;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.beirut-cover-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(1.25rem, 4vh, 3rem);
+  padding: clamp(1.25rem, 5vh, 4rem) clamp(1.25rem, 6vw, 7rem);
+}
+
+.beirut-cover-brand,
+.beirut-cover-scroll {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.beirut-cover-brand img {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+}
+
+.beirut-cover-title {
+  font: 400 clamp(3.1rem, 7.6vw, 6rem)/0.96 var(--font-display);
+  letter-spacing: -0.04em;
+}
+
+.beirut-cover-title em {
+  color: #326348;
+}
+
+.beirut-cover-description {
+  max-width: 34ch;
+  margin-top: clamp(1rem, 4vh, 2rem);
+  color: var(--muted-foreground);
+  line-height: 1.65;
+}
+
+.beirut-cover-scroll {
+  color: var(--muted-foreground);
+}
+
+.beirut-cover-photo {
+  position: relative;
+}
+
+.beirut-cover-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+  object-position: 50% 54%;
+}
+
+.beirut-home-intro {
   background: #f5efdf;
   color: #173c2b;
   border-bottom: 1px solid var(--border);
@@ -301,9 +366,10 @@
   padding-block: clamp(2rem, 5vw, 5rem);
 }
 
-.beirut-hero-title {
-  font: 400 clamp(4rem, 8.5vw, 8.75rem)/0.93 var(--font-display);
-  letter-spacing: -0.04em;
+.beirut-home-intro-title {
+  max-width: 12ch;
+  font: 400 clamp(2.75rem, 5.4vw, 5.25rem)/1 var(--font-display);
+  letter-spacing: -0.035em;
 }
 
 .beirut-hero-line {
@@ -315,10 +381,6 @@
 
 .beirut-hero-line > * {
   display: block;
-}
-
-.beirut-hero-title em {
-  color: #326348;
 }
 
 .beirut-hero-description {
@@ -388,10 +450,6 @@
     padding-block: 2.5rem;
   }
 
-  .beirut-hero-title {
-    font-size: clamp(3.4rem, 11vw, 6rem);
-  }
-
   .beirut-hero-video {
     aspect-ratio: 1;
   }
@@ -399,6 +457,67 @@
   .beirut-hero-description {
     margin-block: 1.25rem;
   }
+}
+
+@media (max-width: 699px) {
+  .beirut-cover {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(12rem, 1fr) auto;
+  }
+
+  .beirut-cover-content {
+    display: contents;
+  }
+
+  .beirut-cover-brand {
+    grid-row: 1;
+    margin: 1.125rem 1.25rem 0;
+  }
+
+  .beirut-cover-copy {
+    grid-row: 2;
+    margin: clamp(1rem, 3vh, 2rem) 1.25rem;
+  }
+
+  .beirut-cover-title {
+    font-size: clamp(2.9rem, 11vw, 4.9rem);
+  }
+
+  .beirut-cover-description {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+  }
+
+  .beirut-cover-photo {
+    grid-row: 3;
+  }
+
+  .beirut-cover-photo img {
+    object-position: 50% 62%;
+  }
+
+  .beirut-cover-scroll {
+    grid-row: 4;
+    margin: 1rem 1.25rem;
+  }
+}
+
+.category-preview {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 13.5rem);
+  align-items: end;
+  justify-content: center;
+  gap: clamp(0.35rem, 2vw, 1.5rem);
+  overflow: hidden;
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(0.85rem, 3vw, 2.25rem) clamp(0.85rem, 6vw, 6rem);
+  background: #eee7d6;
+}
+
+.category-preview .product-photo {
+  width: min(100%, 13rem);
+  justify-self: center;
 }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
