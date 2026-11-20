@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDown, ArrowUpRight, Clock, MapPin, Phone, Ship, Store, Truck } from "lucide-react";
-import { FeaturedProductsCarousel } from "./FeaturedProductsCarousel";
+import { FeaturedProducts } from "./FeaturedProducts";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
 import { categoryImage } from "@shared/utils/category-images";
@@ -176,7 +176,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <FeaturedProductsCarousel products={featured} loading={isPending} />
+      <FeaturedProducts products={featured} loading={isPending} />
 
       {/* PILARES */}
       <section className="arabesque border-y border-border bg-muted py-20">
