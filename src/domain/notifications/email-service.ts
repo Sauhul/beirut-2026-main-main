@@ -207,12 +207,14 @@ async function resendFetch(subject: string, html: string, to: string): Promise<b
       body: JSON.stringify({ to, subject, html }),
     });
 
-    if (res.ok) {
+    const isJson = res.headers.get("content-type")?.includes("application/json");
+    const result = isJson ? await res.json() : null;
+
+    if (res.ok && result?.success === true) {
       console.log(`[Email] Correo enviado a ${to}`);
       return true;
     }
-    const err = await res.json();
-    console.warn("[Email API Error]", err);
+    console.warn("[Email API Error]", res.status);
   } catch (err) {
     console.error("[Email API exception]", err);
   }

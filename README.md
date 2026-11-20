@@ -84,6 +84,8 @@ Continue developing this project in the [Lovable editor](https://lovable.dev/pro
 
 Para trabajar en local necesitas Node.js y npm. Consulta la [guía de arquitectura y mantenimiento](BACKEND.md) para configurar Supabase y entender los flujos del proyecto.
 
+Para publicar el sitio en Cloudflare Pages, consulta la [configuración de despliegue](docs/cloudflare-pages.md).
+
 ```sh
 git clone <this-repository-url>
 cd <repository-name>
