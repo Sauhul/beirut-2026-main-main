@@ -502,22 +502,92 @@
   }
 }
 
-.category-preview {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 13.5rem);
-  align-items: end;
-  justify-content: center;
-  gap: clamp(0.35rem, 2vw, 1.5rem);
-  overflow: hidden;
+.category-carousel {
   margin-bottom: clamp(1.5rem, 4vw, 3rem);
-  padding: clamp(0.85rem, 3vw, 2.25rem) clamp(0.85rem, 6vw, 6rem);
-  background: #eee7d6;
 }
 
-.category-preview .product-photo {
-  width: min(100%, 13rem);
-  justify-self: center;
+.category-carousel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.category-carousel-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.category-carousel-controls button {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.category-carousel-controls button:hover {
+  border-color: var(--foreground);
+}
+
+.category-carousel-track {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 58%;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.category-carousel-track li {
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.category-carousel-track a {
+  display: block;
+}
+
+.category-carousel-track a:focus-visible {
+  outline-offset: -3px;
+}
+
+.category-carousel-track[data-count="1"] {
+  grid-auto-columns: min(80%, 22rem);
+}
+
+.category-carousel-track[data-count="2"] {
+  max-width: 28rem;
+  grid-auto-columns: 76%;
+}
+
+.category-carousel-track[data-count="3"] {
+  max-width: 40rem;
+}
+
+@media (min-width: 640px) {
+  .category-carousel-track {
+    grid-auto-columns: calc((100% - 0.75rem) / 2);
+  }
+}
+
+@media (min-width: 900px) {
+  .category-carousel-track:not([data-count="1"], [data-count="2"], [data-count="3"]) {
+    grid-auto-columns: calc((100% - 2.25rem) / 4);
+  }
+
+  .category-carousel-track[data-count="4"] {
+    grid-auto-columns: calc((100% - 1.5rem) / 3);
+  }
 }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
