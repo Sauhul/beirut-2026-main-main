@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { toast } from "sonner";
 import { productQuery } from "@domain/catalog/queries";
-import { ProductPhoto } from "@components/product/ProductPhoto";
+import { ProductPhotoGallery } from "@components/product/ProductPhotoGallery";
 import { formatCOP, titleCase } from "@shared/utils/format";
 import { formatPresentation } from "@shared/utils/product-format";
 import { useCart } from "@domain/cart/use-cart";
@@ -83,7 +83,7 @@ export function ProductDetailPage() {
       <div className="mt-10 grid gap-10 md:grid-cols-[1fr_1.1fr]">
         <div className="detail-image detail-motion">
           <div className="card-onyx p-8 rounded-2xl">
-            <ProductPhoto imageUrl={product.image_url} alt={name} className="mx-auto max-w-xl" loading="eager" />
+            <ProductPhotoGallery key={product.id} imageUrl={product.image_url} name={name} />
             <span className="mt-6 inline-flex border border-gold/50 px-3 py-1.5 text-[0.6rem] font-bold tracking-[0.2em] uppercase text-gold">
               {product.category_name}
             </span>
