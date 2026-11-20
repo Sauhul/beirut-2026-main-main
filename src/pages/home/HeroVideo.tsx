@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
-const HERO_VIDEO = "/media/beirut-hero-0548f127.mp4";
-const HERO_POSTER = "/media/beirut-hero-0548f127.webp";
+const HERO_VIDEO = "/media/beirut-hero-b89f3645.mp4";
+const HERO_POSTER = "/media/beirut-hero-b89f3645.webp";
 
 export function HeroVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -49,7 +49,7 @@ export function HeroVideo() {
         ref={videoRef}
         src={HERO_VIDEO}
         poster={HERO_POSTER}
-        aria-label="Video de aceitunas, dátiles, baklawa y galletas mamoul"
+        aria-label="Video de productos de Delikatessen Beyrouth"
         width={720}
         height={1280}
         muted
