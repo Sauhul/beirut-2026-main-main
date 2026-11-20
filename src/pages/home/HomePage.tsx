@@ -12,7 +12,7 @@ import { categoryImage } from "@shared/utils/category-images";
 import { ProductPhoto } from "@components/product/ProductPhoto";
 import { Header } from "@components/layout/Header";
 import { SITE } from "@config/site";
-import coverPhoto from "@assets/hero-levantine-light.jpg";
+import coverPhoto from "@assets/hero-productos-beirut.webp";
 import logo from "@assets/beirut-logo.png";
 import { HeroVideo } from "./HeroVideo";
 
@@ -148,7 +148,7 @@ export function HomePage() {
         <div className="beirut-cover-photo">
           <img
             src={coverPhoto}
-            alt="Una mesa con pan árabe, dátiles, baklawa y hummus"
+            alt="Aceite de oliva Koura, café Najjar con cardamomo, aceitunas verdes y pan con zaatar de Delikatessen Beyrouth"
             fetchPriority="high"
           />
         </div>
