@@ -64,16 +64,22 @@ export function Header() {
           <Link
             to="/carrito"
             aria-label="Ver carrito"
-            className="relative inline-flex text-muted-foreground transition-colors hover:text-gold"
+            className="relative grid size-11 touch-manipulation place-items-center text-muted-foreground hover:text-gold"
           >
             <ShoppingBag className="h-5 w-5" />
             {count > 0 && (
-              <span className="absolute -right-2.5 -top-2 flex h-5 min-w-[1.15rem] items-center justify-center rounded-full bg-gold px-1 text-[0.6rem] font-bold text-primary-foreground">
+              <span className="absolute right-0 top-0 flex h-5 min-w-[1.15rem] items-center justify-center rounded-full bg-gold px-1 text-[0.6rem] font-bold text-primary-foreground">
                 {count}
               </span>
             )}
           </Link>
-          <button onClick={() => setOpen((v) => !v)} aria-label="Abrir menú" className="text-gold">
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={open}
+            className="grid size-11 touch-manipulation place-items-center text-gold"
+          >
             {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
@@ -81,13 +87,13 @@ export function Header() {
 
       {open && (
         <nav className="border-t border-border bg-card px-5 py-5 shadow-lg md:hidden">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
             {NAV.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="text-[0.72rem] font-bold tracking-[0.22em] uppercase text-muted-foreground hover:text-gold"
+                className="flex min-h-11 touch-manipulation items-center text-sm font-bold tracking-[0.15em] uppercase text-muted-foreground hover:text-gold"
               >
                 {item.label}
               </Link>
