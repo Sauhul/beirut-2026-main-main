@@ -1,6 +1,23 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
 
+const supabaseBuildVariables = [
+  "REACT_APP_SUPABASE_URL",
+  "REACT_APP_SUPABASE_ANON_KEY",
+] as const;
+
+if (process.env.CF_PAGES === "1" || process.env.WORKERS_CI === "1") {
+  const missingVariables = supabaseBuildVariables.filter(
+    (name) => !process.env[name]?.trim(),
+  );
+
+  if (missingVariables.length > 0) {
+    throw new Error(
+      `Configura estas variables de compilación en Cloudflare: ${missingVariables.join(", ")}.`,
+    );
+  }
+}
+
 export default defineConfig({
   plugins: [pluginReact()],
   resolve: {

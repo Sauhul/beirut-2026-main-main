@@ -27,6 +27,21 @@ En las variables de compilación de producción, configura `REACT_APP_SUPABASE_U
 `REACT_APP_WOMPI_PUBLIC_KEY` (clave pública de Wompi). Estos valores se incluyen en
 el JavaScript del navegador. Las claves privadas deben permanecer en su backend.
 
+## Si /admin muestra «Supabase no está configurado»
+
+Usa la dirección que muestra el navegador para elegir el proyecto en **Workers & Pages**.
+
+| Dirección | Dónde guardar las variables |
+| --- | --- |
+| `*.workers.dev` | Worker → **Settings → Builds → Build variables** |
+| `*.pages.dev` | Pages → **Settings → Environment variables** → **Production** |
+
+Guarda `REACT_APP_SUPABASE_URL` con la URL del proyecto Supabase y
+`REACT_APP_SUPABASE_ANON_KEY` con su clave pública (`anon` o `sb_publishable_…`).
+Ejecuta una compilación nueva en Cloudflare después de guardarlas. El navegador
+recibe ambos valores del JavaScript generado durante la compilación.
+Cuando termine el despliegue, abre `/admin` y comprueba que aparece el formulario de acceso.
+
 Pages resuelve las rutas de React directamente mediante su soporte de aplicaciones de
 página única. Netlify conserva su regla de rutas en `netlify.toml`.
 
