@@ -13,10 +13,13 @@ export function StorePage() {
   const [params, setParams] = useSearchParams();
   const [q, setQ] = useState("");
   const { data } = useQuery(catalogQuery);
-  const navCategories = useMemo(() => [
-    { slug: "todos", name: "Todos" },
-    ...(data?.categories ?? []),
-  ], [data?.categories]);
+  const navCategories = useMemo(() => {
+    const populated = new Set(data?.products.map((product) => product.category_slug));
+    return [
+      { slug: "todos", name: "Todos" },
+      ...(data?.categories.filter((category) => populated.has(category.slug)) ?? []),
+    ];
+  }, [data]);
 
   const requestedCategory = params.get("categoria");
   const cat = navCategories.find((category) => category.slug === requestedCategory)?.slug ?? "todos";

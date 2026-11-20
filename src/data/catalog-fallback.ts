@@ -1,6 +1,6 @@
 ﻿/**
  * Datos de respaldo del catálogo.
- * Incluye 8 categorías y 120+ productos con imágenes del folder public/product-images/
+ * Incluye las categorías y los productos de respaldo de la tienda.
  */
 import type { Category, Product } from "@domain/catalog/types";
 
@@ -72,7 +72,7 @@ export const CATEGORIES: Category[] = [
     "id": "cat-11",
     "slug": "cafeteras-teteras",
     "name": "Cafeteras y Teteras",
-    "description": "Cezves, cafeteras, teteras y juegos de café",
+    "description": "Cezves, cafeteras, teteras, tazas y juegos de café",
     "sort_order": 11
   },
   {
@@ -81,6 +81,41 @@ export const CATEGORIES: Category[] = [
     "name": "Otros",
     "description": "Otros productos y variedades",
     "sort_order": 12
+  },
+  {
+    "id": "cat-13",
+    "slug": "legumbres-granos",
+    "name": "Legumbres y Granos",
+    "description": "Legumbres, trigo, bulgur y sémola",
+    "sort_order": 13
+  },
+  {
+    "id": "cat-14",
+    "slug": "bebidas",
+    "name": "Bebidas",
+    "description": "Arak y siropes para preparar bebidas",
+    "sort_order": 14
+  },
+  {
+    "id": "cat-15",
+    "slug": "accesorios",
+    "name": "Utensilios de Cocina",
+    "description": "Moldes, bandejas y utensilios de cocina",
+    "sort_order": 15
+  },
+  {
+    "id": "cat-16",
+    "slug": "cuidado-personal",
+    "name": "Cuidado Personal",
+    "description": "Jabones y tintes",
+    "sort_order": 16
+  },
+  {
+    "id": "cat-17",
+    "slug": "tabaco",
+    "name": "Tabaco y Accesorios",
+    "description": "Tabaco y accesorios de narguile",
+    "sort_order": 17
   }
 ];
 
@@ -122,7 +157,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "ACEITUNAS_VERDES_ENCURTIDAS.jpg",
     "category_slug": "conservas",
-    "category_name": "Conservas y Encurtidos"
+    "category_name": "Conservas"
   },
   {
     "id": "aead6ad9-2037-4b63-8970-086e22ad8b97",
@@ -134,8 +169,8 @@ export const PRODUCTS: Product[] = [
     "featured": true,
     "in_stock": true,
     "image_url": "AGUA_AZAHAR.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "salsas",
+    "category_name": "Aceites, Salsas, Especias y Condimentos"
   },
   {
     "id": "87e0bf7e-579e-453d-957a-ce5b3774f588",
@@ -147,8 +182,8 @@ export const PRODUCTS: Product[] = [
     "featured": true,
     "in_stock": true,
     "image_url": "AGUA_aZAHAR_GRANDE.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "salsas",
+    "category_name": "Aceites, Salsas, Especias y Condimentos"
   },
   {
     "id": "2bb9f36a-255e-48b8-af48-097c9a437857",
@@ -160,8 +195,8 @@ export const PRODUCTS: Product[] = [
     "featured": true,
     "in_stock": true,
     "image_url": "AGUA_ROSAS_300ML.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "salsas",
+    "category_name": "Aceites, Salsas, Especias y Condimentos"
   },
   {
     "id": "d25c867d-dbb4-4da0-842f-591a68056749",
@@ -173,8 +208,8 @@ export const PRODUCTS: Product[] = [
     "featured": true,
     "in_stock": true,
     "image_url": "AGUA_rosas_750ml.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "salsas",
+    "category_name": "Aceites, Salsas, Especias y Condimentos"
   },
   {
     "id": "4dcb2f37-d2a5-4ba6-a955-024cdcb52fcd",
@@ -187,7 +222,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "ALBARICOQUE SECO (25.000) .jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "6776073a-28bb-482c-b271-cd91e6b1095b",
@@ -200,7 +235,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "ALMENDRA MEDIA L(20.000).jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "c894c5fb-ab11-43e4-90d6-807589398e00",
@@ -212,8 +247,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "ALTRAMUCES SECOS.jpg",
-    "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_slug": "legumbres-granos",
+    "category_name": "Legumbres y Granos"
   },
   {
     "id": "97296dd5-376f-44bf-8018-15d3db3112f6",
@@ -226,7 +261,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Anatolia Moda Cezve Cafetera Turca de Cobre Pulido.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "643f1c57-4f61-44e7-b3c9-6b0be87901c1",
@@ -238,8 +273,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "ARAK_TOUMA.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "bebidas",
+    "category_name": "Bebidas"
   },
   {
     "id": "77540d69-c66d-4c4e-8221-03586e7eb6a4",
@@ -251,8 +286,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "AZAHAR_AGUA_260ML.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "salsas",
+    "category_name": "Aceites, Salsas, Especias y Condimentos"
   },
   {
     "id": "da6edcbd-f73b-41b0-a19e-dfadb7866ca8",
@@ -265,7 +300,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "BAKLAWA HOJALDRE (15.000) .jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "b34c6b05-1da9-488f-84bb-bef4faef7ddb",
@@ -278,7 +313,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "BAKLAWA KILO (180.000) .jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "4d5e9570-d5bf-4047-92ff-989b38d8f9c9",
@@ -290,8 +325,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Bandeja de Vidrio Circular con Espiral Dorado.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "accesorios",
+    "category_name": "Utensilios de Cocina"
   },
   {
     "id": "ed250832-e0e5-42a6-a7b2-e42f0486dd66",
@@ -316,8 +351,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "BORDON (25.000).jpg",
-    "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_slug": "carnes",
+    "category_name": "Carnes Procesadas"
   },
   {
     "id": "e898bf26-a317-402c-9aa4-e5645229dcfc",
@@ -330,7 +365,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Brioni Cezve Cafetera Turca de Granito Azul.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "5751ac63-2dee-4856-ae3f-66b63205bb36",
@@ -343,7 +378,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Brioni Cezve Cafetera Turca de Granito Negro.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "0ae06357-2e20-4982-a844-c212b17c5760",
@@ -356,7 +391,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Brioni Cezve Cafetera Turca de Granito Negro.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "10b8fc4d-0ed4-41e8-bf9e-021d3ed21185",
@@ -434,7 +469,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CASTANIA AZUL LAT (50.000).jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "343ce08c-01fc-480c-8dca-13caeb168242",
@@ -447,7 +482,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CASTANIA NUTS.jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "edd42e0b-410b-4271-9731-6c2d22648748",
@@ -460,7 +495,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CASTANIA SIN SAL(75.000).jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "b8643979-ff34-4883-bafe-bea94ac8e642",
@@ -473,7 +508,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CASTANIA VERDE LAT(65.000).jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "29fe70f9-916d-4533-9461-3fa95c7eff64",
@@ -486,7 +521,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Cezve Cafetera Turca de Hierro Fundido Negro.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "d5642543-6900-45c1-8aaa-10fe9d73f7b7",
@@ -499,7 +534,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Cezve Cafetera Turca Esmaltada Marrón con Motivos Blancos.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "41755cc6-172f-46bd-b658-26e1a998c8b9",
@@ -512,7 +547,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Cezve Cafetera Turca Esmaltada Roja con Motivos Blancos .jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "ceebbb5c-e0a1-442e-89b4-c4e084b9da75",
@@ -525,7 +560,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "chanclis (38000).jpg",
     "category_slug": "lacteos",
-    "category_name": "Lácteos y Derivados"
+    "category_name": "Lácteos"
   },
   {
     "id": "77409396-d7fb-4267-9dae-7d0797fa2eb2",
@@ -538,7 +573,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY 170GR (30.000).jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "adaea87d-71a4-4af8-947b-948dd5b90579",
@@ -550,8 +585,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "CRUNCHY BITE 80GR (15.000) .jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "snacks",
+    "category_name": "Snacks"
   },
   {
     "id": "8fb29f50-62fc-4ab2-966c-b0ca7fa88d56",
@@ -564,7 +599,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY BITES 80GR (15.000) .jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "f1c9acb5-56e3-453f-80e3-0b28478da4b9",
@@ -577,7 +612,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY LAT MORADA 170GR (20.000) .jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "ce7c3ad2-d139-41ba-a8f7-7d26f5c53267",
@@ -590,7 +625,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY LAT MORADA 340GR (35.000) .jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "d350f3f7-b036-4d0f-9797-d3503ba49159",
@@ -603,7 +638,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY LAT MORADA(45.000).jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "9e909cd6-6db1-4d2e-856d-204243328a7f",
@@ -616,7 +651,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY LAT ROJA 340GR (60.000) .jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "ed3c4016-7ac0-4b55-b7bc-846d84e63f70",
@@ -629,7 +664,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY LAT VERDE 450GR (55.000) .jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "2f31015c-55ff-4d92-a896-34ef798abf52",
@@ -642,7 +677,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY LATA 200GR (25.000).jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "4a3047c7-4c39-4128-9b8f-4590429ceeab",
@@ -655,7 +690,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY LT VERDE 170GR (25.000) .jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "7cd5a5cd-ed5d-42e4-ad14-45d1fadb6d35",
@@ -668,7 +703,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY MIX.jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "dfaebe66-ff59-4a2f-af15-e70aa95cea65",
@@ -681,7 +716,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY SESAME.jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "f7d18255-2391-429a-8cab-bf4456182a87",
@@ -694,7 +729,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY TARRO 200GR (25.000) .jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "5e755e41-eb90-4279-8bde-07e3fd27f32b",
@@ -707,7 +742,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CRUNCHY VERDE PINANTE (55.000).jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "3a454c49-d976-4e79-ac57-b1580008699d",
@@ -720,7 +755,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "CTUNCHY BITES 80GR (15.000) .jpg",
     "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_name": "Snacks"
   },
   {
     "id": "12fdce69-1e89-49ab-baa9-a63253e33240",
@@ -733,7 +768,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "DATIL LIBRA(45.000).jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "1082a906-a2f1-4006-917e-001c6817c914",
@@ -746,7 +781,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "DATIL RELLENO(100.000).jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "bf4c29ab-d060-4e11-b63b-6b0ff4b4a070",
@@ -759,7 +794,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "DATILES KILO (90.000) .jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "a9a8c78f-c0a7-43f4-83c7-e4eeb05606cf",
@@ -849,8 +884,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "ESCENCIA_CHOCOLATE_MENTA.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "salsas",
+    "category_name": "Aceites, Salsas, Especias y Condimentos"
   },
   {
     "id": "3bd0c915-0755-4d7b-81e8-c31b986aa18f",
@@ -862,8 +897,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "ESCENCIA_COCO_BLUEBBERRY.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "salsas",
+    "category_name": "Aceites, Salsas, Especias y Condimentos"
   },
   {
     "id": "a2870c32-77e1-4e71-b535-a6b607c08694",
@@ -915,7 +950,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "etera Clásica de Acero Inoxidable Pulido.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "2dacf8be-7863-4311-8a38-551edc4cd90b",
@@ -927,8 +962,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "FALAFEL (20.000) .jpg",
-    "category_slug": "snacks",
-    "category_name": "Snacks y Pasabocas"
+    "category_slug": "conservas",
+    "category_name": "Conservas"
   },
   {
     "id": "15cc3817-a8ff-471b-809c-7aa7d6515432",
@@ -941,7 +976,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "GALLETAS MAMOUL.jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "58f21d81-fccc-4e8a-94ab-4c22a09eb477",
@@ -967,7 +1002,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "GHRAYBEH (14.000).jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "7cbac9c7-2843-4d52-9f7f-fafb35a82257",
@@ -993,7 +1028,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Halva con pistacho Al Nakhil.jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "271c5182-a401-4cd3-a10c-194bf9b40430",
@@ -1006,7 +1041,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Halva original Al Nakhil.jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "53121d1b-27f1-402e-9022-cff2d489b7dd",
@@ -1019,7 +1054,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Halva original Al Nakhil.jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "e8ef19d7-b3dc-43fd-8102-a09e0dfd6c3e",
@@ -1032,7 +1067,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Halva original sin azúcar.jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "e3cc798d-28fa-4329-808c-c651ac2486d1",
@@ -1071,7 +1106,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "HIGOS SECOS 125GR (17.000) .jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "5914c669-c03a-4667-82a7-ddce12bdafcd",
@@ -1083,8 +1118,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "HUMMUS EN LATA.jpg",
-    "category_slug": "salsas",
-    "category_name": "Aceites, Salsas, Especias y Condimentos"
+    "category_slug": "conservas",
+    "category_name": "Conservas"
   },
   {
     "id": "404dd8d0-0c5a-4af9-ba97-14134bbebc4b",
@@ -1096,8 +1131,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "JABON FARAH.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cuidado-personal",
+    "category_name": "Cuidado Personal"
   },
   {
     "id": "40bff6f2-d8b0-4b6d-89b0-f264c88ee11d",
@@ -1109,8 +1144,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Juego de Café Porcelana Árbol de Oro.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "d4c5df17-9ff5-4a59-be7b-1453fcd9f418",
@@ -1122,8 +1157,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Juego de Café Porcelana Blanco Puro con Filo Dorado.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "ff43175e-cf98-448b-89ff-0031933bb52a",
@@ -1135,8 +1170,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Juego de Café Porcelana Espiral Óptica Gold.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "83e61cea-30ab-402c-bffc-46437409671a",
@@ -1148,8 +1183,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Juego de Café Porcelana Labrada Crema.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "c17bb20f-2a43-4cb8-823e-c19f7e224606",
@@ -1161,8 +1196,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Juego de Café Porcelana Labrada Gris.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "cc85db7a-2215-468d-9da6-99d304cdf52f",
@@ -1174,8 +1209,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Juego de Café Porcelana Mandala Étnico y Oro.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "1c0eb8c8-d656-428b-8c13-650c50f0bbb2",
@@ -1187,8 +1222,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Juego de Café Porcelana Mosaico Geométrico Gold.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "1cff772d-d9af-4c3c-ba4e-9c1ad5d42563",
@@ -1200,8 +1235,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Juego de Café Porcelana Multicolor (1).jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "4c1dab8e-a139-481f-aac8-3df6322addf1",
@@ -1213,8 +1248,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Juego de Café Porcelana Relieve Pétalo Blanco.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "fdb221e5-cbf9-4f74-8b56-4d2e36340e00",
@@ -1227,7 +1262,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "labne(38.000).jpg",
     "category_slug": "lacteos",
-    "category_name": "Lácteos y Derivados"
+    "category_name": "Lácteos"
   },
   {
     "id": "8342f2b9-15f5-4eff-807d-381a6768d28b",
@@ -1252,8 +1287,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "MANGUERA (30.000) .jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "tabaco",
+    "category_name": "Tabaco y Accesorios"
   },
   {
     "id": "87e7e248-d0ed-49f8-b276-f71c2f22285a",
@@ -1266,7 +1301,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "MANI CONFITADO CON MIEL.jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "e8914ce9-5ee0-444d-87ed-0cd6f6774807",
@@ -1331,7 +1366,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "MERMELADA_ALBARICOQUE_LIGHT.jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "6da442ce-91fe-4e91-8ca0-e4e77c78ee4b",
@@ -1343,8 +1378,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "Molde Kibbeh.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "accesorios",
+    "category_name": "Utensilios de Cocina"
   },
   {
     "id": "839946d7-00a2-475e-a466-2dd208e0f723",
@@ -1356,8 +1391,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "MOLDE_MAAMOUL_ALARGADO.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "accesorios",
+    "category_name": "Utensilios de Cocina"
   },
   {
     "id": "efb33bee-f2ee-4b1b-bb09-99ba096230ed",
@@ -1369,8 +1404,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "MOLDE_MAAMOUL_PEQUEÑO.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "accesorios",
+    "category_name": "Utensilios de Cocina"
   },
   {
     "id": "e0e7e40a-0e81-45e3-8532-af9f0aadef7e",
@@ -1382,8 +1417,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "MOLDE_PARA_MAAOUL.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "accesorios",
+    "category_name": "Utensilios de Cocina"
   },
   {
     "id": "1a10d36b-6fff-4f2a-b885-02b621988658",
@@ -1396,7 +1431,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "MUG CERAMICA DORADO.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "5199f5ae-8bb6-4d40-9059-6f317665c888",
@@ -1409,7 +1444,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "NUEZ.jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "e1f46bda-78a9-4159-98a1-0c58a688a597",
@@ -1421,8 +1456,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "ORGANIZADOR DE CUCHARAS PLATEADO.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "accesorios",
+    "category_name": "Utensilios de Cocina"
   },
   {
     "id": "942b4f3e-7614-462b-ba21-96e252578d59",
@@ -1434,8 +1469,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "ORGANIZADOR_CUCHARAS_DORADO.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "accesorios",
+    "category_name": "Utensilios de Cocina"
   },
   {
     "id": "a0b85331-f55a-4e74-b1f1-ad28b97879c8",
@@ -1473,8 +1508,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "PAN CON ZAATAR(7.000).jpg",
-    "category_slug": "salsas",
-    "category_name": "Aceites, Salsas, Especias y Condimentos"
+    "category_slug": "panaderia",
+    "category_name": "Panadería"
   },
   {
     "id": "b5d2b6a8-e706-4c4d-8c18-62623057d320",
@@ -1526,7 +1561,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "PEPINOS_SILVESTRES_1000G.jpg",
     "category_slug": "conservas",
-    "category_name": "Conservas y Encurtidos"
+    "category_name": "Conservas"
   },
   {
     "id": "c1b795d8-0326-4d68-a05d-c9a166ead298",
@@ -1539,7 +1574,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "piñones(85.000).jpg",
     "category_slug": "frutos-secos",
-    "category_name": "Frutos Secos y Frutas Secas"
+    "category_name": "Frutos Secos"
   },
   {
     "id": "1fbaff3c-6edc-41d2-a29a-861a3f834ddb",
@@ -1551,8 +1586,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "PROCESADOR_ALIMENTOS.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "accesorios",
+    "category_name": "Utensilios de Cocina"
   },
   {
     "id": "e56bc06c-858e-49f0-a3be-17a00784fc94",
@@ -1565,7 +1600,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "QUESO PUCK.jpg",
     "category_slug": "lacteos",
-    "category_name": "Lácteos y Derivados"
+    "category_name": "Lácteos"
   },
   {
     "id": "0085d85e-b42d-465c-97bf-ccfb4eb8b78a",
@@ -1578,7 +1613,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "REMOLACHA ENCUTIDA.jpg",
     "category_slug": "conservas",
-    "category_name": "Conservas y Encurtidos"
+    "category_name": "Conservas"
   },
   {
     "id": "74d098dd-7c04-4ea6-a9e1-0b8400a33056",
@@ -1629,8 +1664,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SET DE CAFE ARBOL DE LA VIDA.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "76161b36-3790-45e8-a212-a8dd752a7304",
@@ -1642,8 +1677,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SET DE CAFE BLANCO BASE ANILLOS DORADOS.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "9f67f4ec-c59c-461f-a08b-4874a92e4dc5",
@@ -1655,8 +1690,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SET DE CAFE BLANCO BASE ANILLOS PLATEADO.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "1a4bf3ff-79eb-40d9-a3e6-3b6ec20ef37d",
@@ -1668,8 +1703,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "set cafe hojas de oro.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "9292890e-8c2b-4cf4-9a30-a873ece051e7",
@@ -1681,8 +1716,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SET DE CAFE TAZAS BLANCAS BASE DE ANILLOS DORADOS.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cafeteras-teteras",
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "bc513d01-5e4d-48c6-9591-b1e55e817ea8",
@@ -1695,7 +1730,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "set de taza negra.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "9032cae5-68f4-48d2-8b81-9a695c5c062f",
@@ -1707,8 +1742,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SET_BROCHETAS_BARBACOA.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "accesorios",
+    "category_name": "Utensilios de Cocina"
   },
   {
     "id": "347a327b-b973-46ad-b76b-00bca13b3367",
@@ -1720,8 +1755,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SIROPE_ALBARICOQUE.jpg",
-    "category_slug": "salsas",
-    "category_name": "Aceites, Salsas, Especias y Condimentos"
+    "category_slug": "bebidas",
+    "category_name": "Bebidas"
   },
   {
     "id": "585309c9-a9e5-4fb7-9e04-383a19624568",
@@ -1733,8 +1768,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SIROPE_ALMENDRA.jpg",
-    "category_slug": "salsas",
-    "category_name": "Aceites, Salsas, Especias y Condimentos"
+    "category_slug": "bebidas",
+    "category_name": "Bebidas"
   },
   {
     "id": "3750f4f9-c206-48da-8bf0-639da648c717",
@@ -1746,8 +1781,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SIROPE_GRANADINA.jpg",
-    "category_slug": "salsas",
-    "category_name": "Aceites, Salsas, Especias y Condimentos"
+    "category_slug": "bebidas",
+    "category_name": "Bebidas"
   },
   {
     "id": "5a409c23-f6a7-477a-b6c1-5d24ddb76524",
@@ -1759,8 +1794,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SIROPE_JALLAB.jpg",
-    "category_slug": "salsas",
-    "category_name": "Aceites, Salsas, Especias y Condimentos"
+    "category_slug": "bebidas",
+    "category_name": "Bebidas"
   },
   {
     "id": "f62e549a-2ff8-4681-8bdc-a9ecbaf8f132",
@@ -1772,8 +1807,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "SIROPE_MORA.jpg",
-    "category_slug": "salsas",
-    "category_name": "Aceites, Salsas, Especias y Condimentos"
+    "category_slug": "bebidas",
+    "category_name": "Bebidas"
   },
   {
     "id": "9778ec5f-3b4c-4038-b23a-ad92eae67f57",
@@ -1786,7 +1821,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Surtido de Dulces Árabes.jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "38c662d6-53c3-4328-9d42-ad5e4cd49610",
@@ -1798,8 +1833,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "TABACO_DOS_MANZANAS.jpg",
-    "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_slug": "tabaco",
+    "category_name": "Tabaco y Accesorios"
   },
   {
     "id": "1df2b2b1-1a79-4912-97a3-704060a3539f",
@@ -1916,7 +1951,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Tetera de Vidrio Borosilicato Labrado con Detalles Dorados.jpg",
     "category_slug": "cafeteras-teteras",
-    "category_name": "Cafeteras, Teteras y Accesorios"
+    "category_name": "Cafeteras y Teteras"
   },
   {
     "id": "0ae7cafe-e89d-438f-893b-419d2063c574",
@@ -1928,8 +1963,8 @@ export const PRODUCTS: Product[] = [
     "featured": false,
     "in_stock": true,
     "image_url": "TINTE_HENNA_ROJA.jpg",
-    "category_slug": "cafe-te",
-    "category_name": "Café y Té"
+    "category_slug": "cuidado-personal",
+    "category_name": "Cuidado Personal"
   },
   {
     "id": "e0c91015-95fd-4d96-9c6b-5ce5d05597dd",
@@ -1955,7 +1990,7 @@ export const PRODUCTS: Product[] = [
     "in_stock": true,
     "image_url": "Turrones de ajonjoli.jpg",
     "category_slug": "dulces",
-    "category_name": "Dulces y Postres"
+    "category_name": "Dulces"
   },
   {
     "id": "a68c79e3-bf99-4944-9862-830b00a821ef",

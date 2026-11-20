@@ -8,6 +8,9 @@ import { CATEGORIES, PRODUCTS } from "@data/catalog-fallback";
 import { getCorrectCategory } from "@shared/utils/category-mapper";
 import type { Catalog, Product } from "./types";
 
+const categoryByProductId = new Map(PRODUCTS.map((product) => [product.id, product.category_slug]));
+const categoryByProductSlug = new Map(PRODUCTS.map((product) => [product.slug, product.category_slug]));
+
 /** Catálogo completo: categorías + productos. */
 export async function getCatalog(): Promise<Catalog> {
   if (!supabase) return { categories: CATEGORIES, products: PRODUCTS };
@@ -44,19 +47,20 @@ export async function getCatalog(): Promise<Catalog> {
     return { categories: CATEGORIES, products: PRODUCTS };
   }
 
-  const dbCategories = (categoriesRes.data ?? []).map((c) => ({
-    id: c.id,
-    slug: c.slug,
-    name: c.name,
-    description: c.description,
-    sort_order: c.sort_order,
-  }));
+  const categoriesBySlug = new Map(CATEGORIES.map((category) => [category.slug, category]));
+  for (const category of categoriesRes.data ?? []) {
+    const curated = categoriesBySlug.get(category.slug);
+    categoriesBySlug.set(category.slug, curated ? { ...curated, id: category.id } : category);
+  }
 
   const dbProducts = (productsRes.data ?? []).map((p): Product => {
-    // Intentar usar la categoría asignada en BD, si no, usar el mapper
-    const categoryName = p.categories?.name ?? "Otros";
-    const categorySlug = p.categories?.slug ?? getCorrectCategory(p.name);
-    
+    const categorySlug =
+      categoryByProductId.get(p.id) ??
+      categoryByProductSlug.get(p.slug) ??
+      p.categories?.slug ??
+      getCorrectCategory(p.name);
+    const category = categoriesBySlug.get(categorySlug) ?? categoriesBySlug.get("otros")!;
+
     return {
       id: p.id,
       slug: p.slug,
@@ -67,12 +71,13 @@ export async function getCatalog(): Promise<Catalog> {
       featured: p.featured,
       in_stock: p.in_stock,
       image_url: p.image_url,
-      category_slug: categorySlug,
-      category_name: categoryName,
+      category_slug: category.slug,
+      category_name: category.name,
     };
   });
 
-  return { categories: dbCategories, products: dbProducts };
+  const categories = [...categoriesBySlug.values()].sort((a, b) => a.sort_order - b.sort_order);
+  return { categories, products: dbProducts };
 }
 
 /** Producto por slug con relacionados de su misma categoría (null si no existe). */
