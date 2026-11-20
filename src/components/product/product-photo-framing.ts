@@ -14,6 +14,7 @@ const coffeeSetFocalPoints = new Map<string, [number, number]>([
   ["set-de-cafe-blanco-base-anillos-plateado", [47, 51]],
   ["set-de-cafe-hojas-de-oro", [32, 50]],
   ["set-de-cafe-tazas-blancas-base-de-anillos-dorados", [33, 50]],
+  ["set-de-tazada-negro-mate", [61, 51]],
 ]);
 
 const uprightPouches = new Set([
@@ -39,5 +40,9 @@ export function getProductPhotoFraming(source?: string) {
   const photo = source?.match(/^\/products-refined\/([^/]+)\.webp$/)?.[1] ?? "";
   const focalPoint = coffeeSetFocalPoints.get(photo);
 
-  return { focalPoint, enlarge: !!focalPoint || uprightPouches.has(photo) };
+  return {
+    focalPoint,
+    enlarge: uprightPouches.has(photo),
+    studioSource: focalPoint ? `/products-studio/${photo}.webp` : undefined,
+  };
 }

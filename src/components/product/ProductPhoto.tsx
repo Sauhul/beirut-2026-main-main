@@ -18,13 +18,16 @@ export function ProductPhoto({
   loading = "lazy",
   showDetail = false,
 }: ProductPhotoProps) {
-  const [failedSource, setFailedSource] = useState<string>();
-  const source = imageUrl ? productImageSrc(imageUrl) : undefined;
-  const { focalPoint, enlarge } = getProductPhotoFraming(source);
+  const [failedSources, setFailedSources] = useState<string[]>([]);
+  const originalSource = imageUrl ? productImageSrc(imageUrl) : undefined;
+  const { focalPoint, enlarge, studioSource } = getProductPhotoFraming(originalSource);
+  const source =
+    !showDetail && studioSource && !failedSources.includes(studioSource)
+      ? studioSource
+      : originalSource;
   const detailPoint = showDetail ? focalPoint : undefined;
   const modifiers = [
     enlarge && "product-photo--framed",
-    focalPoint && "product-photo--porcelain",
     detailPoint && "product-photo--detail",
     className,
   ]
@@ -38,7 +41,7 @@ export function ProductPhoto({
 
   return (
     <div className={`product-photo ${modifiers}`}>
-      {source && source !== failedSource ? (
+      {source && !failedSources.includes(source) ? (
         <img
           src={source}
           alt={alt}
@@ -47,7 +50,7 @@ export function ProductPhoto({
           loading={loading}
           decoding="async"
           style={detailStyle}
-          onError={() => setFailedSource(source)}
+          onError={() => setFailedSources((previous) => [...previous, source])}
         />
       ) : (
         <span
