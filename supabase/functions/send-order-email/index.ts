@@ -148,7 +148,7 @@ function buildHtmlEmail(data: RequestBody): string {
           <tr>
             <td style="padding: 20px; background-color: #11100e; border-top: 1px solid #2a2826; text-align: center; color: #7a7065; font-size: 12px;">
               <p style="margin: 0 0 5px 0;">Almacén Beirut · Cra. 43 #84-26, Barranquilla</p>
-              <p style="margin: 0 0 5px 0;">Si tienes dudas sobre tu envío, contáctanos al WhatsApp +57 312 852 7325</p>
+              <p style="margin: 0 0 5px 0;">Si tienes dudas sobre tu envío, escríbenos a hola@delikatessenbeyrouth.co</p>
               <p style="margin: 10px 0 0 0; color: #524b43; font-size: 11px;">Mensaje enviado desde beirutmarket.co</p>
             </td>
           </tr>

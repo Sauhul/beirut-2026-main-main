@@ -61,7 +61,7 @@ export function StorePage() {
         <div className="rule-gold mt-5" />
         <p className="mx-auto mt-5 max-w-xl px-5 text-sm leading-7 text-muted-foreground">
           Todo lo que necesitas para cocinar y compartir la mesa del Medio Oriente. Puedes pagar en
-          línea con Wompi o coordinarlo por WhatsApp.
+          línea con Wompi.
         </p>
       </section>
 

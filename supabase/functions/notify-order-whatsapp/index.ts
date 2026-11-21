@@ -2,13 +2,13 @@
  * Supabase Edge Function: notify-order-whatsapp
  *
  * Envía la notificación de un nuevo pedido directamente al WhatsApp del dueño del negocio
- * (por defecto 573128527325) utilizando la API de WhatsApp Business de Meta,
+ * utilizando la API de WhatsApp Business de Meta,
  * UltraMsg, Twilio o webhook equivalente.
  *
  * Secrets en Supabase:
  *   WHATSAPP_BUSINESS_TOKEN     — Token de acceso permanente de Meta (o API key)
  *   WHATSAPP_BUSINESS_PHONE_ID  — Phone Number ID en Meta Cloud API
- *   WHATSAPP_BUSINESS_RECIPIENT — Número destino (default: 573128527325)
+ *   WHATSAPP_BUSINESS_RECIPIENT — Número destino
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -31,13 +31,20 @@ serve(async (req) => {
 
   try {
     const body: RequestBody = await req.json();
-    const recipient = body.recipient || Deno.env.get("WHATSAPP_BUSINESS_RECIPIENT") || "573128527325";
+    const recipient = body.recipient || Deno.env.get("WHATSAPP_BUSINESS_RECIPIENT");
     const token = Deno.env.get("WHATSAPP_BUSINESS_TOKEN");
     const phoneId = Deno.env.get("WHATSAPP_BUSINESS_PHONE_ID");
 
     if (!body.message) {
       return new Response(JSON.stringify({ error: "Missing message body" }), {
         status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!recipient) {
+      return new Response(JSON.stringify({ error: "WhatsApp recipient not configured" }), {
+        status: 503,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

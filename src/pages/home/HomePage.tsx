@@ -107,7 +107,7 @@ export function HomePage() {
     {
       n: "02",
       title: "Confirma tu pedido",
-      text: "Agrégalo al carrito y paga en línea con Wompi, o escríbenos por WhatsApp.",
+      text: "Agrégalo al carrito y paga en línea con Wompi. Para consultas, escríbenos por correo.",
     },
     {
       n: "03",
@@ -281,7 +281,7 @@ export function HomePage() {
                 <Phone className="mt-1 h-5 w-5 shrink-0 text-gold" />
                 <span>
                   <span className="block text-[0.6rem] font-bold tracking-[0.22em] uppercase text-gold">
-                    Pedidos
+                    Teléfono
                   </span>
                   {SITE.phoneDisplay}
                 </span>

@@ -3,7 +3,7 @@ export const SITE = {
   name: "BEIRUT",
   brandFull: "Delikatessen Beyrouth",
   tagline: "Sabores del Líbano, en tu mesa",
-  phoneDisplay: "+57 312 852 7325",
+  phoneDisplay: "000",
   email: "hola@delikatessenbeyrouth.co",
   address: "Cra. 43 #84-26, Barranquilla, Atlántico",
   hoursWeek: "Lunes a Sábado · 9:00 – 19:00",
