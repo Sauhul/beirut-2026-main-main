@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDown, ArrowUpRight, Clock, MapPin, Phone, Ship, Store, Truck } from "lucide-react";
 import { FeaturedProducts } from "./FeaturedProducts";
+import { groupCatalog } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
 import { categoryImage } from "@shared/utils/category-images";
@@ -60,7 +61,6 @@ export function HomePage() {
   }, { scope: pageRef, dependencies: [isPending], revertOnUpdate: true });
 
   const products = data?.products ?? [];
-  const categories = data?.categories ?? [];
 
   const available = products.filter((product) => product.in_stock);
   const featured = [
@@ -68,20 +68,17 @@ export function HomePage() {
     ...available.filter((product) => !product.featured),
   ].slice(0, 10);
 
-  const tiles = categories
-    .filter((c) => products.some((p) => p.category_slug === c.slug))
-    .slice(0, 6)
-    .map((c) => {
-      const sample = products.find((p) => p.category_slug === c.slug && p.image_url);
-      const count = products.filter((p) => p.category_slug === c.slug).length;
-
-      return { 
-        slug: c.slug, 
-        name: c.name, 
-        image: categoryImage(c.slug, sample?.image_url),
-        count 
-      };
-    });
+  const tiles = (data ? groupCatalog(data) : []).map((group) => {
+    const sample = group.categories
+      .map(({ slug }) => group.products.find((product) => product.category_slug === slug && product.image_url))
+      .find(Boolean);
+    return {
+      slug: group.slug,
+      name: group.name,
+      image: categoryImage(sample?.category_slug, sample?.image_url),
+      categories: group.categories.map(({ name }) => name).join(" · "),
+    };
+  });
 
   const PILLARS = [
     {
@@ -220,10 +217,10 @@ export function HomePage() {
                 className="card-onyx mx-auto flex w-full max-w-sm flex-col overflow-hidden rounded-2xl"
               >
                 <ProductPhoto imageUrl={tile.image} alt="" />
-                <div className="flex flex-1 flex-col p-5">
+                <div className="flex flex-1 flex-col p-3 sm:p-5">
                   <p className="font-display text-xl text-sand">{tile.name}</p>
-                  <p className="mt-1 text-[0.58rem] font-bold tracking-[0.2em] uppercase text-gold">
-                    {tile.count} productos
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    {tile.categories}
                   </p>
                 </div>
               </Link>
