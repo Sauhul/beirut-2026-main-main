@@ -38,9 +38,6 @@ export default defineConfig({
       index: "./src/main.tsx",
     },
     define: {
-      "process.env.REACT_APP_WOMPI_PUBLIC_KEY": JSON.stringify(
-        process.env.REACT_APP_WOMPI_PUBLIC_KEY ?? "",
-      ),
       "process.env.REACT_APP_SUPABASE_URL": JSON.stringify(
         process.env.REACT_APP_SUPABASE_URL ?? "",
       ),

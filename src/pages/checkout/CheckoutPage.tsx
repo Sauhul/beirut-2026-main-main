@@ -233,7 +233,7 @@ export function CheckoutPage() {
                     <input
                       type="radio"
                       {...register("delivery_method")}
-                      value="tienda"
+                      value="recogida"
                       className="sr-only"
                     />
                     <Truck className="h-4 w-4 text-gold" /> Recoger en tienda
