@@ -15,41 +15,36 @@ export function StorePage() {
   const { data, isPending } = useQuery(catalogQuery);
   const groups = useMemo(() => (data ? groupCatalog(data) : []), [data]);
   const requestedCategory = params.get("categoria");
-  const activeGroup = groups.find(
-    (group) =>
-      group.slug === requestedCategory ||
-      group.categories.some((category) => category.slug === requestedCategory),
-  );
-  const activeCategory = activeGroup?.categories.find(
-    (category) => category.slug === requestedCategory,
-  );
+  const activeGroup =
+    groups.find(
+      (group) =>
+        group.slug === requestedCategory ||
+        group.categories.some((category) => category.slug === requestedCategory),
+    ) ?? groups[0];
+
   const normalize = (value: string) =>
     value.toLocaleLowerCase("es-CO").normalize("NFD").replace(/\p{M}/gu, "");
   const term = normalize(q.trim());
-  const groupedList = (activeGroup ? [activeGroup] : groups)
-    .map((group) => ({
-      ...group,
-      name: activeCategory?.name ?? group.name,
-      products: group.products.filter(
-        (product) =>
-          (!activeCategory || product.category_slug === activeCategory.slug) &&
-          [product.name, product.category_name, group.name].some((value) =>
-            normalize(value).includes(term),
+  const visibleGroups = term
+    ? groups
+        .map((group) => ({
+          ...group,
+          products: group.products.filter((product) =>
+            [product.name, product.category_name, group.name, product.description].some((value) =>
+              normalize(value).includes(term),
+            ),
           ),
-      ),
-    }))
-    .filter((group) => group.products.length > 0);
-
-  const primaryFilters = [{ slug: "todos", name: "Todos" }, ...groups];
-  const secondaryFilters = activeGroup
-    ? [{ slug: activeGroup.slug, name: "Ver todo el grupo" }, ...activeGroup.categories]
-    : [];
+        }))
+        .filter((group) => group.products.length > 0)
+    : activeGroup
+      ? [activeGroup]
+      : [];
 
   function setCategoria(next: string) {
+    setQ("");
     setParams((previous) => {
       const updated = new URLSearchParams(previous);
-      if (next === "todos") updated.delete("categoria");
-      else updated.set("categoria", next);
+      updated.set("categoria", next);
       return updated;
     });
   }
@@ -70,10 +65,10 @@ export function StorePage() {
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="search"
-            aria-label="Buscar productos"
+            aria-label="Buscar en toda la tienda"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Buscar zaatar, dátiles, café..."
+            placeholder="Buscar en toda la tienda…"
             className="w-full border border-input bg-onyx px-4 py-3 pl-11 text-sm text-sand outline-none placeholder:text-muted-foreground focus:border-gold"
           />
         </div>
@@ -83,13 +78,13 @@ export function StorePage() {
           aria-label="Grupos de productos"
           className="mt-4 flex flex-wrap gap-2 sm:mt-6"
         >
-          {primaryFilters.map((filter) => {
-            const selected = (activeGroup?.slug ?? "todos") === filter.slug;
+          {groups.map((group) => {
+            const selected = !term && activeGroup?.slug === group.slug;
             return (
               <button
-                key={filter.slug}
+                key={group.slug}
                 type="button"
-                onClick={() => setCategoria(filter.slug)}
+                onClick={() => setCategoria(group.slug)}
                 aria-pressed={selected}
                 className={`min-h-11 border px-3 py-2 text-sm sm:px-4 font-semibold transition-colors ${
                   selected
@@ -97,37 +92,22 @@ export function StorePage() {
                     : "border-border text-muted-foreground hover:border-gold hover:text-gold"
                 }`}
               >
-                {filter.name}
+                {group.name}
               </button>
             );
           })}
         </div>
 
-        {secondaryFilters.length > 2 && (
-          <div role="group" aria-label="Subcategorías" className="mt-3 flex flex-wrap gap-x-4">
-            {secondaryFilters.map((filter) => {
-              const selected = (activeCategory?.slug ?? activeGroup?.slug) === filter.slug;
-              return (
-                <button
-                  key={filter.slug}
-                  type="button"
-                  onClick={() => setCategoria(filter.slug)}
-                  aria-pressed={selected}
-                  className={`min-h-11 text-left text-sm underline-offset-4 hover:text-gold ${
-                    selected
-                      ? "font-semibold text-sand underline decoration-gold"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {filter.name}
-                </button>
-              );
-            })}
-          </div>
+        {term && !isPending && (
+          <p role="status" className="mt-6 text-sm text-muted-foreground">
+            {visibleGroups.length > 0
+              ? "Resultados en toda la tienda"
+              : "No encontramos productos con esa búsqueda."}
+          </p>
         )}
 
         <div className="mt-7 space-y-12 sm:mt-12 sm:space-y-16">
-          {groupedList.map((group) => (
+          {visibleGroups.map((group) => (
             <div key={group.slug}>
               <h2 className="mb-6 font-display text-2xl text-sand">{group.name}</h2>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -145,9 +125,9 @@ export function StorePage() {
           </p>
         )}
 
-        {!isPending && groupedList.length === 0 && (
+        {!isPending && !term && !activeGroup && (
           <p className="py-20 text-center text-sm text-muted-foreground">
-            No encontramos productos con esa búsqueda.
+            No hay productos disponibles.
           </p>
         )}
       </section>

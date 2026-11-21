@@ -1,14 +1,60 @@
-/**
- * Integración con el Widget de Checkout de Wompi (Colombia).
- * Docs: https://docs.wompi.co/docs/colombia/widget-checkout
- *
- * Variables de entorno (ver .env.example):
- *  - REACT_APP_WOMPI_PUBLIC_KEY: llave pública (sandbox: pub_test_...)
- *
- * ⚠️ SEGURIDAD: aquí NO va ningún secreto. La firma de integridad, si se
- * activa en Wompi, debe generarse en el SERVIDOR (n8n / edge function),
- * nunca en el navegador.
- */
+import { supabase } from "@data/supabase/client";
+
+export type WompiConfig = { ready: boolean; sandbox: boolean };
+export type WompiCheckout = {
+  orderId: string;
+  orderNumber: number;
+  amountInCents: number;
+  publicKey: string;
+  signature: string;
+  expirationTime: string;
+  sandbox: boolean;
+};
+
+function wompiEndpoint() {
+  const url = process.env.REACT_APP_SUPABASE_URL;
+  if (!supabase || !url) throw new Error("El pago en línea no está disponible.");
+  return new URL("/functions/v1/wompi-checkout", url);
+}
+
+export async function getWompiConfig(): Promise<WompiConfig> {
+  const response = await fetch(wompiEndpoint(), { signal: AbortSignal.timeout(8000) });
+  if (!response.ok) throw new Error("No se pudo comprobar la disponibilidad de Wompi.");
+  return response.json();
+}
+
+async function wompiRequest<T>(body: unknown): Promise<T> {
+  const response = await fetch(wompiEndpoint(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(15000),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Wompi no está disponible.");
+  return data as T;
+}
+
+export function prepareWompiOrder(order: {
+  customer_name: string;
+  customer_phone: string;
+  customer_email: string;
+  delivery_method: "domicilio" | "recogida";
+  address?: string;
+  city?: string;
+  notes?: string;
+  items: { product_id: string; quantity: number }[];
+}) {
+  return wompiRequest<WompiCheckout>({ action: "prepare", order });
+}
+
+export function verifyWompiPayment(orderId: string, transactionId: string) {
+  return wompiRequest<{ status: WompiTransactionStatus; orderNumber: number; sandbox: boolean }>({
+    action: "verify",
+    orderId,
+    transactionId,
+  });
+}
 
 type WompiWidget = new (options: {
   currency: "COP";
@@ -16,8 +62,14 @@ type WompiWidget = new (options: {
   reference: string;
   publicKey: string;
   redirectUrl: string;
-  customerEmail?: string;
-  customerData?: { fullName?: string; phoneNumber?: string; phoneNumberPrefix: string };
+  signature: { integrity: string };
+  expirationTime: string;
+  customerData?: {
+    email?: string;
+    fullName?: string;
+    phoneNumber?: string;
+    phoneNumberPrefix: string;
+  };
 }) => {
   open(callback: (result?: { transaction?: { status?: string; id?: string } }) => void): void;
 };
@@ -71,50 +123,35 @@ function loadWompiScript(): Promise<void> {
   return scriptPromise;
 }
 
-export type WompiPaymentInput = {
-  /** Referencia única del pedido (se sanitiza a formato válido Wompi). */
-  reference: string;
-  /** Total en centavos de COP (nunca se envía el monto sin validar). */
-  amountInCents: number;
-  customerEmail?: string;
-  customerName?: string;
-  customerPhone?: string;
+export type WompiPaymentInput = WompiCheckout & {
+  customerEmail: string;
+  customerName: string;
+  customerPhone: string;
 };
 
-/**
- * Sanitiza la referencia al formato que Wompi Colombia acepta:
- * solo letras, números, guion bajo y guion; sin espacios ni acentos;
- * máxima longitud de Wompi.
- */
-function toValidReference(reference: string): string {
-  const cleaned = reference
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9_-]/g, "-")
-    .slice(0, 40);
-  return cleaned || "BEIRUT-ORDER";
-}
-
-/** Abre el widget modal y resuelve cuando Wompi reporta el resultado. */
+/** El widget solo recibe el monto y la firma emitidos por el servidor. */
 export async function openWompiCheckout(input: WompiPaymentInput): Promise<WompiWidgetResult> {
-  const publicKey = process.env.REACT_APP_WOMPI_PUBLIC_KEY;
-  if (!publicKey) throw new Error("Falta configurar REACT_APP_WOMPI_PUBLIC_KEY");
-
   await loadWompiScript();
   const Widget = window.WidgetCheckout || window.WompiCheckout || window.Wompi?.WidgetCheckout;
   if (!Widget) throw new Error("El widget de Wompi no está disponible");
 
+  const redirectUrl = new URL("/pedido-confirmado", window.location.origin);
+  redirectUrl.searchParams.set("pedido", input.orderId);
+  const phone = input.customerPhone.replace(/\D/g, "");
   const widget = new Widget({
     currency: "COP",
-    amountInCents: Math.round(input.amountInCents),
-    reference: toValidReference(input.reference),
-    publicKey,
-    redirectUrl: window.location.origin + "/pedido-confirmado",
-    customerEmail: input.customerEmail,
-    customerData:
-      input.customerName || input.customerPhone
-        ? { fullName: input.customerName, phoneNumber: input.customerPhone, phoneNumberPrefix: "57" }
-        : undefined,
+    amountInCents: input.amountInCents,
+    reference: input.orderId,
+    publicKey: input.publicKey,
+    signature: { integrity: input.signature },
+    expirationTime: input.expirationTime,
+    redirectUrl: redirectUrl.href,
+    customerData: {
+      email: input.customerEmail,
+      fullName: input.customerName,
+      phoneNumber: phone.length === 12 && phone.startsWith("57") ? phone.slice(2) : phone,
+      phoneNumberPrefix: "+57",
+    },
   });
 
   return new Promise<WompiWidgetResult>((resolve, reject) => {
@@ -140,14 +177,19 @@ export async function openWompiCheckout(input: WompiPaymentInput): Promise<Wompi
 
     function checkWidget() {
       const visible = Boolean(
-        document.querySelector(".waybox-backdrop, iframe.waybox-iframe, iframe[src*='checkout.wompi']"),
+        document.querySelector(
+          ".waybox-backdrop, iframe.waybox-iframe, iframe[src*='checkout.wompi']",
+        ),
       );
       if (visible) {
         mounted = true;
         window.clearTimeout(closeTimeout);
         closeTimeout = undefined;
       } else if (mounted && closeTimeout === undefined) {
-        closeTimeout = window.setTimeout(() => finish({ status: "UNKNOWN", transactionId: null }), 1000);
+        closeTimeout = window.setTimeout(
+          () => finish({ status: "UNKNOWN", transactionId: null }),
+          1000,
+        );
       }
     }
 

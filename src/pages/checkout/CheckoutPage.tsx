@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Truck, ShieldCheck } from "lucide-react";
 import { gsap } from "gsap";
@@ -11,9 +12,12 @@ import { supabase } from "@data/supabase/client";
 import { useCart } from "@domain/cart/use-cart";
 import { formatCOP, titleCase } from "@shared/utils/format";
 import { formatPresentation } from "@shared/utils/product-format";
-import { createOrder, type PaymentMethod, type CreatedOrder } from "@domain/orders/order-service";
-import { openWompiCheckout } from "@domain/payments/wompi";
-import { sendOrderConfirmationEmail } from "@domain/notifications/email-service";
+import {
+  getWompiConfig,
+  openWompiCheckout,
+  prepareWompiOrder,
+  type WompiCheckout,
+} from "@domain/payments/wompi";
 import { inputClass } from "@shared/utils/input-class";
 import { checkoutSchema, type CheckoutForm } from "./checkout.schema";
 import { usePageTitle } from "@hooks/usePageTitle";
@@ -21,27 +25,19 @@ import { getMotionQuality } from "@hooks/useAnimationQuality";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const PAYMENT_OPTIONS: {
-  value: PaymentMethod;
-  label: string;
-  sub: string;
-}[] = [
-  { value: "wompi", label: "Pago en línea", sub: "Tarjeta, PSE, Nequi — procesado por Wompi" },
-  {
-    value: "transferencia",
-    label: "Transferencia / Nequi",
-    sub: "Te contactaremos para finalizar",
-  },
-];
-
 export function CheckoutPage() {
   usePageTitle("Finalizar compra · Beirut");
-  const { items, subtotal, clear } = useCart();
+  const { items, subtotal } = useCart();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [submitting, setSubmitting] = useState(false);
-  const savedOrder = useRef<{ input: string; order: CreatedOrder } | null>(null);
-  const hasWompi = Boolean(process.env.REACT_APP_WOMPI_PUBLIC_KEY);
+  const savedOrder = useRef<{ input: string; order: WompiCheckout } | null>(null);
+  const { data: wompi, isPending: checkingWompi } = useQuery({
+    queryKey: ["wompi-config"],
+    queryFn: getWompiConfig,
+    enabled: Boolean(supabase && items.length),
+    retry: false,
+  });
 
   const {
     register,
@@ -50,16 +46,15 @@ export function CheckoutPage() {
     formState: { errors },
   } = useForm<CheckoutForm>({
     resolver: zodResolver(checkoutSchema),
-      defaultValues: {
-        delivery_method: "domicilio",
-        payment_method: "transferencia",
-        address: "",
-        city: "",
-        customer_name: "",
-        customer_phone: "",
-        customer_email: "",
-        notes: "",
-      },
+    defaultValues: {
+      delivery_method: "domicilio",
+      address: "",
+      city: "",
+      customer_name: "",
+      customer_phone: "",
+      customer_email: "",
+      notes: "",
+    },
   });
 
   const delivery = watch("delivery_method");
@@ -99,72 +94,53 @@ export function CheckoutPage() {
     setSubmitting(true);
 
     try {
-      if (data.payment_method === "wompi" && !hasWompi) {
-        toast.error("El pago en línea no está disponible. Puedes elegir transferencia.");
+      if (!wompi?.ready) {
+        toast.error("El pago con Wompi no está disponible en este momento.");
         return;
       }
-
       const input = {
         ...data,
         address: data.delivery_method === "domicilio" ? data.address : undefined,
         city: data.delivery_method === "domicilio" ? data.city : undefined,
-        items: items.map(({ id, quantity }) => ({ id, quantity })),
+        items: items.map(({ id, quantity }) => ({ product_id: id, quantity })),
       };
       const serialized = JSON.stringify(input);
-
-      const order = savedOrder.current?.input === serialized
-        ? savedOrder.current.order
-        : await createOrder(input);
+      const cached = savedOrder.current;
+      const order =
+        cached?.input === serialized && Date.parse(cached.order.expirationTime) > Date.now()
+          ? cached.order
+          : await prepareWompiOrder(input);
       savedOrder.current = { input: serialized, order };
-
-      if (data.payment_method === "wompi") {
-        try {
-          const result = await openWompiCheckout({
-            reference: order.orderId,
-            amountInCents: Math.round(order.total * 100),
-            customerEmail: data.customer_email,
-            customerName: data.customer_name,
-            customerPhone: data.customer_phone,
-          });
-
-          if (result.status !== "APPROVED" && result.status !== "PENDING") {
-            toast.error("El pago no se completó. Revisa el resultado en Wompi antes de reintentar.");
-            return;
-          }
-        } catch {
-          toast.error("No pudimos abrir Wompi. Puedes volver a intentar con este pedido.");
-          return;
-        }
-      } else {
-        void sendOrderConfirmationEmail({
-          orderNumber: order.orderNumber,
-          customerEmail: data.customer_email,
-          customerName: data.customer_name,
-          customerPhone: data.customer_phone,
-          deliveryMethod: data.delivery_method,
-          address: input.address,
-          city: input.city,
-          notes: data.notes,
-          paymentMethod: data.payment_method,
-          lines: order.lines,
-          total: order.total,
-        });
+      if (order.amountInCents !== subtotal * 100) {
+        toast.error("El total del catálogo cambió. Revisa el carrito actualizado antes de pagar.");
+        return;
       }
-
-      clear();
-      navigate(`/pedido-confirmado?numero=${order.orderNumber}`, {
-        state: { orderNumber: order.orderNumber, paymentMethod: data.payment_method },
+      sessionStorage.setItem("beirut-pending-wompi", order.orderId);
+      const result = await openWompiCheckout({
+        ...order,
+        customerEmail: data.customer_email,
+        customerName: data.customer_name,
+        customerPhone: data.customer_phone,
       });
+      if (result.transactionId) {
+        navigate(
+          `/pedido-confirmado?${new URLSearchParams({ pedido: order.orderId, id: result.transactionId })}`,
+        );
+        return;
+      }
+      toast.error("El pago no se completó. Puedes volver a abrir Wompi.");
     } catch (error) {
-      console.error(error);
-      toast.error("No pudimos registrar tu pedido. Intenta de nuevo.");
+      toast.error(error instanceof Error ? error.message : "No pudimos procesar el pedido.");
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <div ref={containerRef} className="route-page mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 md:px-10">
+    <div
+      ref={containerRef}
+      className="route-page mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 md:px-10"
+    >
       <div className="checkout-title checkout-motion border-b border-border pb-6 mb-6">
         <p className="eyebrow">Paso final</p>
         <h1 className="mt-2 font-display text-4xl text-sand sm:text-5xl">Finalizar compra</h1>
@@ -194,7 +170,12 @@ export function CheckoutPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground w-full">
                 Nombre completo *
-                <input {...register("customer_name")} autoComplete="name" maxLength={80} className={`${inputClass} mt-1`} />
+                <input
+                  {...register("customer_name")}
+                  autoComplete="name"
+                  maxLength={80}
+                  className={`${inputClass} mt-1`}
+                />
                 {errors.customer_name && (
                   <span className="mt-1 block text-xs text-destructive">
                     {errors.customer_name.message}
@@ -203,7 +184,13 @@ export function CheckoutPage() {
               </label>
               <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground w-full">
                 Teléfono / WhatsApp *
-                <input {...register("customer_phone")} type="tel" autoComplete="tel" maxLength={15} className={`${inputClass} mt-1`} />
+                <input
+                  {...register("customer_phone")}
+                  type="tel"
+                  autoComplete="tel"
+                  maxLength={15}
+                  className={`${inputClass} mt-1`}
+                />
                 {errors.customer_phone && (
                   <span className="mt-1 block text-xs text-destructive">
                     {errors.customer_phone.message}
@@ -257,7 +244,12 @@ export function CheckoutPage() {
                 <>
                   <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2">
                     Dirección *
-                    <input {...register("address")} autoComplete="street-address" maxLength={200} className={inputClass} />
+                    <input
+                      {...register("address")}
+                      autoComplete="street-address"
+                      maxLength={200}
+                      className={inputClass}
+                    />
                     {errors.address && (
                       <span className="mt-1 block text-xs text-destructive">
                         {errors.address.message}
@@ -266,7 +258,12 @@ export function CheckoutPage() {
                   </label>
                   <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Ciudad *
-                    <input {...register("city")} autoComplete="address-level2" maxLength={100} className={inputClass} />
+                    <input
+                      {...register("city")}
+                      autoComplete="address-level2"
+                      maxLength={100}
+                      className={inputClass}
+                    />
                     {errors.city && (
                       <span className="mt-1 block text-xs text-destructive">
                         {errors.city.message}
@@ -280,28 +277,16 @@ export function CheckoutPage() {
 
           <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
             <legend className="px-2 eyebrow">Pago</legend>
-            <div className="space-y-3">
-              {PAYMENT_OPTIONS.filter((opt) => opt.value !== "wompi" || hasWompi).map((opt) => (
-                <label
-                  key={opt.value}
-                  className="group flex cursor-pointer items-center gap-3 border border-input focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ring px-5 py-4 transition has-[:checked]:border-gold has-[:checked]:bg-gold/10 hover:border-gold"
-                >
-                  <input
-                    type="radio"
-                    {...register("payment_method")}
-                    value={opt.value}
-                    className="sr-only"
-                  />
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-gold/40 group-has-[:checked]:border-gold">
-                    <div className="h-2.5 w-2.5 scale-0 rounded-full bg-gold transition-transform group-has-[:checked]:scale-100" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-sand">{opt.label}</p>
-                    <p className="text-xs text-muted-foreground">{opt.sub}</p>
-                  </div>
-                </label>
-              ))}
-            </div>
+            <p className="font-bold text-sand">Wompi</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {checkingWompi
+                ? "Comprobando disponibilidad…"
+                : wompi?.ready
+                  ? wompi.sandbox
+                    ? "Modo de prueba. El pago no genera un cobro real."
+                    : "Paga en línea en la ventana segura de Wompi."
+                  : "El pago en línea no está disponible en este momento."}
+            </p>
           </fieldset>
 
           <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
@@ -343,7 +328,7 @@ export function CheckoutPage() {
             </div>
             <button
               type="submit"
-              disabled={submitting || !supabase || items.length === 0}
+              disabled={submitting || !wompi?.ready || items.length === 0}
               className="btn-gold w-full mt-7 py-4 text-sm"
             >
               {submitting ? (
@@ -352,9 +337,7 @@ export function CheckoutPage() {
                   Procesando...
                 </>
               ) : (
-                <>
-                  {watch("payment_method") === "wompi" ? "Continuar a Wompi" : "Registrar pedido"}
-                </>
+                "Continuar a Wompi"
               )}
             </button>
           </div>

@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
+import { catalogQuery } from "@domain/catalog/queries";
+import { productPresentation } from "@shared/utils/product-format";
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
 export type CartItem = {
@@ -31,7 +34,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw) as CartItem[]);
+      if (raw) {
+        const saved = JSON.parse(raw) as CartItem[];
+        setItems(saved.map((item) => ({ ...item, ...productPresentation(item) })));
+      }
     } catch {
       /* ignore */
     }
@@ -69,17 +75,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clear = useCallback(() => setItems([]), []);
 
+  const { data: catalog } = useQuery({ ...catalogQuery, enabled: items.length > 0 });
+  const currentItems = useMemo(() => {
+    if (!catalog) return items;
+    const prices = new Map(catalog.products.map(({ id, price }) => [id, price]));
+    return items.map((item) => ({ ...item, price: prices.get(item.id) ?? item.price }));
+  }, [catalog, items]);
+
   const value = useMemo<CartContextValue>(
     () => ({
-      items,
-      count: items.reduce((n, i) => n + i.quantity, 0),
-      subtotal: items.reduce((n, i) => n + i.price * i.quantity, 0),
+      items: currentItems,
+      count: currentItems.reduce((n, i) => n + i.quantity, 0),
+      subtotal: currentItems.reduce((n, i) => n + i.price * i.quantity, 0),
       add,
       setQuantity,
       remove,
       clear,
     }),
-    [items, add, setQuantity, remove, clear],
+    [currentItems, add, setQuantity, remove, clear],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

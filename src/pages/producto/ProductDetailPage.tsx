@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { productQuery } from "@domain/catalog/queries";
 import { ProductPhotoGallery } from "@components/product/ProductPhotoGallery";
 import { formatCOP, titleCase } from "@shared/utils/format";
-import { formatPresentation } from "@shared/utils/product-format";
 import { useCart } from "@domain/cart/use-cart";
 import { ProductCard } from "@components/product/ProductCard";
 import { usePageTitle } from "@hooks/usePageTitle";
@@ -95,9 +94,6 @@ export function ProductDetailPage() {
           <h1 className="detail-title detail-motion mt-3 font-display text-5xl leading-tight text-sand md:text-6xl">
             {name}
           </h1>
-          <p className="detail-meta detail-motion mt-2 text-[0.65rem] font-bold tracking-[0.22em] uppercase text-muted-foreground">
-            {formatPresentation(product.unit)}
-          </p>
           <p className="detail-meta detail-motion mt-6 max-w-xl text-base leading-8 text-muted-foreground">
             {product.description}
           </p>

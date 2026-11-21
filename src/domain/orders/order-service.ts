@@ -1,9 +1,11 @@
 /** Creación de pedidos mediante la RPC de Supabase. */
 import { getCatalog } from "@domain/catalog/service";
 import { supabase } from "@data/supabase/client";
+import { formatPresentation } from "@shared/utils/product-format";
 
 export type OrderLine = {
   name: string;
+  presentation: string;
   quantity: number;
   lineTotal: number;
 };
@@ -41,6 +43,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreatedOrder
       {
         productId: product.id,
         name: product.name,
+        presentation: formatPresentation(product.unit),
         quantity: item.quantity,
         unitPrice: product.price,
         lineTotal: product.price * item.quantity,
@@ -66,6 +69,11 @@ export async function createOrder(input: CreateOrderInput): Promise<CreatedOrder
     orderId: data.id,
     orderNumber: Number(data.order_number),
     total: resolvedLines.reduce((sum, line) => sum + line.lineTotal, 0),
-    lines: resolvedLines.map(({ name, quantity, lineTotal }) => ({ name, quantity, lineTotal })),
+    lines: resolvedLines.map(({ name, presentation, quantity, lineTotal }) => ({
+      name,
+      presentation,
+      quantity,
+      lineTotal,
+    })),
   };
 }

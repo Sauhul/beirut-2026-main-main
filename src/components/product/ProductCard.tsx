@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import type { Product } from "@domain/catalog/types";
 import { ProductPhoto } from "./ProductPhoto";
 import { formatCOP, titleCase } from "@shared/utils/format";
-import { formatPresentation } from "@shared/utils/product-format";
 import { useCart } from "@domain/cart/use-cart";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -27,11 +26,6 @@ export function ProductCard({ product }: { product: Product }) {
         <Link to={`/producto/${product.slug}`}>
           <h3 className="font-display text-xl leading-tight text-sand">{name}</h3>
         </Link>
-        {formatPresentation(product.unit) ? (
-          <p className="mt-2 text-[0.65rem] font-semibold tracking-[0.18em] uppercase text-muted-foreground">
-            {formatPresentation(product.unit)}
-          </p>
-        ) : null}
         <p className="mt-2 line-clamp-2 text-xs leading-6 text-muted-foreground">
           {product.description}
         </p>

@@ -60,14 +60,7 @@ export function Footer() {
             </li>
             <li className="flex gap-2">
               <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-              <a
-                href="https://instagram.com/delikatessenbeyrouth"
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs text-muted-foreground hover:text-gold"
-              >
-                Instagram
-              </a>
+              <span>{SITE.phoneDisplay}</span>
             </li>
             <li className="flex gap-2">
               <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />

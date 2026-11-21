@@ -6,11 +6,14 @@
 import { supabase } from "@data/supabase/client";
 import { CATEGORIES, PRODUCTS } from "@data/catalog-fallback";
 import { productDescriptions } from "@data/product-descriptions";
+import { formatPresentation, productPresentation } from "@shared/utils/product-format";
 import { getCorrectCategory } from "@shared/utils/category-mapper";
 import type { Catalog, Product } from "./types";
 
 const categoryByProductId = new Map(PRODUCTS.map((product) => [product.id, product.category_slug]));
-const categoryByProductSlug = new Map(PRODUCTS.map((product) => [product.slug, product.category_slug]));
+const categoryByProductSlug = new Map(
+  PRODUCTS.map((product) => [product.slug, product.category_slug]),
+);
 
 const defaultDescription = "Producto auténtico árabe importado de alta calidad";
 
@@ -20,12 +23,31 @@ function catalogDescription(slug: string, description: string | null): string {
   return productDescriptions.get(slug) ?? saved ?? "";
 }
 
+function withDisplayProduct(product: Product): Product {
+  const { name, unit } = productPresentation(product);
+  const description = catalogDescription(product.slug, product.description);
+  const presentation = formatPresentation(unit);
+  const measure = presentation.match(/^(\d+)(?:\.(\d+))? (g|kg|ml|L)$/);
+  const needsPresentation =
+    measure &&
+    !new RegExp(
+      `(?<![\\d.,])${measure[1]}${measure[2] ? `[.,]${measure[2]}` : ""}\\s*${measure[3]}\\b`,
+      "i",
+    ).test(description);
+
+  return {
+    ...product,
+    name,
+    unit,
+    description: needsPresentation
+      ? `Presentación de ${presentation}. ${description}`.trim()
+      : description,
+  };
+}
+
 const fallbackCatalog: Catalog = {
   categories: CATEGORIES,
-  products: PRODUCTS.map((product) => ({
-    ...product,
-    description: catalogDescription(product.slug, product.description),
-  })),
+  products: PRODUCTS.map(withDisplayProduct),
 };
 
 /** Catálogo completo: categorías + productos. */
@@ -78,11 +100,11 @@ export async function getCatalog(): Promise<Catalog> {
       getCorrectCategory(p.name);
     const category = categoriesBySlug.get(categorySlug) ?? categoriesBySlug.get("otros")!;
 
-    return {
+    return withDisplayProduct({
       id: p.id,
       slug: p.slug,
       name: p.name,
-      description: catalogDescription(p.slug, p.description),
+      description: p.description,
       price: p.price,
       unit: p.unit,
       featured: p.featured,
@@ -90,7 +112,7 @@ export async function getCatalog(): Promise<Catalog> {
       image_url: p.image_url,
       category_slug: category.slug,
       category_name: category.name,
-    };
+    });
   });
 
   const categories = [...categoriesBySlug.values()].sort((a, b) => a.sort_order - b.sort_order);

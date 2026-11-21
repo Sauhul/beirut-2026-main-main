@@ -1,5 +1,6 @@
 import { SITE } from "@config/site";
 import { formatCOP } from "@shared/utils/format";
+import type { OrderLine } from "@domain/orders/order-service";
 
 export type OrderEmailInput = {
   orderNumber: number;
@@ -11,7 +12,7 @@ export type OrderEmailInput = {
   city?: string;
   notes?: string;
   paymentMethod: string;
-  lines: { name: string; quantity: number; lineTotal: number }[];
+  lines: OrderLine[];
   total: number;
 };
 
@@ -41,7 +42,7 @@ function generateOrderEmailHtml(input: OrderEmailInput): string {
     .map(
       (l) => `
     <tr>
-      <td style="padding: 12px; border-bottom: 1px solid #2a2826; color: #f5f0eb; font-weight: 600;">${l.name}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #2a2826; color: #f5f0eb; font-weight: 600;">${l.name}${/^[0-9.]+ (?:g|kg|ml|L)$/.test(l.presentation) ? `<br><span style="color: #c4b5a5; font-weight: 400;">Presentación: ${l.presentation}</span>` : ""}</td>
       <td style="padding: 12px; border-bottom: 1px solid #2a2826; color: #c4b5a5; text-align: center;">${l.quantity}</td>
       <td style="padding: 12px; border-bottom: 1px solid #2a2826; color: #d4af37; font-weight: 700; text-align: right;">${formatCOP(l.lineTotal)}</td>
     </tr>

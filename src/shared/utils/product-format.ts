@@ -103,3 +103,47 @@ export function formatPresentation(unit: string | null | undefined) {
   const normalized = normalizeUnit(unit);
   return normalized === "unidad" ? "" : normalized;
 }
+
+const namedMeasure =
+  /\(?\s*\d+(?:[.,]\d+)?\s*(?:kilogramos?|mililitros?|gramos?|litros?|libras?|kilos?|kgs?|grs?|mls?|lts?|lb|g|l)\b\.?\s*\)?/gi;
+const commercialMeasure = /\s+\(?\s*(kilos?|libras?|litros?|lb)\.?\s*\)?$/i;
+const bareWeight = /\s+\(?\s*(\d+(?:[.,]\d+)?)\s*\)?$/;
+
+export function productPresentation({
+  name,
+  unit,
+  slug,
+}: {
+  name: string;
+  unit: string;
+  slug: string;
+}) {
+  const saved = formatPresentation(unit);
+  const named = [...name.matchAll(namedMeasure)][0]?.[0]?.replace(/[()]/g, "").trim();
+  const commercial = name.match(commercialMeasure)?.[1];
+  const presentation = saved || (named ? normalizeUnit(named) : "");
+  const weight = presentation.match(/^(\d+(?:\.\d+)?) (g|kg|ml|L)$/);
+  const bare = name.match(bareWeight);
+  const matchesKnownSize =
+    bare && weight && normalizeUnit(`${bare[1]} ${weight[2]}`) === presentation;
+  const isWalnutSize = slug === "nuez-250" && bare?.[1] === "250";
+
+  const cleanName = (matchesKnownSize || isWalnutSize ? name.slice(0, bare?.index) : name)
+    .replace(namedMeasure, " ")
+    .replace(commercialMeasure, "")
+    .replace(/\(\s*\)/g, "")
+    .replace(/[\s,;(/-]+$/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return {
+    name: cleanName || name,
+    unit:
+      presentation ||
+      (isWalnutSize
+        ? "250 g"
+        : commercial
+          ? normalizeUnit(commercial.toLowerCase() === "lb" ? "libra" : commercial)
+          : unit),
+  };
+}
