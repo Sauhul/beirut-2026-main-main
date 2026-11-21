@@ -203,7 +203,7 @@ export function CartPage() {
           </div>
 
           <Link to="/checkout" className="btn-gold w-full mt-10 py-5 text-sm">
-            <CreditCard className="h-4 w-4" /> Ir a checkout
+            <CreditCard className="h-4 w-4" /> Ir al pago con Wompi
           </Link>
         </div>
       </div>

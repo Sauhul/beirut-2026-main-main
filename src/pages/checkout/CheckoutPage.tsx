@@ -142,15 +142,25 @@ export function CheckoutPage() {
       className="route-page mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 md:px-10"
     >
       <div className="checkout-title checkout-motion border-b border-border pb-6 mb-6">
-        <p className="eyebrow">Paso final</p>
-        <h1 className="mt-2 font-display text-4xl text-sand sm:text-5xl">Finalizar compra</h1>
+        <h1 className="font-display text-4xl text-sand sm:text-5xl">Finalizar compra</h1>
+        <div className="mt-4 flex items-start gap-3">
+          <ShieldCheck aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-gold" />
+          <div>
+            <h2 className="font-semibold text-sand">Pago con Wompi</h2>
+            <p role="status" className="mt-1 text-sm text-muted-foreground">
+              {!supabase
+                ? "El registro de pedidos no está disponible en este momento."
+                : checkingWompi
+                  ? "Comprobando disponibilidad…"
+                  : wompi?.ready
+                    ? wompi.sandbox
+                      ? "Completa tus datos para abrir Wompi. Estás en modo de prueba y no habrá cobro real."
+                      : "Completa tus datos para abrir la ventana segura de Wompi."
+                    : "El pago con Wompi no está disponible en este momento."}
+            </p>
+          </div>
+        </div>
       </div>
-
-      {!supabase && (
-        <p role="status" className="mb-6 border border-border bg-card p-4 text-sand">
-          La tienda puede mostrar el catálogo, pero el registro de pedidos no está disponible.
-        </p>
-      )}
 
       <form
         onSubmit={handleSubmit(onSubmit, (errors) => {
@@ -273,20 +283,6 @@ export function CheckoutPage() {
                 </>
               )}
             </div>
-          </fieldset>
-
-          <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
-            <legend className="px-2 eyebrow">Pago</legend>
-            <p className="font-bold text-sand">Wompi</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {checkingWompi
-                ? "Comprobando disponibilidad…"
-                : wompi?.ready
-                  ? wompi.sandbox
-                    ? "Modo de prueba. El pago no genera un cobro real."
-                    : "Paga en línea en la ventana segura de Wompi."
-                  : "El pago en línea no está disponible en este momento."}
-            </p>
           </fieldset>
 
           <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
