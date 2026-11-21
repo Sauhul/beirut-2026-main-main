@@ -2,19 +2,14 @@
  * Supabase Edge Function: send-order-email
  *
  * Envía el correo de confirmación de pedido al cliente desde confirmacion@beirutmarket.co
- * utilizando Resend API (o servicio SMTP/Webhook).
+ * utilizando Resend API. Requiere una clave secreta de Supabase en apikey.
  *
  * Variables de entorno (Supabase → Edge Functions → Secrets):
  *   RESEND_API_KEY — Key de Resend (re_...)
  *   EMAIL_FROM     — Remitente (default: "Almacén Beirut <confirmacion@beirutmarket.co>")
  */
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { withSupabase } from "npm:@supabase/server";
 
 interface OrderLine {
   name: string;
@@ -162,57 +157,48 @@ function buildHtmlEmail(data: RequestBody): string {
   `;
 }
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
+export default {
+  fetch: withSupabase({ auth: "secret" }, async (req) => {
+    if (req.method !== "POST") {
+      return Response.json({ error: "Método no permitido" }, { status: 405 });
+    }
 
-  try {
-    const body: RequestBody = await req.json();
+    try {
+      const body: RequestBody = await req.json();
+      if (!body.customerEmail) {
+        return Response.json({ error: "Falta el correo del destinatario" }, { status: 400 });
+      }
 
-    if (!body.customerEmail) {
-      return new Response(JSON.stringify({ error: "Missing customerEmail" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      const resendApiKey = Deno.env.get("RESEND_API_KEY");
+      const senderEmail =
+        Deno.env.get("EMAIL_FROM") || "Almacén Beirut <confirmacion@beirutmarket.co>";
+      if (!resendApiKey) {
+        return Response.json({ error: "Servicio de correo no configurado" }, { status: 503 });
+      }
+
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: senderEmail,
+          to: [body.customerEmail],
+          subject: `¡Pedido Confirmado #${body.orderNumber}! - Almacén Beirut`,
+          html: buildHtmlEmail(body),
+        }),
+        signal: AbortSignal.timeout(10000),
       });
+
+      if (!response.ok) {
+        console.error("Error del proveedor de correo:", response.status);
+        return Response.json({ error: "Error al enviar el correo" }, { status: 502 });
+      }
+
+      return Response.json({ success: true, data: await response.json() });
+    } catch {
+      return Response.json({ error: "No se pudo procesar la solicitud" }, { status: 400 });
     }
-
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const senderEmail = Deno.env.get("EMAIL_FROM") || "Almacén Beirut <confirmacion@beirutmarket.co>";
-
-    if (!resendApiKey) {
-      console.warn("RESEND_API_KEY no está configurada en Edge Functions.");
-      return new Response(
-        JSON.stringify({ success: false, message: "RESEND_API_KEY not configured" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
-
-    const resendRes = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: senderEmail,
-        to: [body.customerEmail],
-        subject: `¡Pedido Confirmado #${body.orderNumber}! - Almacén Beirut`,
-        html: buildHtmlEmail(body),
-      }),
-    });
-
-    const resData = await resendRes.json();
-
-    return new Response(JSON.stringify({ success: resendRes.ok, data: resData }), {
-      status: resendRes.ok ? 200 : 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    console.error("Error in send-order-email:", err);
-    return new Response(JSON.stringify({ error: (err as Error).message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-});
+  }),
+};
