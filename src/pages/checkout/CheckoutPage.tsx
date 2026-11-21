@@ -128,7 +128,9 @@ export function CheckoutPage() {
         );
         return;
       }
-      toast.error("El pago no se completó. Puedes volver a abrir Wompi.");
+      if (result.status !== "CLOSED") {
+        toast.error("El pago no se completó. Puedes volver a abrir Wompi.");
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "No pudimos procesar el pedido.");
     } finally {

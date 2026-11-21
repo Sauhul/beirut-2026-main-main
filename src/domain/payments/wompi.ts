@@ -83,7 +83,7 @@ declare global {
 }
 
 export type WompiTransactionStatus =
-  "APPROVED" | "DECLINED" | "VOIDED" | "ERROR" | "PENDING" | "UNKNOWN";
+  "APPROVED" | "DECLINED" | "VOIDED" | "ERROR" | "PENDING" | "CLOSED" | "UNKNOWN";
 
 export type WompiWidgetResult = {
   status: WompiTransactionStatus;
@@ -156,44 +156,74 @@ export async function openWompiCheckout(input: WompiPaymentInput): Promise<Wompi
 
   return new Promise<WompiWidgetResult>((resolve, reject) => {
     let mounted = false;
+    let finished = false;
+    let closeTimeout: number | undefined;
+    const previousFocus = document.activeElement;
     const statuses: readonly string[] = ["APPROVED", "DECLINED", "VOIDED", "ERROR", "PENDING"];
+    const exitButton = document.createElement("button");
+    exitButton.type = "button";
+    exitButton.textContent = "Salir de Wompi";
+    exitButton.className =
+      "fixed top-3 right-3 z-[2147483647] min-h-11 border border-gold bg-card px-4 text-sm font-semibold text-sand shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
+    exitButton.addEventListener("click", closeWidget);
 
     const observer = new MutationObserver(checkWidget);
     const startupTimeout = window.setTimeout(() => {
       if (!mounted) finish({ status: "UNKNOWN", transactionId: null });
     }, 12000);
-    let closeTimeout: number | undefined;
 
     function cleanup() {
       observer.disconnect();
       window.clearTimeout(startupTimeout);
       window.clearTimeout(closeTimeout);
+      document.removeEventListener("keydown", handleEscape);
+      exitButton.remove();
     }
 
     function finish(result: WompiWidgetResult) {
+      if (finished) return;
+      finished = true;
       cleanup();
       resolve(result);
+      if (result.status === "CLOSED" && previousFocus instanceof HTMLElement) {
+        window.requestAnimationFrame(() => previousFocus.focus());
+      }
+    }
+
+    function closeWidget() {
+      const backdrop = document.querySelector(".waybox-backdrop:not([hidden])");
+      // El widget escucha Escape en su fondo y se encarga de restaurar el DOM.
+      backdrop?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", keyCode: 27 }));
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      if (event.target instanceof Element && event.target.closest(".waybox-backdrop")) return;
+      closeWidget();
     }
 
     function checkWidget() {
-      const visible = Boolean(
-        document.querySelector(
-          ".waybox-backdrop, iframe.waybox-iframe, iframe[src*='checkout.wompi']",
-        ),
-      );
-      if (visible) {
+      const backdrop = document.querySelector(".waybox-backdrop");
+      if (backdrop && !backdrop.hasAttribute("hidden")) {
+        if (mounted) return;
         mounted = true;
-        window.clearTimeout(closeTimeout);
-        closeTimeout = undefined;
+        document.body.append(exitButton);
+        document.addEventListener("keydown", handleEscape);
       } else if (mounted && closeTimeout === undefined) {
+        // Da tiempo al callback de Wompi si el cierre vino de un pago terminado.
         closeTimeout = window.setTimeout(
-          () => finish({ status: "UNKNOWN", transactionId: null }),
+          () => finish({ status: "CLOSED", transactionId: null }),
           1000,
         );
       }
     }
 
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["hidden"],
+    });
     try {
       widget.open((result) => {
         const transaction = result?.transaction;
