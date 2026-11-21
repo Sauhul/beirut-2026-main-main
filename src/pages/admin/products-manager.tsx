@@ -75,6 +75,11 @@ export function ProductsManager() {
       toast.error("El nombre del producto es obligatorio");
       return;
     }
+    const price = editing.price;
+    if (price === undefined || !Number.isInteger(price) || price < 0 || price > 2_147_483_647) {
+      toast.error("Escribe un precio entero entre 0 y 2.147.483.647 COP.");
+      return;
+    }
     let image_url = editing.image_url || null;
 
     if (imageFile) {
@@ -99,7 +104,7 @@ export function ProductsManager() {
           : name,
       slug: editing.slug || slugify(name),
       description: editing.description ?? "Producto auténtico árabe importado de alta calidad",
-      price: Number(editing.price || 0),
+      price,
       unit:
         original && presentation && editing.unit === presentation.unit
           ? original.unit
@@ -403,10 +408,17 @@ function ProductForm({
               Precio (COP)
               <input
                 required
-                type="number"
-                min={1}
-                value={value.price ?? 0}
-                onChange={(e) => set("price", Number(e.target.value))}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]+"
+                maxLength={10}
+                value={value.price ?? ""}
+                onChange={(event) => {
+                  const text = event.target.value;
+                  if (/^\d*$/.test(text)) {
+                    onChange({ ...value, price: text === "" ? undefined : Number(text) });
+                  }
+                }}
                 className={`mt-1 ${inputClass}`}
               />
             </label>

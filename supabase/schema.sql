@@ -19,7 +19,7 @@ create table if not exists public.products (
   slug        text not null unique,
   name        text not null,
   description text not null default '',
-  price       int  not null check (price > 0),
+  price       int  not null check (price >= 0),
   unit        text not null default 'unidad',
   image_url   text,
   featured    boolean not null default false,
