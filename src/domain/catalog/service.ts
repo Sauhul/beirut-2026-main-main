@@ -5,15 +5,32 @@
  */
 import { supabase } from "@data/supabase/client";
 import { CATEGORIES, PRODUCTS } from "@data/catalog-fallback";
+import { productDescriptions } from "@data/product-descriptions";
 import { getCorrectCategory } from "@shared/utils/category-mapper";
 import type { Catalog, Product } from "./types";
 
 const categoryByProductId = new Map(PRODUCTS.map((product) => [product.id, product.category_slug]));
 const categoryByProductSlug = new Map(PRODUCTS.map((product) => [product.slug, product.category_slug]));
 
+const defaultDescription = "Producto auténtico árabe importado de alta calidad";
+
+function catalogDescription(slug: string, description: string | null): string {
+  const saved = description?.trim();
+  if (saved && saved !== defaultDescription) return saved;
+  return productDescriptions.get(slug) ?? saved ?? "";
+}
+
+const fallbackCatalog: Catalog = {
+  categories: CATEGORIES,
+  products: PRODUCTS.map((product) => ({
+    ...product,
+    description: catalogDescription(product.slug, product.description),
+  })),
+};
+
 /** Catálogo completo: categorías + productos. */
 export async function getCatalog(): Promise<Catalog> {
-  if (!supabase) return { categories: CATEGORIES, products: PRODUCTS };
+  if (!supabase) return fallbackCatalog;
 
   const [categoriesRes, productsRes] = await Promise.all([
     supabase.from("categories").select("*").order("sort_order"),
@@ -44,7 +61,7 @@ export async function getCatalog(): Promise<Catalog> {
     });
     // LOG DETAILED ERROR
     console.log("[Catálogo] Detailed:", { categoriesRes, productsRes });
-    return { categories: CATEGORIES, products: PRODUCTS };
+    return fallbackCatalog;
   }
 
   const categoriesBySlug = new Map(CATEGORIES.map((category) => [category.slug, category]));
@@ -65,7 +82,7 @@ export async function getCatalog(): Promise<Catalog> {
       id: p.id,
       slug: p.slug,
       name: p.name,
-      description: p.description,
+      description: catalogDescription(p.slug, p.description),
       price: p.price,
       unit: p.unit,
       featured: p.featured,
