@@ -3,12 +3,12 @@ import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import type { Product } from "@domain/catalog/types";
 import { ProductPhoto } from "./ProductPhoto";
-import { formatCOP, titleCase } from "@shared/utils/format";
+import { formatCOP } from "@shared/utils/format";
 import { useCart } from "@domain/cart/use-cart";
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
-  const name = titleCase(product.name);
+  const { name } = product;
 
   return (
     <article className="card-onyx group flex flex-col overflow-hidden rounded-2xl">

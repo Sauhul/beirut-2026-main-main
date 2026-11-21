@@ -18,7 +18,7 @@ function catalogDescription(slug: string, description: string | null): string {
 }
 
 function withDisplayProduct(product: Product): Product {
-  const { name, unit } = productPresentation(product);
+  const { unit } = productPresentation(product);
   const description = catalogDescription(product.slug, product.description);
   const presentation = formatPresentation(unit);
   const measure = presentation.match(/^(\d+)(?:\.(\d+))? (g|kg|ml|L)$/);
@@ -31,7 +31,6 @@ function withDisplayProduct(product: Product): Product {
 
   return {
     ...product,
-    name,
     unit,
     description: needsPresentation
       ? `Presentación de ${presentation}. ${description}`.trim()

@@ -8,7 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { toast } from "sonner";
 import { productQuery } from "@domain/catalog/queries";
 import { ProductPhotoGallery } from "@components/product/ProductPhotoGallery";
-import { formatCOP, titleCase } from "@shared/utils/format";
+import { formatCOP } from "@shared/utils/format";
 import { useCart } from "@domain/cart/use-cart";
 import { ProductCard } from "@components/product/ProductCard";
 import { usePageTitle } from "@hooks/usePageTitle";
@@ -68,7 +68,7 @@ export function ProductDetailPage() {
 
   if (!data) return <ProductoNoEncontrado />;
   const { product, related } = data;
-  const name = titleCase(product.name);
+  const { name } = product;
 
   return (
     <div ref={containerRef} className="route-page mx-auto max-w-7xl px-5 pb-24 pt-10">

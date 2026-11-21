@@ -3,13 +3,8 @@ import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@data/supabase/client";
-import { formatCOP, titleCase } from "@shared/utils/format";
-import {
-  UNIT_OPTIONS,
-  formatPresentation,
-  normalizeProductName,
-  productPresentation,
-} from "@shared/utils/product-format";
+import { formatCOP } from "@shared/utils/format";
+import { UNIT_OPTIONS, formatPresentation } from "@shared/utils/product-format";
 import { inputClass } from "@shared/utils/input-class";
 import { slugify } from "@shared/utils/slugify";
 import type { CategoryRow, ProductRow } from "./admin.types";
@@ -57,12 +52,7 @@ export function ProductsManager() {
   }, [load]);
 
   const searchTerm = searchQuery.trim().toLocaleLowerCase("es-CO");
-  const visibleProducts = products
-    .map((product) => {
-      const presentation = productPresentation(product);
-      return { ...product, ...presentation, name: titleCase(presentation.name) };
-    })
-    .filter(({ name, unit }) =>
+  const visibleProducts = products.filter(({ name, unit }) =>
       [name, [name, formatPresentation(unit)].filter(Boolean).join(" ")].some((label) =>
         label.toLocaleLowerCase("es-CO").includes(searchTerm),
       ),
@@ -70,7 +60,7 @@ export function ProductsManager() {
 
   async function save(imageFile?: File | null) {
     if (!supabase || !editing) return;
-    const name = normalizeProductName(editing.name ?? "");
+    const name = editing.name?.trim();
     if (!name) {
       toast.error("El nombre del producto es obligatorio");
       return;
@@ -95,20 +85,12 @@ export function ProductsManager() {
       image_url = supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
     }
 
-    const original = products.find((product) => product.id === editing.id);
-    const presentation = original && productPresentation(original);
     const cleanValues = {
-      name:
-        original && presentation && editing.name === titleCase(presentation.name)
-          ? original.name
-          : name,
+      name,
       slug: editing.slug || slugify(name),
       description: editing.description ?? "Producto auténtico árabe importado de alta calidad",
       price,
-      unit:
-        original && presentation && editing.unit === presentation.unit
-          ? original.unit
-          : editing.unit?.trim() || "unidad",
+      unit: editing.unit?.trim() || "unidad",
       image_url,
       featured: Boolean(editing.featured),
       in_stock: editing.in_stock !== false,
