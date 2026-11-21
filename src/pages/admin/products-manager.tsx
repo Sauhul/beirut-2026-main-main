@@ -3,11 +3,12 @@ import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@data/supabase/client";
-import { formatCOP } from "@shared/utils/format";
+import { formatCOP, titleCase } from "@shared/utils/format";
 import {
   UNIT_OPTIONS,
   formatPresentation,
   normalizeProductName,
+  productPresentation,
 } from "@shared/utils/product-format";
 import { inputClass } from "@shared/utils/input-class";
 import { slugify } from "@shared/utils/slugify";
@@ -55,6 +56,18 @@ export function ProductsManager() {
     void load();
   }, [load]);
 
+  const searchTerm = searchQuery.trim().toLocaleLowerCase("es-CO");
+  const visibleProducts = products
+    .map((product) => {
+      const presentation = productPresentation(product);
+      return { ...product, ...presentation, name: titleCase(presentation.name) };
+    })
+    .filter(({ name, unit }) =>
+      [name, [name, formatPresentation(unit)].filter(Boolean).join(" ")].some((label) =>
+        label.toLocaleLowerCase("es-CO").includes(searchTerm),
+      ),
+    );
+
   async function save(imageFile?: File | null) {
     if (!supabase || !editing) return;
     const name = normalizeProductName(editing.name ?? "");
@@ -77,12 +90,20 @@ export function ProductsManager() {
       image_url = supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
     }
 
+    const original = products.find((product) => product.id === editing.id);
+    const presentation = original && productPresentation(original);
     const cleanValues = {
-      name,
+      name:
+        original && presentation && editing.name === titleCase(presentation.name)
+          ? original.name
+          : name,
       slug: editing.slug || slugify(name),
       description: editing.description ?? "Producto auténtico árabe importado de alta calidad",
       price: Number(editing.price || 0),
-      unit: editing.unit ? editing.unit.trim() : "unidad",
+      unit:
+        original && presentation && editing.unit === presentation.unit
+          ? original.unit
+          : editing.unit?.trim() || "unidad",
       image_url,
       featured: Boolean(editing.featured),
       in_stock: editing.in_stock !== false,
@@ -92,9 +113,18 @@ export function ProductsManager() {
     const query = editing.id
       ? supabase.from("products").update(cleanValues).eq("id", editing.id)
       : supabase.from("products").insert(cleanValues);
-    const { error } = await query.select("id").single();
+    const { data: savedProduct, error } = await query.select("id").maybeSingle();
     if (error) {
       toast.error(`No se pudo guardar: ${error.message}`);
+      return;
+    }
+    if (!savedProduct) {
+      const { data: isAdmin, error: accessError } = await supabase.rpc("is_current_admin");
+      toast.error(
+        !accessError && isAdmin === false
+          ? "Tu cuenta no tiene permiso para editar productos."
+          : "Supabase no confirmó el cambio. Comprueba los permisos o si el producto sigue en el catálogo.",
+      );
       return;
     }
 
@@ -156,50 +186,47 @@ export function ProductsManager() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {products
-                .filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                .map((p) => (
-                  <tr key={p.id} className="hover:bg-onyx/50">
-                    <td className="px-4 py-3">
-                      <span className="font-bold text-sand">{p.name}</span>
-                      <span className="ml-2 text-xs text-muted-foreground">
-                        {formatPresentation(p.unit)}
-                      </span>
-                      {p.featured && <span className="ml-2 text-xs text-gold">★</span>}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {categories.find((c) => c.id === p.category_id)?.name ?? "—"}
-                    </td>
-                    <td className="px-4 py-3 font-display text-gold">{formatCOP(p.price)}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`text-xs font-semibold ${p.in_stock ? "text-gold" : "text-destructive"}`}
+              {visibleProducts.map((p) => (
+                <tr key={p.id} className="hover:bg-onyx/50">
+                  <td className="px-4 py-3">
+                    <span className="font-bold text-sand">{p.name}</span>
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      {formatPresentation(p.unit)}
+                    </span>
+                    {p.featured && <span className="ml-2 text-xs text-gold">★</span>}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {categories.find((c) => c.id === p.category_id)?.name ?? "—"}
+                  </td>
+                  <td className="px-4 py-3 font-display text-gold">{formatCOP(p.price)}</td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`text-xs font-semibold ${p.in_stock ? "text-gold" : "text-destructive"}`}
+                    >
+                      {p.in_stock ? "Disponible" : "Agotado"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setEditing(p)}
+                        aria-label="Editar"
+                        className="text-muted-foreground hover:text-gold"
                       >
-                        {p.in_stock ? "Disponible" : "Agotado"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => setEditing(p)}
-                          aria-label="Editar"
-                          className="text-muted-foreground hover:text-gold"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => setDeleting(p)}
-                          aria-label="Eliminar"
-                          className="text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              {products.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                .length === 0 && (
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => setDeleting(p)}
+                        aria-label="Eliminar"
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {visibleProducts.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
                     {products.length === 0
