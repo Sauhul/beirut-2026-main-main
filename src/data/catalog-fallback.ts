@@ -123,7 +123,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "ce313787-8f51-4891-9ddd-219648232ebc",
     "slug": "aceite-oliva-3litros",
-    "name": "ACEITE DE OLIVA 3 LITROS",
+    "name": "Aceite de oliva Koura (3 L)",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 240000,
     "unit": "3 L",
@@ -136,7 +136,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "a161102a-c66b-4407-96fc-9f1e4d021b78",
     "slug": "aceite-oliva-koura",
-    "name": "ACEITE OLIVA KOURA",
+    "name": "Aceite de oliva Koura en botella",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 60000,
     "unit": "unidad",
@@ -149,7 +149,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "2f9b3302-6b56-42c4-84ed-9702b1d317b0",
     "slug": "aceitunas-verdes-encurtidas",
-    "name": "ACEITUNAS VERDES ENCURTIDAS",
+    "name": "Aceitunas verdes encurtidas Beirut",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 25000,
     "unit": "unidad",
@@ -162,7 +162,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "aead6ad9-2037-4b63-8970-086e22ad8b97",
     "slug": "agua-azahar",
-    "name": "AGUA AZAHAR",
+    "name": "Agua de azahar",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 18000,
     "unit": "unidad",
@@ -188,7 +188,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "2bb9f36a-255e-48b8-af48-097c9a437857",
     "slug": "agua-rosas-300ml",
-    "name": "AGUA ROSAS 300ML",
+    "name": "Agua de rosas (300 ml)",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 17000,
     "unit": "300 ml",
@@ -201,7 +201,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "d25c867d-dbb4-4da0-842f-591a68056749",
     "slug": "agua-rosas-750ml",
-    "name": "AGUA ROSAS 750ML",
+    "name": "Agua de rosas (750 ml)",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 38000,
     "unit": "750 ml",
@@ -214,7 +214,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "4dcb2f37-d2a5-4ba6-a955-024cdcb52fcd",
     "slug": "albaricoque-seco",
-    "name": "ALBARICOQUE SECO",
+    "name": "Albaricoques secos Beirut",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 25000,
     "unit": "unidad",
@@ -240,7 +240,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "c894c5fb-ab11-43e4-90d6-807589398e00",
     "slug": "altramuces-secos",
-    "name": "ALTRAMUCES SECOS",
+    "name": "Altramuces secos Gardenia",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 22000,
     "unit": "unidad",
@@ -279,7 +279,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "77540d69-c66d-4c4e-8221-03586e7eb6a4",
     "slug": "azahar-agua-260ml",
-    "name": "AZAHAR AGUA 260ML",
+    "name": "Agua de azahar (260 ml)",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 15000,
     "unit": "260 ml",
@@ -331,7 +331,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "ed250832-e0e5-42a6-a7b2-e42f0486dd66",
     "slug": "berenjena-con-tahine",
-    "name": "BERENJENA CON TAHINE",
+    "name": "Crema de berenjena con tahini Chtoura Garden",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 12000,
     "unit": "unidad",
@@ -344,7 +344,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "c753a703-5a67-469b-982f-4f6809b2c7d5",
     "slug": "bordon",
-    "name": "BORDON",
+    "name": "Carne de res en conserva Target (corned beef)",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 25000,
     "unit": "unidad",
@@ -396,7 +396,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "10b8fc4d-0ed4-41e8-bf9e-021d3ed21185",
     "slug": "bulgur-trigo-blanco-1",
-    "name": "BULGUR TRIGO BLANCO 1",
+    "name": "Bulgur de trigo blanco Vea n.º 1",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 16000,
     "unit": "unidad",
@@ -409,7 +409,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "45d74857-7d7f-4ff3-b2f0-a388b35d3f1f",
     "slug": "cafe-maatouk-450gr",
-    "name": "CAFE MAATOUK 450GR",
+    "name": "Café Maatouk (450 g)",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 55000,
     "unit": "450 g",
@@ -435,7 +435,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "e142e369-2fb5-4a3d-a263-06dd09d97b09",
     "slug": "cafe-najjar-clasic",
-    "name": "CAFE NAJJAR CLASIC",
+    "name": "Café Najjar clásico",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 50000,
     "unit": "unidad",
@@ -448,7 +448,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "5f9d5135-ab37-4e0c-a8f9-9f75246881d9",
     "slug": "cafe-najjar-con-cardamomo",
-    "name": "CAFE NAJJAR CON CARDAMOMO",
+    "name": "Café Najjar con cardamomo",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 27000,
     "unit": "unidad",
@@ -461,7 +461,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "0c8645e8-4af2-40c3-aeeb-44ba1dc53689",
     "slug": "castania-azul-lat",
-    "name": "CASTANIA AZUL LAT",
+    "name": "Mezcla de frutos secos Castania en lata azul",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 50000,
     "unit": "unidad",
@@ -487,7 +487,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "edd42e0b-410b-4271-9731-6c2d22648748",
     "slug": "castania-sin-sal",
-    "name": "CASTANIA SIN SAL",
+    "name": "Mezcla de frutos secos Castania sin sal",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 75000,
     "unit": "unidad",
@@ -500,7 +500,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "b8643979-ff34-4883-bafe-bea94ac8e642",
     "slug": "castania-verde-lat",
-    "name": "CASTANIA VERDE LAT",
+    "name": "Mezcla de frutos secos Castania en lata verde",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 65000,
     "unit": "unidad",
@@ -630,7 +630,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "d350f3f7-b036-4d0f-9797-d3503ba49159",
     "slug": "crunchy-lat-morada",
-    "name": "CRUNCHY LAT MORADA",
+    "name": "Mezcla de frutos secos Crunchy Extra",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 45000,
     "unit": "unidad",
@@ -656,7 +656,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "ed3c4016-7ac0-4b55-b7bc-846d84e63f70",
     "slug": "crunchy-lat-verde-450gr",
-    "name": "CRUNCHY LAT VERDE 450GR",
+    "name": "Mezcla de frutos secos Crunchy Supreme (450 g)",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 55000,
     "unit": "450 g",
