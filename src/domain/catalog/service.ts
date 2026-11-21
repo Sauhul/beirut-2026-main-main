@@ -7,13 +7,7 @@ import { supabase } from "@data/supabase/client";
 import { CATEGORIES, PRODUCTS } from "@data/catalog-fallback";
 import { productDescriptions } from "@data/product-descriptions";
 import { formatPresentation, productPresentation } from "@shared/utils/product-format";
-import { getCorrectCategory } from "@shared/utils/category-mapper";
 import type { Catalog, Product } from "./types";
-
-const categoryByProductId = new Map(PRODUCTS.map((product) => [product.id, product.category_slug]));
-const categoryByProductSlug = new Map(
-  PRODUCTS.map((product) => [product.slug, product.category_slug]),
-);
 
 const defaultDescription = "Producto auténtico árabe importado de alta calidad";
 
@@ -56,49 +50,25 @@ export async function getCatalog(): Promise<Catalog> {
 
   const [categoriesRes, productsRes] = await Promise.all([
     supabase.from("categories").select("*").order("sort_order"),
-    supabase.from("products").select("*, categories(slug, name)").order("name"),
+    supabase.from("products").select("*").order("name"),
   ]);
 
-  /* 
-  console.log("[Catálogo] Resultados Supabase:", {
-      categories: categoriesRes.data?.length,
-      products: productsRes.data?.length,
-      errCat: categoriesRes.error,
-      errProd: productsRes.error
-    });
-    */
-
-  /* 
-  console.log("[Catálogo] Resultados Supabase:", {
-      categories: categoriesRes.data?.length,
-      products: productsRes.data?.length,
-      errCat: categoriesRes.error,
-      errProd: productsRes.error
-    });
-    */
   if (categoriesRes.error || productsRes.error) {
     console.error("[Catálogo] Error leyendo de Supabase:", {
       categories: categoriesRes.error?.message,
       products: productsRes.error?.message,
     });
-    // LOG DETAILED ERROR
-    console.log("[Catálogo] Detailed:", { categoriesRes, productsRes });
     return fallbackCatalog;
   }
 
-  const categoriesBySlug = new Map(CATEGORIES.map((category) => [category.slug, category]));
-  for (const category of categoriesRes.data ?? []) {
-    const curated = categoriesBySlug.get(category.slug);
-    categoriesBySlug.set(category.slug, curated ? { ...curated, id: category.id } : category);
-  }
+  const savedCategories = categoriesRes.data ?? [];
+  const categoriesById = new Map(savedCategories.map((category) => [category.id, category]));
+  const otherCategory =
+    savedCategories.find((category) => category.slug === "otros") ??
+    CATEGORIES.find((category) => category.slug === "otros")!;
 
   const dbProducts = (productsRes.data ?? []).map((p): Product => {
-    const categorySlug =
-      categoryByProductId.get(p.id) ??
-      categoryByProductSlug.get(p.slug) ??
-      p.categories?.slug ??
-      getCorrectCategory(p.name);
-    const category = categoriesBySlug.get(categorySlug) ?? categoriesBySlug.get("otros")!;
+    const category = categoriesById.get(p.category_id) ?? otherCategory;
 
     return withDisplayProduct({
       id: p.id,
@@ -115,7 +85,9 @@ export async function getCatalog(): Promise<Catalog> {
     });
   });
 
-  const categories = [...categoriesBySlug.values()].sort((a, b) => a.sort_order - b.sort_order);
+  const categories = categoriesById.has(otherCategory.id)
+    ? savedCategories
+    : [...savedCategories, otherCategory].sort((a, b) => a.sort_order - b.sort_order);
   return { categories, products: dbProducts };
 }
 

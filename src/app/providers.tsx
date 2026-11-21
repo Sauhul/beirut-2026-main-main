@@ -24,7 +24,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
       <BrowserRouter>
         <CartProvider>
           {children}
-          <Toaster position="top-center" richColors />
+          <Toaster position="top-right" duration={2500} richColors />
         </CartProvider>
       </BrowserRouter>
     </QueryClientProvider>

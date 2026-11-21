@@ -86,7 +86,9 @@ export function OrdersManager() {
       const { error } = await supabase
         .from("orders")
         .update({ status: newStatus })
-        .eq("id", orderId);
+        .eq("id", orderId)
+        .select("id")
+        .single();
 
       if (error) throw error;
 

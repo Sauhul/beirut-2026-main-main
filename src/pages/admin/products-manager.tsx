@@ -92,7 +92,7 @@ export function ProductsManager() {
     const query = editing.id
       ? supabase.from("products").update(cleanValues).eq("id", editing.id)
       : supabase.from("products").insert(cleanValues);
-    const { error } = await query;
+    const { error } = await query.select("id").single();
     if (error) {
       toast.error(`No se pudo guardar: ${error.message}`);
       return;
@@ -108,7 +108,12 @@ export function ProductsManager() {
   async function remove(product: ProductRow) {
     if (!supabase || !product) return;
     setDeletingBusy(true);
-    const { error } = await supabase.from("products").delete().eq("id", product.id);
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq("id", product.id)
+      .select("id")
+      .single();
     setDeletingBusy(false);
     if (error) {
       toast.error(`No se pudo eliminar: ${error.message}`);
