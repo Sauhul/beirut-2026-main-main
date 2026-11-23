@@ -32,6 +32,7 @@ export function ProductDetailPage() {
   const { data } = useQuery(productQuery(slug ?? ""));
   const { add } = useCart();
   const [qty, setQty] = useState(1);
+  const [addCount, setAddCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   usePageTitle(data ? `${data.product.name} · Beirut` : "Producto · Beirut");
@@ -105,15 +106,20 @@ export function ProductDetailPage() {
             <div className="flex items-center gap-2 border border-input bg-onyx px-3 py-2">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="grid h-9 w-9 place-items-center text-muted-foreground hover:text-gold"
+                className="motion-press grid h-9 w-9 place-items-center text-muted-foreground hover:text-gold"
                 aria-label="Restar"
               >
                 <Minus className="h-4 w-4" />
               </button>
-              <span className="min-w-6 text-center text-sm font-bold text-sand">{qty}</span>
+              <span
+                key={qty}
+                className="motion-value min-w-6 text-center text-sm font-bold text-sand"
+              >
+                {qty}
+              </span>
               <button
                 onClick={() => setQty((q) => q + 1)}
-                className="grid h-9 w-9 place-items-center text-muted-foreground hover:text-gold"
+                className="motion-press grid h-9 w-9 place-items-center text-muted-foreground hover:text-gold"
                 aria-label="Sumar"
               >
                 <Plus className="h-4 w-4" />
@@ -133,11 +139,17 @@ export function ProductDetailPage() {
                   },
                   qty,
                 );
+                setAddCount((count) => count + 1);
                 toast.success(`${name} agregado al carrito`);
               }}
               className="btn-gold flex-1 sm:flex-none"
             >
-              <CheckCircle2 className="h-4 w-4" /> Agregar al carrito
+              <CheckCircle2
+                key={addCount}
+                aria-hidden="true"
+                className={`h-4 w-4 ${addCount ? "motion-added" : ""}`}
+              />
+              Agregar al carrito
             </button>
           </div>
 

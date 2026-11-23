@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
-import { LogOut } from "lucide-react";
+import type { Session, SupabaseClient } from "@supabase/supabase-js";
+import { Eye, EyeOff, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@data/supabase/client";
 import { inputClass } from "@shared/utils/input-class";
@@ -17,91 +17,187 @@ export function AdminPage() {
   usePageTitle("Administración · BEIRUT");
   const [session, setSession] = useState<Session | null>(null);
   const [checking, setChecking] = useState(true);
+  const [access, setAccess] = useState<{ userId: string; allowed: boolean | null }>();
+  const [attempt, setAttempt] = useState(0);
   const client = supabase;
+  const userId = session?.user.id;
 
   useEffect(() => {
-    if (!client) {
-      setChecking(false);
-      return;
-    }
-    client.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setChecking(false);
-    });
+    if (!client) return;
     const {
       data: { subscription },
-    } = client.auth.onAuthStateChange((_event, newSession) => setSession(newSession));
+    } = client.auth.onAuthStateChange((event, newSession) => {
+      setSession(newSession);
+      setChecking(false);
+      if (event === "SIGNED_OUT") setAccess(undefined);
+    });
     return () => subscription.unsubscribe();
   }, [client]);
 
-  if (!client) {
+  useEffect(() => {
+    if (!client || !userId) return;
+    const controller = new AbortController();
+    void client
+      .rpc("is_current_admin")
+      .abortSignal(controller.signal)
+      .then(({ data, error }) => {
+        if (!controller.signal.aborted)
+          setAccess({ userId, allowed: error ? null : data === true });
+      });
+    return () => controller.abort();
+  }, [client, userId, attempt]);
+
+  async function logout() {
+    const { error } = await client!.auth.signOut({ scope: "local" });
+    if (error) toast.error("No se pudo cerrar la sesión. Intenta de nuevo.");
+  }
+
+  if (!client)
+    return <AccessMessage>El panel no está disponible. Contacta a la tienda.</AccessMessage>;
+  if (checking) return <AccessMessage>Abriendo el panel…</AccessMessage>;
+  if (!session) return <LoginForm client={client} />;
+  if (!access || access.userId !== userId) {
+    return <AccessMessage>Comprobando el permiso de acceso…</AccessMessage>;
+  }
+  if (access.allowed !== true) {
     return (
-      <div className="mx-auto max-w-md px-5 py-28 text-center text-sm text-muted-foreground">
-        Supabase no está configurado.
-      </div>
+      <section className="mx-auto max-w-lg px-5 py-16">
+        <h1 className="font-display text-3xl text-sand">Acceso al panel</h1>
+        <p className="mt-3 text-lg" role="alert">
+          {access.allowed === null
+            ? "No pudimos comprobar tu permiso de acceso."
+            : "Este correo no tiene permiso para administrar la tienda."}
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          {access.allowed === null && (
+            <button
+              className={actionClass}
+              onClick={() => {
+                setAccess(undefined);
+                setAttempt(attempt + 1);
+              }}
+            >
+              Intentar de nuevo
+            </button>
+          )}
+          <button className={actionClass} onClick={() => void logout()}>
+            Cerrar sesión
+          </button>
+        </div>
+      </section>
     );
   }
 
-  if (checking) {
-    return (
-      <div className="mx-auto max-w-md px-5 py-28 text-center text-sm text-muted-foreground">
-        Cargando…
-      </div>
-    );
-  }
-
-  if (!session) return <LoginForm />;
-
-  return <AdminPanel onLogout={() => client.auth.signOut()} />;
+  return <AdminPanel onLogout={() => void logout()} />;
 }
 
-/* ── Login ─────────────────────────────────────────────────── */
+const actionClass =
+  "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-input px-4 py-2 text-base font-semibold text-sand hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const fieldClass = `${inputClass} min-h-12 rounded-lg !text-lg focus-visible:outline-2 focus-visible:outline-primary`;
 
-function LoginForm() {
+function AccessMessage({ children }: { children: string }) {
+  return (
+    <p role="status" className="mx-auto max-w-lg px-5 py-16 text-lg text-sand">
+      {children}
+    </p>
+  );
+}
+
+function LoginForm({ client }: { client: SupabaseClient }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (loading) return;
     setLoading(true);
-    const { error } = await supabase!.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) toast.error("Credenciales inválidas");
+    setMessage("");
+    try {
+      const { error } = await client.auth.signInWithPassword({ email: email.trim(), password });
+      if (error?.code === "invalid_credentials") {
+        setMessage("Revisa tu correo y contraseña e intenta de nuevo.");
+      } else if (error) {
+        setMessage("No pudimos iniciar sesión. Espera un momento e intenta de nuevo.");
+      }
+    } catch {
+      setMessage("No pudimos conectarnos. Revisa tu conexión e intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <div className="mx-auto max-w-sm px-5 py-24">
-      <div className="text-center">
-        <p className="eyebrow">Acceso Restringido</p>
-        <h1 className="mt-2 font-display text-4xl text-sand">Beirut Admin</h1>
+    <section className="mx-auto max-w-lg px-5 py-10 sm:py-16" aria-labelledby="admin-login-title">
+      <div className="rounded-2xl border border-border bg-card p-6 sm:p-9">
+        <h1 id="admin-login-title" className="font-display text-3xl text-sand sm:text-4xl">
+          Panel de Beirut
+        </h1>
+        <p className="mt-2 text-base text-muted-foreground">
+          Entra con tu correo de administración.
+        </p>
+        <form onSubmit={onSubmit} className="mt-7 grid gap-5" aria-busy={loading}>
+          <label className="block text-base font-semibold text-sand">
+            Correo electrónico
+            <input
+              type="email"
+              name="email"
+              autoComplete="username"
+              autoCapitalize="none"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className={fieldClass}
+            />
+          </label>
+          <div>
+            <label htmlFor="admin-password" className="block text-base font-semibold text-sand">
+              Contraseña
+            </label>
+            <input
+              id="admin-password"
+              name="password"
+              autoComplete="current-password"
+              type={showPassword ? "text" : "password"}
+              required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className={fieldClass}
+            />
+            <button
+              type="button"
+              className={`mt-2 ${actionClass}`}
+              aria-controls="admin-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOff size={20} aria-hidden="true" />
+              ) : (
+                <Eye size={20} aria-hidden="true" />
+              )}
+              {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            </button>
+          </div>
+          {message && (
+            <p
+              role="alert"
+              className="rounded-lg border border-destructive p-3 text-base text-destructive"
+            >
+              {message}
+            </p>
+          )}
+          <button
+            type="submit"
+            disabled={loading}
+            className="min-h-12 rounded-lg bg-primary px-5 py-3 text-lg font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
+          >
+            {loading ? "Iniciando sesión…" : "Iniciar sesión"}
+          </button>
+        </form>
       </div>
-      <form onSubmit={onSubmit} className="mt-8 card-onyx p-7 space-y-4">
-        <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          Correo
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={`mt-1 ${inputClass}`}
-          />
-        </label>
-        <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          Contraseña
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={`mt-1 ${inputClass}`}
-          />
-        </label>
-        <button type="submit" disabled={loading} className="btn-gold w-full mt-4 !py-3">
-          {loading ? "Ingresando…" : "Ingresar"}
-        </button>
-      </form>
-    </div>
+    </section>
   );
 }
 
@@ -114,31 +210,29 @@ function AdminPanel({ onLogout }: { onLogout: () => void }) {
     <div className="mx-auto max-w-6xl px-5 py-12">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
         <div>
-          <p className="eyebrow">Gestión Interna</p>
           <h1 className="mt-1 font-display text-4xl text-sand">Administración</h1>
         </div>
-        <button onClick={onLogout} className="btn-outline-gold !px-5 !py-2 text-xs">
-          <LogOut className="h-4 w-4" /> Salir
+        <button onClick={onLogout} className={actionClass}>
+          <LogOut className="h-5 w-5" aria-hidden="true" /> Cerrar sesión
         </button>
       </div>
 
-      <div className="mt-8 flex gap-2">
+      <nav aria-label="Secciones del panel" className="mt-6 flex flex-wrap gap-3">
         {(["productos", "pedidos"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-6 py-2.5 text-[0.65rem] font-bold tracking-[0.2em] uppercase transition-colors ${
-              tab === t
-                ? "border border-gold bg-gold text-primary-foreground"
-                : "border border-border text-muted-foreground hover:border-gold hover:text-gold"
+            aria-pressed={tab === t}
+            className={`${actionClass} capitalize ${
+              tab === t ? "!border-primary !bg-primary !text-primary-foreground" : ""
             }`}
           >
             {t}
           </button>
         ))}
-      </div>
+      </nav>
 
-      <div className="mt-8">{tab === "productos" ? <ProductsManager /> : <OrdersManager />}</div>
+      <div className="mt-6">{tab === "productos" ? <ProductsManager /> : <OrdersManager />}</div>
     </div>
   );
 }

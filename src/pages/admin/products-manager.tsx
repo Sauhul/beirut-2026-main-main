@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { ImageOff, Pencil, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@data/supabase/client";
@@ -32,16 +32,21 @@ export function ProductsManager() {
   const [deleting, setDeleting] = useState<ProductRow | null>(null);
   const [deletingBusy, setDeletingBusy] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const load = useCallback(async () => {
     if (!supabase) return;
     setLoading(true);
+    setLoadError(false);
     const [{ data: prods, error: errP }, { data: cats, error: errC }] = await Promise.all([
       supabase.from("products").select("*").order("name"),
       supabase.from("categories").select("*").order("sort_order"),
     ]);
-    if (errP) console.error("Error cargando productos de Supabase:", errP);
-    if (errC) console.error("Error cargando categorías de Supabase:", errC);
+    if (errP || errC) {
+      setLoadError(true);
+      setLoading(false);
+      return;
+    }
     setProducts((prods as ProductRow[]) ?? []);
     setCategories((cats as CategoryRow[]) ?? []);
     setLoading(false);
@@ -145,42 +150,65 @@ export function ProductsManager() {
 
   return (
     <div>
-      <div className="mb-6 flex gap-4">
-        <button onClick={() => setEditing({ ...emptyProduct })} className="btn-gold !py-2.5 !px-5">
+      <div className="mb-6 flex flex-wrap items-end gap-4">
+        <button
+          onClick={() => setEditing({ ...emptyProduct })}
+          className="min-h-12 inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-base font-semibold text-primary-foreground hover:bg-primary/90"
+        >
           <Plus className="h-4 w-4" /> Nuevo producto
         </button>
-        <input
-          type="text"
-          placeholder="Buscar productos..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className={`${inputClass} max-w-xs`}
-        />
+        <label className="block w-full max-w-sm text-base font-semibold">
+          Buscar por nombre
+          <input
+            type="search"
+            placeholder="Ej. Café Najjar"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={`${inputClass} min-h-12 rounded-lg !text-base`}
+          />
+        </label>
       </div>
 
       {loading ? (
         <p className="text-sm text-muted-foreground">Cargando…</p>
+      ) : loadError ? (
+        <div role="alert" className="rounded-lg border border-border bg-card p-5">
+          <p>No pudimos cargar los productos.</p>
+          <button
+            onClick={() => void load()}
+            className="mt-3 min-h-11 rounded-lg border border-input px-4 font-semibold hover:bg-muted"
+          >
+            Intentar de nuevo
+          </button>
+        </div>
       ) : (
         <div className="overflow-x-auto border border-border bg-card">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-muted text-[0.62rem] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+          <table className="w-full text-left text-base">
+            <thead className="bg-muted text-sm font-semibold text-sand">
               <tr>
                 <th className="px-4 py-3">Producto</th>
                 <th className="px-4 py-3">Categoría</th>
                 <th className="px-4 py-3">Precio</th>
                 <th className="px-4 py-3">Estado</th>
-                <th className="px-4 py-3"></th>
+                <th className="px-4 py-3">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {visibleProducts.map((p) => (
-                <tr key={p.id} className="hover:bg-onyx/50">
+                <tr key={p.id} className="hover:bg-muted/50">
                   <td className="px-4 py-3">
-                    <span className="font-bold text-sand">{p.name}</span>
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      {formatPresentation(p.unit)}
-                    </span>
-                    {p.featured && <span className="ml-2 text-xs text-gold">★</span>}
+                    <div className="flex min-w-52 items-center gap-3">
+                      <ProductPhoto src={p.image_url} className="h-14 w-14" />
+                      <div>
+                        <span className="block font-semibold text-sand">{p.name}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {formatPresentation(p.unit)}
+                        </span>
+                        {p.featured && (
+                          <span className="ml-2 text-sm text-muted-foreground">Destacado</span>
+                        )}
+                      </div>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {categories.find((c) => c.id === p.category_id)?.name ?? "—"}
@@ -197,15 +225,15 @@ export function ProductsManager() {
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={() => setEditing(p)}
-                        aria-label="Editar"
-                        className="text-muted-foreground hover:text-gold"
+                        aria-label={`Editar ${p.name}`}
+                        className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-input px-3 font-semibold text-sand hover:bg-muted"
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil className="h-4 w-4" aria-hidden="true" /> Editar
                       </button>
                       <button
                         onClick={() => setDeleting(p)}
-                        aria-label="Eliminar"
-                        className="text-muted-foreground hover:text-destructive"
+                        aria-label={`Eliminar ${p.name}`}
+                        className="grid min-h-11 min-w-11 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -302,6 +330,28 @@ async function compressImage(file: File) {
   return new File([blob], `${name || "imagen"}.jpg`, { type: "image/jpeg" });
 }
 
+function ProductPhoto({ src, className }: { src: string | null; className: string }) {
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+
+  return src && failedSrc !== src ? (
+    <img
+      src={src}
+      alt=""
+      loading="lazy"
+      onError={() => setFailedSrc(src)}
+      className={`${className} shrink-0 rounded-lg border border-border bg-muted object-contain`}
+    />
+  ) : (
+    <span
+      aria-label="Sin foto disponible"
+      role="img"
+      className={`${className} grid shrink-0 place-items-center rounded-lg border border-border bg-muted text-muted-foreground`}
+    >
+      <ImageOff size={20} aria-hidden="true" />
+    </span>
+  );
+}
+
 function ProductForm({
   value,
   categories,
@@ -313,13 +363,31 @@ function ProductForm({
   categories: CategoryRow[];
   onChange: (v: Partial<ProductRow> & { id?: string }) => void;
   onCancel: () => void;
-  onSave: (imageFile?: File | null) => void;
+  onSave: (imageFile?: File | null) => Promise<void>;
 }) {
   const set = <K extends keyof ProductRow>(key: K, v: ProductRow[K]) =>
     onChange({ ...value, [key]: v });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(value.image_url ?? null);
   const [processingImage, setProcessingImage] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (previewUrl?.startsWith("blob:")) return () => URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (saving || processingImage) return;
+    setSaving(true);
+    try {
+      await onSave(imageFile);
+    } catch {
+      toast.error("No se pudo guardar el producto. Intenta de nuevo.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function selectImage(rawFile: File | undefined) {
     if (!rawFile) return;
@@ -352,6 +420,7 @@ function ProductForm({
           </h2>
           <button
             onClick={onCancel}
+            disabled={saving}
             aria-label="Cerrar"
             className="text-muted-foreground hover:text-gold"
           >
@@ -360,14 +429,13 @@ function ProductForm({
         </div>
 
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSave(imageFile);
-          }}
+          onSubmit={(event) => void submit(event)}
           className="mt-6 grid gap-4"
+          aria-busy={saving}
         >
-          <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Nombre
+          {previewUrl && <ProductPhoto src={previewUrl} className="h-36 w-full" />}
+          <label className="block text-base font-semibold text-sand">
+            Nombre del producto
             <input
               required
               minLength={2}
@@ -429,7 +497,17 @@ function ProductForm({
             <span className="text-[0.65rem] text-muted-foreground font-semibold uppercase tracking-wider mr-1">
               Atajos rápidos:
             </span>
-            {["unidad", "100 g", "250 g", "500 g", "1 kg", "250 ml", "500 ml", "1 L", "Lata 340 g"].map((preset) => (
+            {[
+              "unidad",
+              "100 g",
+              "250 g",
+              "500 g",
+              "1 kg",
+              "250 ml",
+              "500 ml",
+              "1 L",
+              "Lata 340 g",
+            ].map((preset) => (
               <button
                 key={preset}
                 type="button"
@@ -481,7 +559,7 @@ function ProductForm({
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    disabled={processingImage}
+                    disabled={processingImage || saving}
                     onChange={(e) => void selectImage(e.target.files?.[0])}
                   />
                 </label>
@@ -517,16 +595,17 @@ function ProductForm({
             <button
               type="button"
               onClick={onCancel}
+              disabled={saving}
               className="btn-outline-gold !px-5 !py-2 text-xs"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              disabled={processingImage}
+              disabled={processingImage || saving}
               className="btn-gold !px-5 !py-2 text-xs"
             >
-              {processingImage ? "Procesando…" : "Guardar"}
+              {saving ? "Guardando…" : processingImage ? "Procesando…" : "Guardar producto"}
             </button>
           </div>
         </form>

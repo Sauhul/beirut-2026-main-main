@@ -7,9 +7,21 @@ import { supabase } from "@data/supabase/client";
 import { CATEGORIES, PRODUCTS } from "@data/catalog-fallback";
 import { productDescriptions } from "@data/product-descriptions";
 import { formatPresentation, productPresentation } from "@shared/utils/product-format";
+import backgroundPhotoSlugs from "./background-photos.json";
+import brochureProducts from "./brochure-products.json";
 import type { Catalog, Product } from "./types";
 
 const defaultDescription = "Producto auténtico árabe importado de alta calidad";
+
+const backgroundPhotos = new Set(backgroundPhotoSlugs);
+const duplicateTahinaSlugs = new Set(["tahine-libra", "tahine-kilo"]);
+const brochureBySlug = new Map<string, { name: string; price: number; description?: string }>(
+  Object.entries(brochureProducts),
+);
+
+function isVisibleInCatalog(product: { slug: string }) {
+  return !duplicateTahinaSlugs.has(product.slug);
+}
 
 function catalogDescription(slug: string, description: string | null): string {
   const saved = description?.trim();
@@ -17,8 +29,17 @@ function catalogDescription(slug: string, description: string | null): string {
   return productDescriptions.get(slug) ?? saved ?? "";
 }
 
-function withDisplayProduct(product: Product): Product {
-  const { unit } = productPresentation(product);
+function withDisplayProduct(product: Product, useBrochure = import.meta.env.DEV): Product {
+  const brochure = useBrochure ? brochureBySlug.get(product.slug) : undefined;
+  const name = brochure?.name ?? product.name;
+  const brochureUnit = brochure
+    ? productPresentation({ ...product, name, unit: "unidad" }).unit
+    : "unidad";
+  const { unit } = productPresentation({
+    ...product,
+    name,
+    unit: brochureUnit === "unidad" ? product.unit : brochureUnit,
+  });
   const description = catalogDescription(product.slug, product.description);
   const presentation = formatPresentation(unit);
   const measure = presentation.match(/^(\d+)(?:\.(\d+))? (g|kg|ml|L)$/);
@@ -31,16 +52,22 @@ function withDisplayProduct(product: Product): Product {
 
   return {
     ...product,
+    name,
+    price: brochure?.price ?? product.price,
+    image_url:
+      backgroundPhotos.has(product.slug)
+        ? `/products-backgrounds/${encodeURIComponent(product.slug)}.webp`
+        : product.image_url,
     unit,
-    description: needsPresentation
-      ? `Presentación de ${presentation}. ${description}`.trim()
-      : description,
+    description:
+      brochure?.description ??
+      (needsPresentation ? `Presentación de ${presentation}. ${description}`.trim() : description),
   };
 }
 
 const fallbackCatalog: Catalog = {
   categories: CATEGORIES,
-  products: PRODUCTS.map(withDisplayProduct),
+  products: PRODUCTS.filter(isVisibleInCatalog).map((product) => withDisplayProduct(product, true)),
 };
 
 /** Catálogo completo: categorías + productos. */
@@ -66,7 +93,7 @@ export async function getCatalog(): Promise<Catalog> {
     savedCategories.find((category) => category.slug === "otros") ??
     CATEGORIES.find((category) => category.slug === "otros")!;
 
-  const dbProducts = (productsRes.data ?? []).map((p): Product => {
+  const dbProducts = (productsRes.data ?? []).filter(isVisibleInCatalog).map((p): Product => {
     const category = categoriesById.get(p.category_id) ?? otherCategory;
 
     return withDisplayProduct({

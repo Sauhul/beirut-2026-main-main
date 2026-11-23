@@ -610,3 +610,104 @@
   background: var(--foreground);
   color: var(--background);
 }
+
+@media (width < 48rem) {
+  .mobile-nav-motion[data-open="false"] {
+    display: none;
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion-press,
+  .btn-gold,
+  .btn-outline-gold {
+    transition-property: transform, background-color, border-color, color, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  :is(.motion-press, .btn-gold, .btn-outline-gold):not(:disabled):active {
+    transform: scale(0.97);
+  }
+
+  .motion-value {
+    animation: interface-value 180ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  .motion-added {
+    animation: interface-added 240ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .motion-gallery-frame {
+    animation: interface-fade 200ms ease-out both;
+  }
+
+  .motion-backdrop {
+    animation: interface-fade 150ms ease-out both;
+  }
+
+  .motion-dialog {
+    animation: interface-sheet 220ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  @media (width < 48rem) {
+    .mobile-nav-motion {
+      transition: opacity 180ms ease-out, transform 180ms ease-out;
+      transition: opacity 180ms ease-out, transform 180ms ease-out, display 180ms allow-discrete;
+    }
+
+    @starting-style {
+      .mobile-nav-motion[data-open="true"] {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .nav-motion-link {
+      position: relative;
+    }
+
+    .nav-motion-link::after {
+      position: absolute;
+      inset: auto 0 -0.35rem;
+      height: 1px;
+      background: var(--gold);
+      content: "";
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .nav-motion-link:is(:hover, :focus-visible)::after {
+      transform: scaleX(1);
+    }
+
+    [data-catalog-item] .product-card-photo img {
+      transition-duration: 230ms;
+    }
+
+    [data-catalog-item]:hover .product-card-photo img {
+      transform: scale(1.05);
+    }
+  }
+}
+
+@keyframes interface-value {
+  from { opacity: 0.7; transform: translateY(3px) scale(0.94); }
+}
+
+@keyframes interface-added {
+  40% { transform: translateY(-3px) scale(1.18); }
+}
+
+@keyframes interface-fade {
+  from { opacity: 0.55; }
+}
+
+@keyframes interface-sheet {
+  from { opacity: 0.6; transform: translateY(10px) scale(0.97); }
+}

@@ -16,6 +16,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 export function CartPage() {
   usePageTitle("Tu carrito · Beirut");
   const { items, subtotal, setQuantity, remove, clear } = useCart();
+  const hasItems = items.length > 0;
   const containerRef = useRef<HTMLDivElement>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
@@ -39,7 +40,7 @@ export function CartPage() {
         );
       }
     },
-    { scope: containerRef, dependencies: [items.length], revertOnUpdate: true },
+    { scope: containerRef, dependencies: [hasItems], revertOnUpdate: true },
   );
 
   if (items.length === 0) {
@@ -106,7 +107,7 @@ export function CartPage() {
 
                     <button
                       onClick={() => remove(item.id)}
-                      className="flex h-10 w-10 items-center justify-center text-muted-foreground transition-colors hover:text-destructive"
+                      className="motion-press flex h-10 w-10 items-center justify-center text-muted-foreground transition-colors hover:text-destructive"
                       aria-label={`Quitar ${item.name}`}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -117,17 +118,20 @@ export function CartPage() {
                     <div className="flex items-center gap-3 border border-input bg-background/60 p-1">
                       <button
                         onClick={() => setQuantity(item.id, Math.max(1, item.quantity - 1))}
-                        className="quantity-btn flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-gold"
+                        className="motion-press quantity-btn flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-gold"
                         aria-label="Reducir cantidad"
                       >
                         <Minus className="h-4 w-4" />
                       </button>
-                      <span className="min-w-[3rem] text-center text-base font-bold text-sand">
+                      <span
+                        key={item.quantity}
+                        className="motion-value min-w-[3rem] text-center text-base font-bold text-sand"
+                      >
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => setQuantity(item.id, item.quantity + 1)}
-                        className="quantity-btn flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-gold"
+                        className="motion-press quantity-btn flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-gold"
                         aria-label="Aumentar cantidad"
                       >
                         <Plus className="h-4 w-4" />
@@ -193,7 +197,9 @@ export function CartPage() {
 
           <div className="mt-8 flex items-center justify-between border-t border-border pt-8">
             <span className="text-xl text-sand">Total</span>
-            <span className="font-display text-4xl text-gold">{formatCOP(subtotal)}</span>
+            <span key={subtotal} className="motion-value font-display text-4xl text-gold">
+              {formatCOP(subtotal)}
+            </span>
           </div>
 
           <div className="mt-8 space-y-2 text-xs text-muted-foreground">
@@ -212,8 +218,8 @@ export function CartPage() {
       </div>
 
       {showConfirmDialog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="mx-4 w-full max-w-lg bg-card p-8 shadow-[var(--shadow-lift)]">
+        <div className="motion-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="motion-dialog mx-4 w-full max-w-lg bg-card p-8 shadow-[var(--shadow-lift)]">
             <h2 className="font-display text-3xl text-sand">¿Vaciar carrito?</h2>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">
               Esta acción no se puede deshacer. Perderás {items.length} artículo(s) de tu carrito.

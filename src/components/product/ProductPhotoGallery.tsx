@@ -17,6 +17,8 @@ export function ProductPhotoGallery({ imageUrl, name }: ProductPhotoGalleryProps
   return (
     <div className="mx-auto max-w-xl">
       <ProductPhoto
+        key={String(showDetail)}
+        className="motion-gallery-frame"
         imageUrl={imageUrl}
         alt={showDetail ? `Detalle de ${name}` : name}
         loading="eager"
@@ -24,11 +26,21 @@ export function ProductPhotoGallery({ imageUrl, name }: ProductPhotoGalleryProps
       />
       {focalPoint && (
         <div className="product-gallery-controls" role="group" aria-label="Vistas del producto">
-          <button type="button" aria-pressed={!showDetail} onClick={() => setShowDetail(false)}>
+          <button
+            type="button"
+            className="motion-press"
+            aria-pressed={!showDetail}
+            onClick={() => setShowDetail(false)}
+          >
             <Image size={16} aria-hidden="true" />
             Juego completo
           </button>
-          <button type="button" aria-pressed={showDetail} onClick={() => setShowDetail(true)}>
+          <button
+            type="button"
+            className="motion-press"
+            aria-pressed={showDetail}
+            onClick={() => setShowDetail(true)}
+          >
             <ZoomIn size={16} aria-hidden="true" />
             Ver detalle
           </button>

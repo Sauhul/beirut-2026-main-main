@@ -78,8 +78,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const { data: catalog } = useQuery({ ...catalogQuery, enabled: items.length > 0 });
   const currentItems = useMemo(() => {
     if (!catalog) return items;
-    const prices = new Map(catalog.products.map(({ id, price }) => [id, price]));
-    return items.map((item) => ({ ...item, price: prices.get(item.id) ?? item.price }));
+    const products = new Map(catalog.products.map((product) => [product.id, product]));
+    return items.map((item) => {
+      const product = products.get(item.id);
+      if (!product) return item;
+      return {
+        ...item,
+        name: product.name,
+        price: product.price,
+        unit: product.unit,
+        imageUrl: product.image_url,
+      };
+    });
   }, [catalog, items]);
 
   const value = useMemo<CartContextValue>(

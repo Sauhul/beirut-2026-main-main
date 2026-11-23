@@ -254,7 +254,7 @@ export function CheckoutPage() {
               </div>
               {delivery === "domicilio" && (
                 <>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2">
+                  <label className="motion-dialog block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2">
                     Dirección *
                     <input
                       {...register("address")}
@@ -268,7 +268,7 @@ export function CheckoutPage() {
                       </span>
                     )}
                   </label>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <label className="motion-dialog block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Ciudad *
                     <input
                       {...register("city")}
@@ -331,7 +331,7 @@ export function CheckoutPage() {
             >
               {submitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 aria-hidden="true" className="h-4 w-4 motion-safe:animate-spin" />
                   Procesando...
                 </>
               ) : (

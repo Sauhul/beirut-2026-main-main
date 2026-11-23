@@ -1,0 +1,338 @@
+{
+  "aceite-oliva-3litros": {
+    "name": "Aceite de Oliva Extra Virgen Koura Valley 3L",
+    "price": 240000
+  },
+  "aceite-oliva-koura": {
+    "name": "Koura Valley Aceite de Oliva Extra Virgen 500 ml",
+    "price": 40000
+  },
+  "aceitunas-verdes-encurtidas": {
+    "name": "Aceituna Verde Libanesa 500g",
+    "price": 25000
+  },
+  "agua-azahar": {
+    "name": "Yamama Agua de Azahar (Orange Blossom Water) - 300ml",
+    "price": 17000,
+    "description": "El Agua de Azahar Yamama es un concentrado aromático que captura la esencia floral y cítrica de la flor de naranjo. Este formato de 300 ml es ideal para aquellos que solo necesitan una pequeña cantidad para recetas específicas o para quienes desean probar la calidad de Yamama por primera vez."
+  },
+  "agua-rosas-300ml": {
+    "name": "Agua de Rosa 300ml",
+    "price": 17000,
+    "description": "Esencia floral pura para repostería, postres árabes y tónico facial natural. Aroma intenso y calidad superior. ¡Compra ya!"
+  },
+  "agua-rosas-750ml": {
+    "name": "Agua de Rosa 750ml",
+    "price": 40000,
+    "description": "Agua de Rosas Yamama 750ml. Esencia floral pura para repostería, postres árabes y tónico facial natural. Aroma intenso y calidad superior. ¡Compra ya!"
+  },
+  "azahar-agua-260ml": {
+    "name": "Agua de Azahar Mechaalany (Orange Blossom Water) - 240 ml",
+    "price": 14000,
+    "description": "Añade un toque vibrante y refrescante a tus platos con el Agua de Azahar (Orange Blossom Water) de Mechaalany. Destilado de las flores del naranjo amargo, este extracto es un ingrediente secreto indispensable que aporta una nota aromática única, muy popular en las cocinas del Medio Oriente y Mediterránea."
+  },
+  "baklawa-kilo": {
+    "name": "Al Tom Delights – Surtido de Dulces Árabes 1000gr",
+    "price": 150000
+  },
+  "berenjena-con-tahine": {
+    "name": "Berenjena Ahumada con Tahine (Baba Ganush) Chtoura Garden 370g",
+    "price": 12000
+  },
+  "bordon": {
+    "name": "Target - Corned Beef (Carne de Res en Conserva)",
+    "price": 22000
+  },
+  "bulgur-trigo-blanco-1": {
+    "name": "VEA - Trigo Bulgur Blanco Fino (Bulgur Fine White)",
+    "price": 16000
+  },
+  "cafe-maatouk-450gr": {
+    "name": "Café Libanés Maatouk Original - 450g",
+    "price": 55000
+  },
+  "cafe-maatuk-200gr": {
+    "name": "Café Libanés Maatouk - Mezcla Original 200g",
+    "price": 30000
+  },
+  "cafe-najjar-clasic": {
+    "name": "Café Najjar Classic - 100% Arábica Brasileño de Molienda Fina 450g",
+    "price": 55000,
+    "description": "Experimenta la pureza y el sabor inconfundible del Café Najjar Classic. Este es el blend preferido por conocedores, garantizando una taza que equilibra la fuerza con un aroma delicioso y un final persistente. Najjar, con su larga tradición, te ofrece un café 100% Arábica brasileño de la más alta calidad."
+  },
+  "cafe-najjar-con-cardamomo": {
+    "name": "Café Najjar Classic con Cardamomo - 100% Arábica Brasileño 450g",
+    "price": 55000,
+    "description": "Sumérgete en una experiencia de sabor tradicional con el Café Najjar Classic con Cardamomo. Esta mezcla de café libanés combina la calidad premium del 100% Arábica brasileño de molienda fina con la intensidad aromática del cardamomo (ليه - Hal), la especia esencial que define el café de Medio Oriente."
+  },
+  "castania-azul-lat": {
+    "name": "Frutos Secos Mixtos \"Extra Nuts\" Castania - Premium 450g",
+    "price": 50000,
+    "description": "Calidad Superior en Cada Bocado: La Mezcla \"Extra Nuts\" de Castania Presentamos la selección \"Extra Nuts\" de Castania, una mezcla superior de frutos secos cuidadosamente seleccionados y tostados a la perfección. Esta lata azul premium contiene una combinación más rica y variada, ideal para los conocedores que buscan la máxima calidad, sabor y crocancia."
+  },
+  "castania-nuts": {
+    "name": "Castania Semillas de Girasol (Sunflower Seeds) - 150g",
+    "price": 22000,
+    "description": "Disfruta del snack clásico por excelencia con la garantía de calidad de Castania. Nuestras Semillas de Girasol son seleccionadas a mano, tostadas lentamente para obtener un crujido perfecto y saladas de forma precisa, ofreciendo un sabor que te recordará a los mejores momentos."
+  },
+  "castania-sin-sal": {
+    "name": "Castania Unsalted Mixed Nuts 450g",
+    "price": 65000,
+    "description": "Frutos Secos Mixtos Sin Sal Castania. Mezcla premium de nueces tostadas sin sal. Snack saludable, nutritivo y fuente de energía. ¡Compra ahora!"
+  },
+  "castania-verde-lat": {
+    "name": "Castania Super Extra Nuts | Mix de Frutos Secos Premium 450g",
+    "price": 65000,
+    "description": "¡El Placer de la Calidad Suprema! Descubre la mezcla Castania Super Extra Nuts, una selección premium de los frutos secos más frescos y crujientes. Este mix \"Super Extra\" está cuidadosamente tostado y sazonado a la perfección para ofrecerte una experiencia de sabor inigualable. Ideal como snack energético, para compartir en reuniones o como el complemento nutritivo de tu dieta diaria."
+  },
+  "chanclis": {
+    "name": "Labni con zaatar en Aceite – 400g",
+    "price": 38000,
+    "description": "Deliciosas bolas de queso fresco cubiertas con zaatar y conservadas en aceite, perfectas para untar, acompañar panes, ensaladas o picadas gourmet."
+  },
+  "crunchy-170gr": {
+    "name": "Frutos Secos Mixtos Premium 170g",
+    "price": 30000,
+    "description": "Exclusiva mezcla Premium de frutos secos de alta calidad de Crunchy Nuts. El snack gourmet para un sabor superior."
+  },
+  "crunchy-bite-80gr": {
+    "name": "Crunchy Bites - Rice & Corn Crackers (Thyme with Pomegranate)",
+    "price": 15000
+  },
+  "crunchy-bites-80gr": {
+    "name": "Crunchy Bites - Galletas de Arroz y Maíz con Tomillo (Thyme/Za'atar)",
+    "price": 15000
+  },
+  "crunchy-lat-morada-170gr": {
+    "name": "Frutos Secos Mixtos Extra 170g",
+    "price": 20000,
+    "description": "Selección premium de frutos secos mixtos de la línea Extra de Crunchy Nuts. El snack perfecto, nutritivo y delicioso para cualquier momento."
+  },
+  "crunchy-lat-morada-340gr": {
+    "name": "Frutos Secos Mixtos Extra 340g",
+    "price": 35000,
+    "description": "Selección premium de frutos secos mixtos de la línea Extra de Crunchy Nuts. El snack perfecto, nutritivo y delicioso para cualquier momento."
+  },
+  "crunchy-lat-morada": {
+    "name": "Frutos Secos Mixtos Extra 450g",
+    "price": 50000,
+    "description": "Selección premium de frutos secos mixtos de la línea Extra de Crunchy Nuts. El snack perfecto, nutritivo y delicioso para cualquier momento."
+  },
+  "crunchy-lat-roja-340gr": {
+    "name": "Frutos Secos Mixtos Premium 340g",
+    "price": 60000,
+    "description": "Exclusiva mezcla Premium de frutos secos de alta calidad de Crunchy Nuts. El snack gourmet para un sabor superior."
+  },
+  "crunchy-lat-verde-450gr": {
+    "name": "Frutos Secos Mixtos Supremos",
+    "price": 55000,
+    "description": "Frutos Secos Mixtos Supremos de la marca Crunchy Nuts. Una mezcla premium y sin aditivos intensos que incluye almendras, nueces de la india (anacardos) y nueces."
+  },
+  "crunchy-lata-200gr": {
+    "name": "Crunchy Bites - Galletas de Arroz y Maíz con Tomillo y Melaza de Granada",
+    "price": 25000
+  },
+  "crunchy-lt-verde-170gr": {
+    "name": "Frutos Secos Mixtos Supremos 170g",
+    "price": 25000,
+    "description": "Frutos Secos Mixtos Supremos de la marca Crunchy Nuts. Una selección premium de los frutos secos más finos y de alta calidad (como almendras, nueces y anacardos)."
+  },
+  "crunchy-mix": {
+    "name": "Abou Naji – Crunchy Mix 700gr",
+    "price": 70000
+  },
+  "crunchy-sesame": {
+    "name": "Crunchy Sesame Abou Naji 700gr",
+    "price": 55000
+  },
+  "crunchy-verde-pinante": {
+    "name": "Frutos Secos Mixtos Supremos con Chile 450g",
+    "price": 55000,
+    "description": "Frutos Secos Mixtos Supremos con Chile de la marca Crunchy Nuts. Una mezcla crujiente y de alta calidad con un toque intenso de chile. Perfecto para quienes buscan un snack picante y lleno de sabor."
+  },
+  "datil-libra": {
+    "name": "Dátiles Naturales Al Zawrak - Sultani Fakhir 450g",
+    "price": 45000,
+    "description": "Al Zawrak: La Cosecha Real de Dátiles Naturales (500g) Experimenta el sabor y la calidad inigualable con nuestros Dátiles Naturales Al Zawrak, cuidadosamente seleccionados a mano para garantizar solo la mejor fruta. Esta presentación de 500g, etiquetada como \"Sultani Fakhir\" (Lujo Sultán), te ofrece dátiles grandes, carnosos y con un dulzor perfectamente equilibrado."
+  },
+  "empanada-carne": {
+    "name": "Empanadas Congeladas de Carne - 10 unidades",
+    "price": 29000,
+    "description": "Empanadas Clásicas de Carne Congeladas. Cada una de las 10 unidades está generosamente rellena con carne de res de primera calidad, finamente picada y sazonada con una mezcla de especias"
+  },
+  "empanada-carne-con-labneh": {
+    "name": "Empanadas Congeladas de Carne y Labneh - 10 unidades",
+    "price": 29000,
+    "description": "Lleva la sofisticación de la cocina de Oriente Medio a tu mesa con nuestras Empanadas Congeladas de Carne y Labneh."
+  },
+  "empanada-de-arish": {
+    "name": "Empanadas Congeladas Arish - 10 unidades",
+    "price": 20000,
+    "description": "Lleva el sabor auténtico y cremoso de las especialidades árabes a tu mesa. Añade el Paquete de 10 Empanadas de Queso Arish a tu carrito y disfruta de un bocado único."
+  },
+  "empanada-de-espinaca": {
+    "name": "Empanadas Congeladas de Espinaca - 10 unidades",
+    "price": 24000,
+    "description": "Disfruta de uno de los aperitivos vegetarianos más queridos de la cocina levantina: las Empanadas Fatayer de Espinaca. Nuestra versión congelada captura el sabor auténtico con un relleno jugoso de espinaca fresca, cebolla y un toque cítrico esencial de sumac y limón."
+  },
+  "empanada-de-pollo": {
+    "name": "Empanadas Congeladas de Pollo - 7 unidades",
+    "price": 20000,
+    "description": "Lleva el sabor casero y la conveniencia a tu mesa. Añade el Paquete de 7 Empanadas de Pollo a tu carrito y disfruta de un bocado versátil."
+  },
+  "empanada-papa-y-carne": {
+    "name": "Empanadas Congeladas de Carne y Papa - 10 unidades",
+    "price": 29000,
+    "description": "Empanadas Congeladas de Carne y Papa. Este clásico relleno combina la jugosidad de la carne de res sazonada con la cremosidad de la papa (patata) cocida, creando un bocado sustancioso, suave y lleno de sabor."
+  },
+  "especias-7-pimienta-454gr": {
+    "name": "Siete Especias (Seven Spices) - Mezcla Libanesa Premium Gardenia Grain D'Or 454g",
+    "price": 75000
+  },
+  "especias-falafel-454gr": {
+    "name": "Mezcla de Especias para Falafel (Falafel Spices) Gardenia Grain D'Or 454g",
+    "price": 70000
+  },
+  "especias-kebbe454gr": {
+    "name": "Especias para Kebbeh (Kibbeh) Gardenia Grain D'Or - Mezcla Auténtica Árabe 454g",
+    "price": 70000
+  },
+  "falafel": {
+    "name": "Gardenia Grain d'Or - Mezcla lista para Falafel",
+    "price": 20000
+  },
+  "galletas-mamoul": {
+    "name": "Maamoul Almama – Galletas Rellenas de Dátil 80g",
+    "price": 12000
+  },
+  "garbanzo-amarillo": {
+    "name": "Garbanzos en Conserva Al Wadi Al Akhdar 400g",
+    "price": 10000
+  },
+  "ghraybeh": {
+    "name": "Ghraybeh Almama – Galletas Cortas con Pistacho 60 g",
+    "price": 13000
+  },
+  "habas-lata-400gr": {
+    "name": "Chtoura Garden Fava Beans - Habas Cocidas 400g",
+    "price": 10000
+  },
+  "halva-original-al-nakhil": {
+    "name": "Halawa (Helva) Natural Al Nakhil – 454 g",
+    "price": 25000
+  },
+  "hierbabuena-seca-200gr": {
+    "name": "Menta Seca / Hierbabuena (Spearmint) Gardenia Grain D'Or 200g",
+    "price": 55000
+  },
+  "hierbamate": {
+    "name": "Yerba Mate Piporé Suave - 250 g",
+    "price": 15000
+  },
+  "jabon-oliva-y-te-verde": {
+    "name": "Jabón Natural Farah - Aceite de Oliva y Té Verde",
+    "price": 47000
+  },
+  "labne": {
+    "name": "Labneh Bolas de Queso en Aceite",
+    "price": 38000,
+    "description": "Descubre la delicia de las Bolas de Queso Suave, un manjar lácteo de textura firme por fuera y cremosa por dentro, conservado en una suave salmuera o aceite."
+  },
+  "lentejas-rojas": {
+    "name": "Lentejas Rojas Gardenia Grain d'Or",
+    "price": 24000
+  },
+  "mermelada-albaricoque-light": {
+    "name": "Koura Valley - Light Apricot Jam Mermelada de Albaricoque",
+    "price": 45000
+  },
+  "nuez-250": {
+    "name": "Nueces del Nogal - 250g",
+    "price": 25000,
+    "description": "Nueces del Nogal, crujientes y enteras. Ricas en Omega-3 y perfectas para un consumo saludable."
+  },
+  "pan-ajonjoli-x3": {
+    "name": "Kaak Libanés de Sésamo (Ajonjolí)",
+    "price": 12000
+  },
+  "pan-arabe": {
+    "name": "Pan Árabe Beirut Clásico 10 Unidades",
+    "price": 8000
+  },
+  "pan-con-zaatar": {
+    "name": "Pan Tostado Crujiente con Zaatar (Za'atar Toast)",
+    "price": 9000
+  },
+  "pan-integral": {
+    "name": "Pan Árabe Integral Beirut 8 Unidades",
+    "price": 8000
+  },
+  "pan-mini": {
+    "name": "Mini Pan Árabe Beirut 7 Unidades",
+    "price": 7000
+  },
+  "pepinos-silvestres-1000g": {
+    "name": "Pepinillos Verde 1000g",
+    "price": 30000,
+    "description": "Pepino Silvestre Encurtido Koura Valley 1000g. Encurtido premium libanés, extra crujiente. Ideal para mezze."
+  },
+  "pi-ones": {
+    "name": "Piñones (Snubar) - 125 gramos",
+    "price": 85000,
+    "description": "Piñones (Snubar) de alta calidad en presentación de 125 gramos. Ingrediente esencial para pesto y repostería gourmet."
+  },
+  "queso-puck": {
+    "name": "Queso Puck Procesado Untable - 240g",
+    "price": 22000,
+    "description": "Queso Puck, queso procesado untable, crema de queso Puck, comprar queso árabe, queso para sándwiches, queso para untar."
+  },
+  "sal-de-limon-lb": {
+    "name": "Sal de Limón Epice et Nature - 500g",
+    "price": 20000
+  },
+  "sirope-albaricoque": {
+    "name": "Kassatly Chtaura Apricot Syrup - Jarabe Concentrado de Albaricoque",
+    "price": 25000
+  },
+  "sirope-granadina": {
+    "name": "Kassatly Chtaura Grenadine Syrup - Jarabe de Granadina 600ml",
+    "price": 25000
+  },
+  "sirope-jallab": {
+    "name": "Jarabe de Jallab Kassatly Chtaura - 600 ml",
+    "price": 35000
+  },
+  "tahine-454gr": {
+    "name": "Tahina Al Nakhil - Pasta de Sésamo 100% Pura 454g",
+    "price": 25000,
+    "description": "El Toque Oriental para tu Cocina: Tahina Pura Al Nakhil 454g Lleva la autenticidad y los beneficios de la dieta mediterránea a tu mesa con la Tahina Pura Al Nakhil. Extraída de semillas de sésamo selectas y molidas finamente, esta pasta cremosa es un ingrediente fundamental que proporciona un sabor inigualable y una riqueza nutricional esencial."
+  },
+  "tahine-907gr": {
+    "name": "Tahina Pura Al Nakhil - Pasta de Sésamo 907g",
+    "price": 50000
+  },
+  "tahine-con-garbanzo": {
+    "name": "Hommos Tahini - Chtoura Garden 380g",
+    "price": 10000
+  },
+  "trigo-entero": {
+    "name": "Trigo Pelado Gardenia Grain D’Or - 907g",
+    "price": 15000
+  },
+  "zwan-caene-850": {
+    "name": "Zwan - Luncheon Meat Beef 850g",
+    "price": 55000
+  },
+  "zwan-carne-340": {
+    "name": "Zwan Beef Luncheon Meat – Jamón de Res en Lata 340g",
+    "price": 30000
+  },
+  "zwan-pollo": {
+    "name": "Zwan Chicken Luncheon Meat – Jamón de Pollo en Lata 340 g",
+    "price": 30000
+  },
+  "zwan-pollo-850gr": {
+    "name": "Zwan - Chicken Luncheon Meat 850g",
+    "price": 55000
+  }
+}

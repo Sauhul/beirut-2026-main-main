@@ -28,12 +28,12 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-10 md:flex">
+        <nav aria-label="Navegación principal" className="hidden items-center gap-10 md:flex">
           {NAV.map((item) => (
             <Link
               key={item.to}
               to={item.to}
-              className="text-[0.7rem] font-bold tracking-[0.22em] uppercase text-muted-foreground transition-colors hover:text-gold"
+              className="nav-motion-link text-[0.7rem] font-bold tracking-[0.22em] uppercase text-muted-foreground transition-colors hover:text-gold"
             >
               {item.label}
             </Link>
@@ -41,11 +41,14 @@ export function Header() {
           <Link
             to="/carrito"
             aria-label="Ver carrito"
-            className="relative inline-flex text-muted-foreground transition-colors hover:text-gold"
+            className="motion-press relative inline-flex text-muted-foreground transition-colors hover:text-gold"
           >
             <ShoppingBag className="h-5 w-5" />
             {count > 0 && (
-              <span className="absolute -right-2.5 -top-2 flex h-5 min-w-[1.15rem] items-center justify-center rounded-full bg-gold px-1 text-[0.6rem] font-bold text-primary-foreground">
+              <span
+                key={count}
+                className="motion-value absolute -right-2.5 -top-2 flex h-5 min-w-[1.15rem] items-center justify-center rounded-full bg-gold px-1 text-[0.6rem] font-bold text-primary-foreground"
+              >
                 {count}
               </span>
             )}
@@ -64,11 +67,14 @@ export function Header() {
           <Link
             to="/carrito"
             aria-label="Ver carrito"
-            className="relative grid size-11 touch-manipulation place-items-center text-muted-foreground hover:text-gold"
+            className="motion-press relative grid size-11 touch-manipulation place-items-center text-muted-foreground hover:text-gold"
           >
             <ShoppingBag className="h-5 w-5" />
             {count > 0 && (
-              <span className="absolute right-0 top-0 flex h-5 min-w-[1.15rem] items-center justify-center rounded-full bg-gold px-1 text-[0.6rem] font-bold text-primary-foreground">
+              <span
+                key={count}
+                className="motion-value absolute right-0 top-0 flex h-5 min-w-[1.15rem] items-center justify-center rounded-full bg-gold px-1 text-[0.6rem] font-bold text-primary-foreground"
+              >
                 {count}
               </span>
             )}
@@ -78,30 +84,36 @@ export function Header() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={open}
-            className="grid size-11 touch-manipulation place-items-center text-gold"
+            aria-controls="mobile-navigation"
+            className="motion-press grid size-11 touch-manipulation place-items-center text-gold"
           >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <span key={String(open)} className="motion-value">
+              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </span>
           </button>
         </div>
       </div>
 
-      {open && (
-        <nav className="border-t border-border bg-card px-5 py-5 shadow-lg md:hidden">
-          <div className="flex flex-col gap-1">
-            {NAV.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                className="flex min-h-11 touch-manipulation items-center text-sm font-bold tracking-[0.15em] uppercase text-muted-foreground hover:text-gold"
-              >
-                {item.label}
-              </Link>
-            ))}
-            {/* Remove WhatsApp Button */}
-          </div>
-        </nav>
-      )}
+      <nav
+        id="mobile-navigation"
+        aria-label="Navegación móvil"
+        inert={!open}
+        data-open={open}
+        className="mobile-nav-motion border-t border-border bg-card px-5 py-5 shadow-lg md:hidden"
+      >
+        <div className="flex flex-col gap-1">
+          {NAV.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={() => setOpen(false)}
+              className="flex min-h-11 touch-manipulation items-center text-sm font-bold tracking-[0.15em] uppercase text-muted-foreground hover:text-gold"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </nav>
     </header>
   );
 }
