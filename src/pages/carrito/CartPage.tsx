@@ -84,8 +84,11 @@ export function CartPage() {
                 key={item.id}
                 className="cart-item cart-motion flex flex-wrap gap-4 p-6 transition-all duration-300 hover:bg-foreground/5"
               >
-                <ProductPhoto imageUrl={item.imageUrl} alt={item.name} className="w-20 shrink-0" />
-
+                <ProductPhoto
+                  imageUrl={item.imageUrl}
+                  alt={item.name}
+                  className="cart-product-photo w-20 shrink-0 self-start"
+                />
 
                 <div className="flex flex-1 flex-col justify-between">
                   <div className="flex items-start justify-between gap-4">
