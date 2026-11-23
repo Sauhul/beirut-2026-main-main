@@ -160,13 +160,6 @@ export async function openWompiCheckout(input: WompiPaymentInput): Promise<Wompi
     let closeTimeout: number | undefined;
     const previousFocus = document.activeElement;
     const statuses: readonly string[] = ["APPROVED", "DECLINED", "VOIDED", "ERROR", "PENDING"];
-    const exitButton = document.createElement("button");
-    exitButton.type = "button";
-    exitButton.textContent = "Salir de Wompi";
-    exitButton.className =
-      "fixed top-3 right-3 z-[2147483647] min-h-11 border border-gold bg-card px-4 text-sm font-semibold text-sand shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
-    exitButton.addEventListener("click", closeWidget);
-
     const observer = new MutationObserver(checkWidget);
     const startupTimeout = window.setTimeout(() => {
       if (!mounted) finish({ status: "UNKNOWN", transactionId: null });
@@ -177,7 +170,6 @@ export async function openWompiCheckout(input: WompiPaymentInput): Promise<Wompi
       window.clearTimeout(startupTimeout);
       window.clearTimeout(closeTimeout);
       document.removeEventListener("keydown", handleEscape);
-      exitButton.remove();
     }
 
     function finish(result: WompiWidgetResult) {
@@ -207,7 +199,6 @@ export async function openWompiCheckout(input: WompiPaymentInput): Promise<Wompi
       if (backdrop && !backdrop.hasAttribute("hidden")) {
         if (mounted) return;
         mounted = true;
-        document.body.append(exitButton);
         document.addEventListener("keydown", handleEscape);
       } else if (mounted && closeTimeout === undefined) {
         // Da tiempo al callback de Wompi si el cierre vino de un pago terminado.
