@@ -425,24 +425,6 @@
   object-position: 50% 62%;
 }
 
-.beirut-hero-video-control {
-  position: absolute;
-  inset-inline-end: 0.75rem;
-  inset-block-end: 0.75rem;
-  min-height: 2.75rem;
-  padding-inline: 0.75rem;
-  background: #214a35;
-  color: #fff9ea;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.beirut-hero-video-control:focus-visible {
-  outline: 2px solid #fff9ea;
-  outline-offset: -4px;
-}
-
 @media (min-width: 900px) {
   .beirut-hero-inner > .beirut-hero-video {
     order: -1;

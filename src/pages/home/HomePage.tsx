@@ -11,7 +11,6 @@ import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
 import { categoryImage } from "@shared/utils/category-images";
 import { ProductPhoto } from "@components/product/ProductPhoto";
-import { Header } from "@components/layout/Header";
 import { SITE } from "@config/site";
 import coverPhoto from "@assets/hero-productos-beirut.webp";
 import logo from "@assets/beirut-logo.png";
@@ -150,8 +149,6 @@ export function HomePage() {
           />
         </div>
       </section>
-
-      <Header />
 
       <section className="beirut-home-intro" aria-labelledby="home-intro-title">
         <div className="beirut-hero-inner">

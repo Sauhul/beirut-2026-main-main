@@ -11,6 +11,7 @@ import { CartPage } from "@pages/carrito/CartPage";
 import { CheckoutPage } from "@pages/checkout/CheckoutPage";
 import { OrderConfirmedPage } from "@pages/pedido-confirmado/OrderConfirmedPage";
 import { ContactPage } from "@pages/contacto/ContactPage";
+import { WholesalePage } from "@pages/al-por-mayor/WholesalePage";
 import { AdminPage } from "@pages/admin/AdminPage";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -108,6 +109,7 @@ function AnimatedRoutes() {
       <Routes location={location}>
         <Route path="/" element={<HomePage />} />
         <Route path="/tienda" element={<StorePage />} />
+        <Route path="/al-por-mayor" element={<WholesalePage />} />
         <Route path="/producto/:slug" element={<ProductDetailPage />} />
         <Route path="/carrito" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
