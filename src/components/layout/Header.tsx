@@ -28,7 +28,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
-      <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-2 sm:px-6 md:grid-cols-[1fr_minmax(0,2.5fr)_1fr] md:gap-6 md:py-3">
+      <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-6 md:py-3">
         <Link to="/" aria-label={SITE.brandFull} className="flex w-fit items-center gap-2">
           <img src={logo} alt="" className="h-10 w-auto md:h-12" />
           <span className="leading-none">

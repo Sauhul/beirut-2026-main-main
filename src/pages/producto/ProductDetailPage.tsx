@@ -75,24 +75,24 @@ export function ProductDetailPage() {
     <div ref={containerRef} className="route-page mx-auto max-w-7xl px-5 pb-24 pt-10">
       <Link
         to="/tienda"
-        className="inline-flex items-center gap-2 text-[0.65rem] font-bold tracking-[0.22em] uppercase text-muted-foreground hover:text-gold"
+        className="inline-flex min-h-11 items-center gap-2 text-sm font-bold tracking-normal text-muted-foreground hover:text-gold"
       >
         <ArrowLeft className="h-4 w-4" /> Volver a la tienda
       </Link>
 
-      <div className="mt-10 grid gap-10 md:grid-cols-[1fr_1.1fr]">
+      <div className="mt-10 grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <div className="detail-image detail-motion">
-          <div className="card-onyx p-8 rounded-2xl">
+          <div className="card-onyx rounded-2xl p-3 sm:p-8">
             <ProductPhotoGallery key={product.id} imageUrl={product.image_url} name={name} />
-            <span className="mt-6 inline-flex border border-gold/50 px-3 py-1.5 text-[0.6rem] font-bold tracking-[0.2em] uppercase text-gold">
+            <span className="mt-6 inline-flex border border-gold/50 px-3 py-1.5 text-[0.6rem] font-bold tracking-normal text-gold">
               {product.category_name}
             </span>
           </div>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex min-w-0 flex-col">
           <p className="detail-meta detail-motion eyebrow">Importación directa</p>
-          <h1 className="detail-title detail-motion mt-3 font-display text-5xl leading-tight text-sand md:text-6xl">
+          <h1 className="detail-title detail-motion mt-3 font-display text-3xl wrap-anywhere leading-tight sm:text-5xl text-sand md:text-6xl">
             {name}
           </h1>
           <p className="detail-meta detail-motion mt-6 max-w-xl text-base leading-8 text-muted-foreground">
@@ -106,7 +106,7 @@ export function ProductDetailPage() {
             <div className="flex items-center gap-2 border border-input bg-onyx px-3 py-2">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="motion-press grid h-9 w-9 place-items-center text-muted-foreground hover:text-gold"
+                className="motion-press grid h-11 w-11 place-items-center text-muted-foreground hover:text-gold"
                 aria-label="Restar"
               >
                 <Minus className="h-4 w-4" />
@@ -119,7 +119,7 @@ export function ProductDetailPage() {
               </span>
               <button
                 onClick={() => setQty((q) => q + 1)}
-                className="motion-press grid h-9 w-9 place-items-center text-muted-foreground hover:text-gold"
+                className="motion-press grid h-11 w-11 place-items-center text-muted-foreground hover:text-gold"
                 aria-label="Sumar"
               >
                 <Plus className="h-4 w-4" />
@@ -142,7 +142,7 @@ export function ProductDetailPage() {
                 setAddCount((count) => count + 1);
                 toast.success(`${name} agregado al carrito`);
               }}
-              className="btn-gold flex-1 sm:flex-none"
+              className="btn-gold w-full sm:w-auto sm:flex-none"
             >
               <CheckCircle2
                 key={addCount}
@@ -166,7 +166,7 @@ export function ProductDetailPage() {
 
       {related.length > 0 && (
         <section className="@container/catalog mt-12 sm:mt-20">
-          <div className="flex items-end justify-between">
+          <div className="text-center">
             <div>
               <p className="eyebrow">Para completar la mesa</p>
               <h2 className="mt-3 font-display text-4xl text-sand">Combina con este producto</h2>

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { catalogQuery } from "@domain/catalog/queries";
 import { productPresentation } from "@shared/utils/product-format";
-import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type CartItem = {
   id: string;
@@ -22,14 +22,17 @@ type CartContextValue = {
   setQuantity: (id: string, quantity: number) => void;
   remove: (id: string) => void;
   clear: () => void;
+  consumeCrossSell: () => boolean;
 };
 
 const STORAGE_KEY = "beirut-cart-v1";
+const CROSS_SELL_KEY = "beirut-cart-cross-sell-seen";
 export const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const crossSellSeen = useRef(false);
 
   useEffect(() => {
     try {
@@ -37,6 +40,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (raw) {
         const saved = JSON.parse(raw) as CartItem[];
         setItems(saved.map((item) => ({ ...item, ...productPresentation(item) })));
+        crossSellSeen.current = saved.length > 0 && localStorage.getItem(CROSS_SELL_KEY) === "1";
       }
     } catch {
       /* ignore */
@@ -46,7 +50,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    if (!items.length) crossSellSeen.current = false;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      if (!items.length) localStorage.removeItem(CROSS_SELL_KEY);
+    } catch {
+      /* Keep the cart usable when browser storage is unavailable. */
+    }
   }, [items, hydrated]);
 
   const add = useCallback((item: Omit<CartItem, "quantity">, quantity = 1) => {
@@ -73,7 +83,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((prev) => prev.filter((i) => i.id !== id));
   }, []);
 
-  const clear = useCallback(() => setItems([]), []);
+  const clear = useCallback(() => {
+    crossSellSeen.current = false;
+    try {
+      localStorage.removeItem(CROSS_SELL_KEY);
+    } catch {
+      /* Storage may be unavailable. */
+    }
+    setItems([]);
+  }, []);
+
+  // Synchronous guard: repeated clicks and checkout navigation share one offer per cart.
+  const consumeCrossSell = useCallback(() => {
+    if (crossSellSeen.current) return false;
+    crossSellSeen.current = true;
+    try {
+      localStorage.setItem(CROSS_SELL_KEY, "1");
+    } catch {
+      /* Keep the in-memory guard. */
+    }
+    return true;
+  }, []);
 
   const { data: catalog } = useQuery({ ...catalogQuery, enabled: items.length > 0 });
   const currentItems = useMemo(() => {
@@ -101,8 +131,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setQuantity,
       remove,
       clear,
+      consumeCrossSell,
     }),
-    [currentItems, add, setQuantity, remove, clear],
+    [currentItems, add, setQuantity, remove, clear, consumeCrossSell],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

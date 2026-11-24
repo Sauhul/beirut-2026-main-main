@@ -16,8 +16,8 @@ export function ContactPage() {
 
       <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-2">
         <div className="space-y-8">
-          <div className="card-onyx p-7">
-            <p className="eyebrow flex items-center gap-2">
+          <div className="card-onyx min-w-0 p-4 sm:p-7">
+            <p className="eyebrow flex min-w-0 items-center gap-2 wrap-anywhere">
               <MapPin className="h-4 w-4" /> Dirección
             </p>
             <p className="mt-3 font-display text-2xl text-sand">{SITE.address}</p>
@@ -26,8 +26,8 @@ export function ContactPage() {
             </p>
           </div>
 
-          <div className="card-onyx p-7">
-            <p className="eyebrow flex items-center gap-2">
+          <div className="card-onyx min-w-0 p-4 sm:p-7">
+            <p className="eyebrow flex min-w-0 items-center gap-2 wrap-anywhere">
               <Clock className="h-4 w-4" /> Horarios
             </p>
             <p className="mt-3 text-sm leading-8 text-sand">
@@ -37,17 +37,17 @@ export function ContactPage() {
             </p>
           </div>
 
-          <div className="card-onyx p-7">
+          <div className="card-onyx min-w-0 p-4 sm:p-7">
             <p className="eyebrow">Contacto directo</p>
             <ul className="mt-3 space-y-3 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-gold" /> {SITE.phoneDisplay}
+              <li className="flex min-w-0 items-center gap-2 wrap-anywhere">
+                <Phone className="h-4 w-4 shrink-0 text-gold" /> {SITE.phoneDisplay}
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-gold" /> {SITE.email}
+              <li className="flex min-w-0 items-center gap-2 wrap-anywhere">
+                <Mail className="h-4 w-4 shrink-0 text-gold" /> {SITE.email}
               </li>
-              <li className="flex items-center gap-2">
-                <Instagram className="h-4 w-4 text-gold" />
+              <li className="flex min-w-0 items-center gap-2 wrap-anywhere">
+                <Instagram className="h-4 w-4 shrink-0 text-gold" />
                 <a
                   href={SITE.instagram}
                   target="_blank"
@@ -58,9 +58,9 @@ export function ContactPage() {
                 </a>
               </li>
             </ul>
-          <Link to="/tienda" className="btn-gold mt-8">
-            <Store className="h-4 w-4" /> Ver tienda
-          </Link>
+            <Link to="/tienda" className="btn-gold mt-8">
+              <Store className="h-4 w-4" /> Ver tienda
+            </Link>
           </div>
         </div>
 

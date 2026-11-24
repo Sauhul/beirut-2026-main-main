@@ -22,48 +22,55 @@ export function HomePage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
 
-  useGSAP(() => {
-    const motion = gsap.matchMedia();
+  useGSAP(
+    () => {
+      const motion = gsap.matchMedia();
 
-    motion.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.timeline({ defaults: { ease: "power2.out", clearProps: "transform,opacity" } })
-        .from("[data-enter='line']", { yPercent: 105, stagger: 0.19, duration: 1.24 })
-        .from("[data-enter='detail']", { y: 14, opacity: 0.65, duration: 0.8 }, 0.48);
-    });
+      motion.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap
+          .timeline({ defaults: { ease: "power2.out", clearProps: "transform,opacity" } })
+          .from("[data-enter='line']", { yPercent: 105, stagger: 0.19, duration: 1.24 })
+          .from("[data-enter='detail']", { y: 14, opacity: 0.65, duration: 0.8 }, 0.48);
+      });
 
-    return () => motion.revert();
-  }, { scope: heroRef });
+      return () => motion.revert();
+    },
+    { scope: heroRef },
+  );
   usePageTitle("Delikatessen Beyrouth | Tienda libanesa en Barranquilla");
 
   const { data, isPending } = useQuery(catalogQuery);
-  useGSAP(() => {
-    const motion = gsap.matchMedia();
+  useGSAP(
+    () => {
+      const motion = gsap.matchMedia();
 
-    motion.add("(prefers-reduced-motion: no-preference)", () => {
-      const sections = pageRef.current?.querySelectorAll<HTMLElement>("[data-reveal-section]");
-      sections?.forEach((section) => {
-        const heading = section.querySelector("[data-reveal-heading]");
-        if (!heading) return;
+      motion.add("(prefers-reduced-motion: no-preference)", () => {
+        const sections = pageRef.current?.querySelectorAll<HTMLElement>("[data-reveal-section]");
+        sections?.forEach((section) => {
+          const heading = section.querySelector("[data-reveal-heading]");
+          if (!heading) return;
 
-        const items = section.querySelectorAll("[data-reveal-item]");
-        const reveal = gsap.timeline({
-          defaults: { ease: "power2.out", clearProps: "transform,opacity" },
-          scrollTrigger: { trigger: section, start: "clamp(top 90%)", once: true },
+          const items = section.querySelectorAll("[data-reveal-item]");
+          const reveal = gsap.timeline({
+            defaults: { ease: "power2.out", clearProps: "transform,opacity" },
+            scrollTrigger: { trigger: section, start: "clamp(top 90%)", once: true },
+          });
+          reveal.from(heading, { y: 30, opacity: 0.55, duration: 0.94 });
+
+          if (items.length) {
+            reveal.from(
+              items,
+              { y: 38, opacity: 0.65, duration: 0.9, stagger: { amount: 0.43 } },
+              0.24,
+            );
+          }
         });
-        reveal.from(heading, { y: 30, opacity: 0.55, duration: 0.94 });
-
-        if (items.length) {
-          reveal.from(
-            items,
-            { y: 38, opacity: 0.65, duration: 0.9, stagger: { amount: 0.43 } },
-            0.24,
-          );
-        }
       });
-    });
 
-    return () => motion.revert();
-  }, { scope: pageRef, dependencies: [data, isPending], revertOnUpdate: true });
+      return () => motion.revert();
+    },
+    { scope: pageRef, dependencies: [data, isPending], revertOnUpdate: true },
+  );
 
   const products = data?.products ?? [];
 
@@ -119,7 +126,7 @@ export function HomePage() {
   ];
 
   return (
-    <div ref={pageRef} className="route-page">
+    <div ref={pageRef} className="route-page home-page">
       <section ref={heroRef} className="beirut-cover" aria-labelledby="home-title">
         <div className="beirut-cover-content">
           <div className="beirut-cover-brand">
@@ -168,8 +175,9 @@ export function HomePage() {
               De nuestra tienda a tu mesa
             </h2>
             <p className="beirut-hero-description">
-              Encuentra aceitunas, panes y dulces para compartir, y los ingredientes para preparar
-              tus platos favoritos.
+              Somos parte del grupo de Beirut 84 y Parrilla Libanesa, con años compartiendo estos
+              sabores en Barranquilla y Cali. También abastecemos a restaurantes de Barranquilla y
+              otras ciudades del país, con calidad y puntualidad en cada entrega.
             </p>
             <Link to="/tienda" className="beirut-hero-cta">
               Explorar la tienda <ArrowUpRight size={19} aria-hidden="true" />
@@ -182,28 +190,31 @@ export function HomePage() {
       </section>
 
       {/* CATEGORÍAS */}
-      <section data-reveal-section className="border-y border-border bg-muted py-16 sm:py-24">
+      <section data-reveal-section className="border-y border-border bg-muted py-10 sm:py-12">
         <div className="@container/catalog mx-auto max-w-7xl px-4 sm:px-5">
           <div className="text-center">
             <p className="eyebrow">Qué encuentras</p>
-            <h2 className="beirut-hero-line mt-3 font-display text-4xl text-sand md:text-5xl">
+            <h2 className="beirut-hero-line mt-3 font-display text-3xl text-sand md:text-4xl">
               <span data-reveal-heading>Nuestras categorías</span>
             </h2>
             <div className="rule-gold mt-5" />
           </div>
 
-          <div className="catalog-card-grid mt-8 [--catalog-wide-columns:3] sm:mt-14">
+          <div className="category-garden mt-8">
             {tiles.map((tile) => (
               <Link
                 data-reveal-item
                 key={tile.slug}
                 to={catalogSectionUrl(tile.slug)}
-                className="card-hover-lift card-onyx mx-auto flex w-full max-w-sm flex-col overflow-hidden rounded-2xl"
+                className="category-garden-link"
               >
-                <ProductPhoto imageUrl={tile.image} alt="" />
-                <div className="flex flex-1 flex-col p-4 sm:p-5">
-                  <p className="font-display text-xl wrap-anywhere text-sand">{tile.name}</p>
-                </div>
+                <span className="category-garden-frame">
+                  <ProductPhoto imageUrl={tile.image} alt="" className="category-thumbnail" />
+                  <span className="category-garden-arrow">
+                    <ArrowUpRight aria-hidden="true" className="size-4" />
+                  </span>
+                </span>
+                <span className="category-garden-name font-display">{tile.name}</span>
               </Link>
             ))}
           </div>
@@ -213,7 +224,10 @@ export function HomePage() {
       <FeaturedProducts products={featured} loading={isPending} />
 
       {/* PILARES */}
-      <section data-reveal-section className="arabesque border-y border-border bg-muted py-20">
+      <section
+        data-reveal-section
+        className="arabesque border-y border-border bg-muted py-12 sm:py-20"
+      >
         <div className="mx-auto max-w-7xl px-5">
           <div data-reveal-heading className="text-center">
             <p className="eyebrow">Por qué comprarnos</p>
@@ -235,7 +249,7 @@ export function HomePage() {
       </section>
 
       {/* CÓMO COMPRAR */}
-      <section data-reveal-section className="mx-auto max-w-7xl px-5 py-24">
+      <section data-reveal-section className="mx-auto max-w-7xl px-5 py-14 sm:py-24">
         <div data-reveal-heading className="text-center">
           <p className="eyebrow">Cómo comprar</p>
           <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">Tres pasos</h2>

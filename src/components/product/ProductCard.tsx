@@ -29,17 +29,15 @@ export function ProductCard({
       <Link to={`/producto/${product.slug}`} className="relative block overflow-hidden">
         <ProductPhoto imageUrl={product.image_url} alt={name} />
         {!compact && (
-          <span className="absolute top-3 right-3 left-3 w-fit wrap-anywhere bg-background/80 px-2 py-1 text-[0.55rem] font-bold tracking-[0.18em] uppercase text-gold">
+          <span className="absolute top-3 right-3 left-3 w-fit wrap-anywhere bg-background/80 px-2 py-1 text-[0.55rem] font-bold tracking-normal text-gold">
             {product.category_name}
           </span>
         )}
       </Link>
 
-      <div className={`flex flex-1 flex-col ${compact ? "p-3 sm:p-4" : "p-5"}`}>
+      <div className={`flex flex-1 flex-col ${compact ? "p-3 sm:p-4" : "p-3 sm:p-5"}`}>
         <Link to={`/producto/${product.slug}`}>
-          <Heading
-            className={`font-display leading-tight wrap-anywhere text-sand ${compact ? "text-base sm:text-xl" : "text-xl"}`}
-          >
+          <Heading className="font-display text-base leading-tight wrap-anywhere text-sand sm:text-xl">
             {name}
           </Heading>
         </Link>
@@ -72,14 +70,21 @@ export function ProductCard({
               toast.success(`${name} agregado al carrito`);
             }}
             aria-label={`Agregar ${name} al carrito`}
-            className={`btn-gold min-h-11 w-full !py-3 !text-xs ${compact ? "!px-2 !tracking-normal" : "!px-3 !tracking-[0.12em]"}`}
+            className={`btn-gold min-h-11 w-full !py-3 !text-xs ${compact ? "!px-2 !tracking-normal" : "!px-3 !tracking-normal"}`}
           >
             <ShoppingCart
               key={addCount}
               aria-hidden="true"
               className={`h-3.5 w-3.5 shrink-0 ${addCount ? "motion-added" : ""}`}
             />{" "}
-            {compact ? "Agregar" : "Agregar al carrito"}
+            {compact ? (
+              "Agregar"
+            ) : (
+              <>
+                <span className="sm:hidden">Agregar</span>
+                <span className="hidden sm:inline">Agregar al carrito</span>
+              </>
+            )}
           </button>
         </div>
       </div>

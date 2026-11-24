@@ -1,7 +1,7 @@
 /**
  * Normalización y formato consistente de productos.
  * Garantiza que todo producto nuevo se guarde con el mismo estilo:
- * nombre en MAYÚSCULAS y presentación canónica
+ * nombre con mayúscula inicial y marcas respetadas y presentación canónica
  * ("unidad", "250 g", "1 kg", "500 ml", "1 L", …).
  */
 
@@ -18,11 +18,32 @@ export const UNIT_OPTIONS = [
   "1 L",
 ] as const;
 
-/** Convierte texto libre en MAYÚSCULAS: "queso feta" → "QUESO FETA". */
+/** Estilo de frase en español; conserva las marcas y unifica las medidas. */
 export function normalizeProductName(name: string) {
-  const clean = name.replace(/\s+/g, " ").trim();
+  let clean = name.replace(/\s+/g, " ").trim().toLocaleLowerCase("es");
   if (!clean) return "";
-  return clean.toUpperCase();
+
+  const brands = [
+    "Beirut", "Koura Valley", "Yamama", "Mechaalany", "Al Tom Delights",
+    "Chtoura Garden", "Target", "VEA", "Maatouk", "Najjar Classic", "Najjar",
+    "Castania", "Crunchy Bites", "Abou Naji", "Al Zawrak", "Gardenia Grain d’Or",
+    "Gardenia Grain d'Or", "Almama", "Al Wadi Al Akhdar", "Al Nakhil", "Piporé",
+    "Farah", "Puck", "Epice et Nature", "Kassatly Chtaura", "Zwan",
+    "Ahmad Tea", "Do Ghazal", "Al Kasser", "Anatolia", "Brioni",
+  ];
+  for (const brand of brands) {
+    const pattern = brand.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    clean = clean.replace(new RegExp(`\\b${pattern}\\b`, "gi"), brand);
+  }
+  clean = clean.replace(
+    /(\d+(?:[.,]\d+)?)\s*(kg|grs?|gramos?|g|ml|lts?|litros?|l)\b/gi,
+    (_, amount: string, unit: string) => {
+      const lower = unit.toLowerCase();
+      const symbol = lower === "kg" ? "kg" : lower.startsWith("g") ? "g" : lower === "ml" ? "ml" : "L";
+      return `${amount} ${symbol}`;
+    },
+  );
+  return clean.charAt(0).toLocaleUpperCase("es") + clean.slice(1);
 }
 
 function formatGrams(grams: number) {

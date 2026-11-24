@@ -21,22 +21,28 @@ export function Footer() {
           <p className="eyebrow text-gold-soft">Navegación</p>
           <ul className="mt-4 space-y-3 text-sm text-secondary-foreground/85">
             <li>
-              <Link to="/" className="hover:text-gold-soft">
+              <Link to="/" className="inline-flex min-h-11 items-center hover:text-gold-soft">
                 Inicio
               </Link>
             </li>
             <li>
-              <Link to="/tienda" className="hover:text-gold-soft">
+              <Link to="/tienda" className="inline-flex min-h-11 items-center hover:text-gold-soft">
                 Tienda
               </Link>
             </li>
             <li>
-              <Link to="/contacto" className="hover:text-gold-soft">
+              <Link
+                to="/contacto"
+                className="inline-flex min-h-11 items-center hover:text-gold-soft"
+              >
                 Visítanos
               </Link>
             </li>
             <li>
-              <Link to="/carrito" className="hover:text-gold-soft">
+              <Link
+                to="/carrito"
+                className="inline-flex min-h-11 items-center hover:text-gold-soft"
+              >
                 Tu pedido
               </Link>
             </li>

@@ -22,6 +22,7 @@ import { inputClass } from "@shared/utils/input-class";
 import { checkoutSchema, type CheckoutForm } from "./checkout.schema";
 import { usePageTitle } from "@hooks/usePageTitle";
 import { getMotionQuality } from "@hooks/useAnimationQuality";
+import { useCheckoutCrossSell } from "@hooks/useCheckoutCrossSell";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -31,6 +32,10 @@ export function CheckoutPage() {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [submitting, setSubmitting] = useState(false);
+  const paymentInFlight = useRef(false);
+  const { requestCrossSell, crossSellDialog } = useCheckoutCrossSell();
+  const latestCart = useRef({ items, subtotal });
+  latestCart.current = { items, subtotal };
   const savedOrder = useRef<{ input: string; order: WompiCheckout } | null>(null);
   const { data: wompi, isPending: checkingWompi } = useQuery({
     queryKey: ["wompi-config"],
@@ -90,7 +95,8 @@ export function CheckoutPage() {
   }
 
   async function onSubmit(data: CheckoutForm) {
-    if (submitting || items.length === 0) return;
+    if (paymentInFlight.current || items.length === 0) return;
+    paymentInFlight.current = true;
     setSubmitting(true);
 
     try {
@@ -98,11 +104,15 @@ export function CheckoutPage() {
         toast.error("El pago con Wompi no está disponible en este momento.");
         return;
       }
+      if (!(await requestCrossSell())) return;
+      // Read after the offer: additions must be included in the server order and payment total.
+      const { items: paymentItems, subtotal: paymentSubtotal } = latestCart.current;
+      if (!paymentItems.length) return;
       const input = {
         ...data,
         address: data.delivery_method === "domicilio" ? data.address : undefined,
         city: data.delivery_method === "domicilio" ? data.city : undefined,
-        items: items.map(({ id, quantity }) => ({ product_id: id, quantity })),
+        items: paymentItems.map(({ id, quantity }) => ({ product_id: id, quantity })),
       };
       const serialized = JSON.stringify(input);
       const cached = savedOrder.current;
@@ -111,7 +121,7 @@ export function CheckoutPage() {
           ? cached.order
           : await prepareWompiOrder(input);
       savedOrder.current = { input: serialized, order };
-      if (order.amountInCents !== subtotal * 100) {
+      if (order.amountInCents !== paymentSubtotal * 100) {
         toast.error("El total del catálogo cambió. Revisa el carrito actualizado antes de pagar.");
         return;
       }
@@ -134,6 +144,7 @@ export function CheckoutPage() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "No pudimos procesar el pedido.");
     } finally {
+      paymentInFlight.current = false;
       setSubmitting(false);
     }
   }
@@ -168,19 +179,19 @@ export function CheckoutPage() {
         onSubmit={handleSubmit(onSubmit, (errors) => {
           const firstError = Object.values(errors)[0];
           if (firstError?.message) {
-            toast.error((firstError.message as string).toUpperCase());
+            toast.error(firstError.message as string);
           } else {
             toast.error("REVISA LOS CAMPOS MARCADOS EN ROJO");
           }
         })}
         noValidate
-        className="mt-8 grid gap-8 lg:grid-cols-[1.5fr_1fr]"
+        className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]"
       >
-        <div className="space-y-6">
-          <fieldset className="checkout-fieldset checkout-motion card-onyx p-4 sm:p-6">
+        <div className="min-w-0 space-y-6">
+          <fieldset className="checkout-fieldset checkout-motion card-onyx min-w-0 p-4 sm:p-6">
             <legend className="px-2 eyebrow">Tus datos</legend>
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground w-full">
+              <label className="block text-sm font-semibold tracking-normal text-muted-foreground w-full">
                 Nombre completo *
                 <input
                   {...register("customer_name")}
@@ -194,7 +205,7 @@ export function CheckoutPage() {
                   </span>
                 )}
               </label>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground w-full">
+              <label className="block text-sm font-semibold tracking-normal text-muted-foreground w-full">
                 Teléfono / WhatsApp *
                 <input
                   {...register("customer_phone")}
@@ -209,7 +220,7 @@ export function CheckoutPage() {
                   </span>
                 )}
               </label>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2 w-full">
+              <label className="block text-sm font-semibold tracking-normal text-muted-foreground sm:col-span-2 w-full">
                 Correo electrónico *
                 <input
                   {...register("customer_email")}
@@ -227,12 +238,12 @@ export function CheckoutPage() {
             </div>
           </fieldset>
 
-          <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
+          <fieldset className="checkout-fieldset checkout-motion card-onyx min-w-0 p-4 sm:p-6">
             <legend className="px-2 eyebrow">Entrega</legend>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <div className="flex flex-wrap gap-3">
-                  <label className="flex cursor-pointer items-center gap-2 border border-input px-5 py-3 text-[0.65rem] font-bold tracking-[0.18em] uppercase transition has-[:checked]:border-gold has-[:checked]:bg-gold/10 hover:border-gold">
+                  <label className="flex cursor-pointer items-center gap-2 border border-input px-5 py-3 min-h-11 text-sm font-semibold tracking-normal transition has-[:checked]:border-gold has-[:checked]:bg-gold/10 hover:border-gold">
                     <input
                       type="radio"
                       {...register("delivery_method")}
@@ -241,7 +252,7 @@ export function CheckoutPage() {
                     />
                     <Truck className="h-4 w-4 text-gold" /> A domicilio
                   </label>
-                  <label className="flex cursor-pointer items-center gap-2 border border-input px-5 py-3 text-[0.65rem] font-bold tracking-[0.18em] uppercase transition has-[:checked]:border-gold has-[:checked]:bg-gold/10 hover:border-gold">
+                  <label className="flex cursor-pointer items-center gap-2 border border-input px-5 py-3 min-h-11 text-sm font-semibold tracking-normal transition has-[:checked]:border-gold has-[:checked]:bg-gold/10 hover:border-gold">
                     <input
                       type="radio"
                       {...register("delivery_method")}
@@ -254,7 +265,7 @@ export function CheckoutPage() {
               </div>
               {delivery === "domicilio" && (
                 <>
-                  <label className="motion-dialog block text-xs font-bold uppercase tracking-wider text-muted-foreground sm:col-span-2">
+                  <label className="motion-dialog block text-sm font-semibold tracking-normal text-muted-foreground sm:col-span-2">
                     Dirección *
                     <input
                       {...register("address")}
@@ -268,7 +279,7 @@ export function CheckoutPage() {
                       </span>
                     )}
                   </label>
-                  <label className="motion-dialog block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <label className="motion-dialog block text-sm font-semibold tracking-normal text-muted-foreground">
                     Ciudad *
                     <input
                       {...register("city")}
@@ -287,20 +298,23 @@ export function CheckoutPage() {
             </div>
           </fieldset>
 
-          <fieldset className="checkout-fieldset checkout-motion card-onyx p-6">
+          <fieldset className="checkout-fieldset checkout-motion card-onyx min-w-0 p-4 sm:p-6">
             <legend className="px-2 eyebrow">Notas (opcional)</legend>
             <textarea {...register("notes")} maxLength={300} rows={3} className={inputClass} />
           </fieldset>
         </div>
 
-        <div className="checkout-summary checkout-motion sticky top-24 self-start">
-          <div className="border border-border bg-card p-8 shadow-[var(--shadow-soft)]">
+        <div className="checkout-summary checkout-motion min-w-0 self-start lg:sticky lg:top-40">
+          <div className="border border-border bg-card p-4 sm:p-8 shadow-[var(--shadow-soft)]">
             <h2 className="font-display text-2xl text-sand">Resumen</h2>
             <ul className="mt-6 divide-y divide-border">
               {items.map((item) => (
-                <li key={item.id} className="py-4 flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="font-bold text-sand truncate">{titleCase(item.name)}</p>
+                <li
+                  key={item.id}
+                  className="py-4 flex flex-wrap items-start justify-between gap-2 sm:gap-4"
+                >
+                  <div className="min-w-0 flex-[1_1_10rem]">
+                    <p className="font-bold wrap-anywhere text-sand">{titleCase(item.name)}</p>
                     <p className="text-xs text-muted-foreground">{formatPresentation(item.unit)}</p>
                   </div>
                   <div className="flex items-center gap-4 shrink-0">
@@ -312,7 +326,7 @@ export function CheckoutPage() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 flex items-center justify-between border-t border-border pt-6 text-xl">
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-6 text-xl">
               <span className="text-sand">Total</span>
               <span className="font-display text-3xl text-gold">{formatCOP(subtotal)}</span>
             </div>
@@ -341,6 +355,7 @@ export function CheckoutPage() {
           </div>
         </div>
       </form>
+      {crossSellDialog}
     </div>
   );
 }

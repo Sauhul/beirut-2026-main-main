@@ -135,7 +135,7 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
         <h2
           data-reveal-heading
           id="featured-products-title"
-          className="font-display text-4xl text-sand md:text-5xl"
+          className="text-center font-display text-4xl text-sand md:text-5xl"
         >
           Productos destacados
         </h2>

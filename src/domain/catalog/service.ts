@@ -6,7 +6,7 @@
 import { supabase } from "@data/supabase/client";
 import { CATEGORIES, PRODUCTS } from "@data/catalog-fallback";
 import { productDescriptions } from "@data/product-descriptions";
-import { formatPresentation, productPresentation } from "@shared/utils/product-format";
+import { formatPresentation, normalizeProductName, productPresentation } from "@shared/utils/product-format";
 import backgroundPhotoSlugs from "./background-photos.json";
 import brochureProducts from "./brochure-products.json";
 import type { Catalog, Product } from "./types";
@@ -31,7 +31,7 @@ function catalogDescription(slug: string, description: string | null): string {
 
 function withDisplayProduct(product: Product, useBrochure = import.meta.env.DEV): Product {
   const brochure = useBrochure ? brochureBySlug.get(product.slug) : undefined;
-  const name = brochure?.name ?? product.name;
+  const name = normalizeProductName(brochure?.name ?? product.name);
   const brochureUnit = brochure
     ? productPresentation({ ...product, name, unit: "unidad" }).unit
     : "unidad";
@@ -53,6 +53,7 @@ function withDisplayProduct(product: Product, useBrochure = import.meta.env.DEV)
   return {
     ...product,
     name,
+    category_name: normalizeProductName(product.category_name),
     price: brochure?.price ?? product.price,
     image_url:
       backgroundPhotos.has(product.slug)
