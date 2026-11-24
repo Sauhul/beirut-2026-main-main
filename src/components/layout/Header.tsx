@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, Instagram, Package, Search, ShoppingBag } from "lucide-react";
 import { SITE } from "@config/site";
 import { useCart } from "@domain/cart/use-cart";
-import { groupCatalog } from "@domain/catalog/groups";
+import { catalogSectionUrl, groupCatalog } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
 import logo from "@assets/beirut-logo.png";
 
@@ -139,7 +139,7 @@ export function Header() {
             <ul
               id="catalog-navigation"
               hidden={!categoriesOpen}
-              className="absolute left-0 top-full z-10 max-h-[50dvh] w-60 overflow-y-auto rounded-b-lg border border-border bg-card p-1.5 shadow-lg"
+              className="absolute left-0 top-full z-10 max-h-[55dvh] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto rounded-b-lg border border-border bg-card p-2 shadow-lg"
             >
               {isPending && (
                 <li role="status" className="px-3 py-2">
@@ -149,12 +149,21 @@ export function Header() {
               {!isPending && !groups.length && (
                 <li className="px-3 py-2">No hay categorías disponibles.</li>
               )}
+              <li className="border-b border-border">
+                <Link
+                  to="/tienda"
+                  onClick={() => setCategoriesOpen(false)}
+                  className="flex min-h-11 items-center rounded-md px-3 font-semibold text-accent hover:bg-background"
+                >
+                  Ver todos los productos
+                </Link>
+              </li>
               {groups.map((group) => (
-                <li key={group.slug}>
+                <li key={group.slug} className="border-b border-border py-1 last:border-0">
                   <Link
-                    to={`/tienda?${new URLSearchParams({ categoria: group.slug })}`}
+                    to={catalogSectionUrl(group.slug)}
                     onClick={() => setCategoriesOpen(false)}
-                    className="flex min-h-11 items-center rounded-md px-3 hover:bg-background"
+                    className="flex min-h-11 items-center rounded-md px-3 font-semibold hover:bg-background"
                   >
                     {group.name}
                   </Link>

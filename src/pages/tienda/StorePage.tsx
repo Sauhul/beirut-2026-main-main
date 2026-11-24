@@ -1,11 +1,11 @@
-import { useSearchParams } from "react-router-dom";
-import { useMemo, useRef } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown } from "lucide-react";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { ProductCard } from "@components/product/ProductCard";
-import { groupCatalog } from "@domain/catalog/groups";
+import { catalogSectionUrl, groupCatalog, resolveCatalogGroups } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
 
@@ -17,93 +17,74 @@ const normalize = (value: string) =>
 export function StorePage() {
   usePageTitle("Nuestra Tienda | Delikatessen Beyrouth");
 
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
   const resultsRef = useRef<HTMLElement>(null);
   const { data, isPending } = useQuery(catalogQuery);
   const groups = useMemo(() => (data ? groupCatalog(data) : []), [data]);
-  const requestedCategory = params.get("categoria");
-  const activeGroup =
-    groups.find(
-      (group) =>
-        group.slug === requestedCategory ||
-        group.categories.some((category) => category.slug === requestedCategory),
-    ) ?? groups[0];
-  const activeCategory = activeGroup?.categories.find(
-    (category) => category.slug === requestedCategory,
-  );
-
+  const category = params.get("categoria");
   const query = (params.get("q") ?? "").trim();
-  const term = normalize(query);
-  const featured = !term && params.get("destacados") === "1";
-  const visibleGroups = term
+  const terms = normalize(query).split(/\s+/).filter(Boolean);
+  const featured = terms.length === 0 && params.get("destacados") === "1";
+  const selectedGroups = resolveCatalogGroups(groups, category);
+  const filtering = Boolean(query) || featured;
+  const activeGroup = !filtering && selectedGroups.length === 1 ? selectedGroups[0] : undefined;
+  const title = query
+    ? `Resultados para «${query}»`
+    : featured
+      ? "Productos destacados"
+      : (activeGroup?.name ?? "Todos los productos");
+
+  const sections = filtering
     ? groups
         .map((group) => ({
           ...group,
-          products: group.products.filter((product) =>
-            [product.name, product.category_name, group.name, product.description].some((value) =>
-              normalize(value).includes(term),
-            ),
-          ),
+          products: group.products.filter((product) => {
+            if (featured) return product.featured;
+            const text = normalize(
+              [product.name, product.category_name, group.name, product.description].join(" "),
+            );
+            return terms.every((term) => text.includes(term));
+          }),
         }))
-        .filter((group) => group.products.length > 0)
-    : featured
-      ? groups
-          .map((group) => ({
-            ...group,
-            products: group.products.filter((product) => product.featured),
-          }))
-          .filter((group) => group.products.length > 0)
-      : activeGroup
-        ? [
-            {
-              ...activeGroup,
-              products: activeCategory
-                ? activeGroup.products.filter(
-                    (product) => product.category_slug === activeCategory.slug,
-                  )
-                : activeGroup.products,
-            },
-          ]
-        : [];
-  const count = visibleGroups.reduce((total, group) => total + group.products.length, 0);
-  const countLabel = `${count} ${count === 1 ? "producto" : "productos"}`;
+        .filter(({ products }) => products.length > 0)
+    : selectedGroups.length
+      ? selectedGroups
+      : groups;
+  const count = sections.reduce((total, section) => total + section.products.length, 0);
+  const showSectionHeadings = !activeGroup;
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [category]);
 
   useGSAP(
     () => {
-      if (term || featured || !activeGroup || !resultsRef.current) return;
-      const media = gsap.matchMedia();
-      media.add("(prefers-reduced-motion: no-preference)", () => {
-        const cards = Array.from(
+      if (filtering) return;
+      const motion = gsap.matchMedia();
+      motion.add("(prefers-reduced-motion: no-preference)", () => {
+        const items = Array.from(
           resultsRef.current?.querySelectorAll("[data-catalog-item]") ?? [],
         ).slice(0, 8);
-        if (!cards.length) return;
-        gsap.from(cards, {
-          opacity: 0.45,
-          y: 12,
-          duration: 0.24,
-          stagger: { amount: 0.11 },
-          ease: "power2.out",
-          clearProps: "opacity,transform",
-        });
+        if (items.length) {
+          gsap.from(items, {
+            opacity: 0.65,
+            y: 14,
+            duration: 0.5,
+            stagger: { amount: 0.17 },
+            ease: "power2.out",
+            clearProps: "opacity,transform",
+          });
+        }
       });
-      return () => media.revert();
+      return () => motion.revert();
     },
     {
       scope: resultsRef,
-      dependencies: [activeGroup?.slug, activeCategory?.slug, Boolean(term), featured],
+      dependencies: [category, filtering, data],
       revertOnUpdate: true,
     },
   );
-
-  function setCategoria(next: string) {
-    setParams((previous) => {
-      const updated = new URLSearchParams(previous);
-      updated.delete("q");
-      updated.delete("destacados");
-      updated.set("categoria", next);
-      return updated;
-    });
-  }
 
   return (
     <div className="route-page">
@@ -118,122 +99,109 @@ export function StorePage() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-8 lg:py-9">
+      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-9 lg:py-9">
         {groups.length > 0 && (
           <>
             <nav
               aria-label="Categorías de la tienda"
-              className="hidden lg:sticky lg:top-32 lg:block lg:self-start"
+              className="hidden max-h-[calc(100dvh-9rem)] overflow-y-auto pr-1 lg:sticky lg:top-32 lg:block lg:self-start"
             >
-              <h2 className="mb-3 border-b border-border pb-3 font-display text-xl text-sand">
-                Categorías
-              </h2>
-              <div className="space-y-1">
-                {groups.map((group) => {
-                  const selected = !term && !featured && activeGroup?.slug === group.slug;
-                  return (
-                    <button
-                      key={group.slug}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => setCategoria(group.slug)}
-                      className={`motion-press flex min-h-11 w-full items-center justify-between gap-2 rounded-md px-3 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-gold ${selected ? "bg-gold text-primary-foreground" : "text-sand hover:bg-card"}`}
-                    >
-                      <span>{group.name}</span>
-                      <span aria-hidden="true" className="text-xs tabular-nums opacity-80">
-                        {group.products.length}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+              <Link
+                to="/tienda"
+                aria-current={!filtering && !selectedGroups.length ? "page" : undefined}
+                className="mb-2 flex min-h-11 items-center border-b border-border px-3 font-semibold text-sand hover:text-accent aria-[current=page]:text-accent"
+              >
+                Todos los productos
+              </Link>
+              {groups.map((group) => (
+                <Link
+                  key={group.slug}
+                  to={catalogSectionUrl(group.slug)}
+                  aria-current={activeGroup === group ? "page" : undefined}
+                  className="flex min-h-11 items-center justify-between gap-2 rounded-md px-3 text-sm text-muted-foreground hover:bg-card aria-[current=page]:bg-muted aria-[current=page]:font-semibold aria-[current=page]:text-sand"
+                >
+                  <span>{group.name}</span>
+                  <span className="text-xs tabular-nums" aria-hidden="true">
+                    {group.products.length}
+                  </span>
+                </Link>
+              ))}
             </nav>
 
             <div className="relative lg:hidden">
-              <select
-                aria-label="Categoría de productos"
-                value={term || featured ? "" : (activeGroup?.slug ?? "")}
-                onChange={(e) => setCategoria(e.target.value)}
-                className="min-h-12 w-full appearance-none rounded-md border border-input bg-card py-2 pl-3 pr-9 text-base text-sand focus-visible:outline-2 focus-visible:outline-gold"
-              >
-                <option value="" disabled>
-                  Categorías
-                </option>
-                {groups.map((group) => (
-                  <option key={group.slug} value={group.slug}>
-                    {group.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                aria-hidden="true"
-                className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-gold"
-              />
+              <label htmlFor="store-category" className="mb-1.5 block text-sm font-semibold">
+                Ir a una sección
+              </label>
+              <div className="relative">
+                <select
+                  id="store-category"
+                  value={activeGroup?.slug ?? ""}
+                  onChange={(event) => {
+                    const target = event.currentTarget.value;
+                    navigate(target ? catalogSectionUrl(target) : "/tienda");
+                  }}
+                  className="min-h-12 w-full appearance-none rounded-md border border-input bg-card py-2 pl-3 pr-9 text-base text-sand focus-visible:outline-2 focus-visible:outline-gold"
+                >
+                  <option value="">Todos los productos</option>
+                  {groups.map((group) => (
+                    <option key={group.slug} value={group.slug}>
+                      {group.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-gold"
+                />
+              </div>
             </div>
           </>
         )}
 
-        <section ref={resultsRef} aria-label="Productos" className="min-w-0">
+        <section ref={resultsRef} aria-labelledby="store-results-heading" className="min-w-0">
           <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1 border-b border-border pb-4">
-            <h2 className="min-w-0 font-display text-3xl leading-tight break-words text-sand sm:text-4xl">
-              {term
-                ? `Resultados para «${query}»`
-                : featured
-                  ? "Productos destacados"
-                  : (activeGroup?.name ?? "Productos")}
+            <h2
+              id="store-results-heading"
+              className="min-w-0 font-display text-3xl leading-tight break-words text-sand sm:text-4xl"
+            >
+              {title}
             </h2>
             {!isPending && (
               <span role="status" className="text-sm tabular-nums text-muted-foreground">
-                {countLabel}
+                {count} {count === 1 ? "producto" : "productos"}
               </span>
             )}
           </div>
 
-          {!term &&
-            !featured &&
-            activeGroup &&
-            (activeGroup.categories.length > 1 || activeCategory) && (
-              <div
-                role="group"
-                aria-label="Filtrar por subcategoría"
-                className="mt-4 flex flex-wrap gap-2"
+          <div className="mt-5 space-y-9 sm:mt-6">
+            {sections.map((section) => (
+              <section
+                key={section.slug}
+                aria-label={section.name}
+                className="border-b border-border pb-8 last:border-0 last:pb-0"
               >
-                {[{ slug: activeGroup.slug, name: "Todos" }, ...activeGroup.categories].map(
-                  (category) => {
-                    const selected = category.slug === (activeCategory?.slug ?? activeGroup.slug);
-                    return (
-                      <button
-                        type="button"
-                        key={category.slug}
-                        aria-pressed={selected}
-                        onClick={() => setCategoria(category.slug)}
-                        className={`motion-press min-h-11 rounded-md border px-3 py-1.5 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-gold ${selected ? "border-gold text-gold" : "border-border text-sand hover:border-gold"}`}
-                      >
-                        {category.name}
-                      </button>
-                    );
-                  },
-                )}
-              </div>
-            )}
-
-          <div className="mt-5 space-y-10 sm:mt-6">
-            {visibleGroups.map((group) => (
-              <div key={group.slug}>
-                {(term || featured) && (
-                  <h3 className="mb-4 font-display text-2xl text-sand">{group.name}</h3>
+                {showSectionHeadings && (
+                  <h3 className="mb-4 font-display text-2xl text-sand">
+                    <Link
+                      to={catalogSectionUrl(section.slug)}
+                      className="inline-flex items-center gap-2 hover:text-accent"
+                    >
+                      {section.name}{" "}
+                      <ArrowUpRight aria-hidden="true" className="size-4 text-gold" />
+                    </Link>
+                  </h3>
                 )}
                 <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-4">
-                  {group.products.map((product) => (
+                  {section.products.map((product) => (
                     <ProductCard
                       key={product.id}
                       product={product}
                       compact
-                      headingLevel={term || featured ? 4 : 3}
+                      headingLevel={showSectionHeadings ? 4 : 3}
                     />
                   ))}
                 </div>
-              </div>
+              </section>
             ))}
           </div>
 
@@ -243,26 +211,19 @@ export function StorePage() {
             </p>
           )}
           {!isPending && count === 0 && (
-            <div className="py-8 text-sm text-muted-foreground">
+            <div className="py-6 text-sm text-muted-foreground">
               <p>
-                {term
+                {query
                   ? "No encontramos productos con esa búsqueda."
                   : "No hay productos disponibles."}
               </p>
-              {term && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setParams((previous) => {
-                      const updated = new URLSearchParams(previous);
-                      updated.delete("q");
-                      return updated;
-                    })
-                  }
-                  className="mt-2 min-h-11 text-gold underline underline-offset-4"
+              {query && (
+                <Link
+                  to="/tienda"
+                  className="mt-2 inline-flex min-h-11 items-center text-gold underline underline-offset-4"
                 >
-                  Limpiar búsqueda
-                </button>
+                  Ver todos los productos
+                </Link>
               )}
             </div>
           )}

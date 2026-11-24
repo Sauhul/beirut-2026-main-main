@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowDown, ArrowUpRight, Clock, MapPin, Phone, Ship, Store, Truck } from "lucide-react";
 import { FeaturedProducts } from "./FeaturedProducts";
-import { groupCatalog } from "@domain/catalog/groups";
+import { catalogSectionUrl, groupCatalog } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
 import { categoryImage } from "@shared/utils/category-images";
@@ -74,14 +74,11 @@ export function HomePage() {
   ].slice(0, 10);
 
   const tiles = (data ? groupCatalog(data) : []).map((group) => {
-    const sample = group.categories
-      .map(({ slug }) => group.products.find((product) => product.category_slug === slug && product.image_url))
-      .find(Boolean);
+    const sample = group.products.find(({ image_url }) => image_url);
     return {
       slug: group.slug,
       name: group.name,
       image: categoryImage(sample?.category_slug, sample?.image_url),
-      categories: group.categories.map(({ name }) => name).join(" · "),
     };
   });
 
@@ -176,6 +173,35 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* CATEGORÍAS */}
+      <section data-reveal-section className="border-y border-border bg-muted py-24">
+        <div className="mx-auto max-w-7xl px-5">
+          <div className="text-center">
+            <p className="eyebrow">Qué encuentras</p>
+            <h2 className="beirut-hero-line mt-3 font-display text-4xl text-sand md:text-5xl">
+              <span data-reveal-heading>Nuestras categorías</span>
+            </h2>
+            <div className="rule-gold mt-5" />
+          </div>
+
+          <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3">
+            {tiles.map((tile) => (
+              <Link
+                data-reveal-item
+                key={tile.slug}
+                to={catalogSectionUrl(tile.slug)}
+                className="card-onyx mx-auto flex w-full max-w-sm flex-col overflow-hidden rounded-2xl"
+              >
+                <ProductPhoto imageUrl={tile.image} alt="" />
+                <div className="flex flex-1 flex-col p-3 sm:p-5">
+                  <p className="font-display text-xl text-sand">{tile.name}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <FeaturedProducts products={featured} loading={isPending} />
 
       {/* PILARES */}
@@ -195,38 +221,6 @@ export function HomePage() {
                 <h3 className="mt-4 font-display text-2xl text-sand">{p.title}</h3>
                 <p className="mt-3 text-xs leading-7 text-muted-foreground">{p.text}</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CATEGORÍAS */}
-      <section data-reveal-section className="border-y border-border bg-muted py-24">
-        <div className="mx-auto max-w-7xl px-5">
-          <div className="text-center">
-            <p className="eyebrow">Qué encuentras</p>
-            <h2 className="beirut-hero-line mt-3 font-display text-4xl text-sand md:text-5xl">
-              <span data-reveal-heading>Nuestras categorías</span>
-            </h2>
-            <div className="rule-gold mt-5" />
-          </div>
-
-          <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3">
-            {tiles.map((tile) => (
-              <Link
-                data-reveal-item
-                key={tile.slug}
-                to={`/tienda?categoria=${tile.slug}`}
-                className="card-onyx mx-auto flex w-full max-w-sm flex-col overflow-hidden rounded-2xl"
-              >
-                <ProductPhoto imageUrl={tile.image} alt="" />
-                <div className="flex flex-1 flex-col p-3 sm:p-5">
-                  <p className="font-display text-xl text-sand">{tile.name}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    {tile.categories}
-                  </p>
-                </div>
-              </Link>
             ))}
           </div>
         </div>
