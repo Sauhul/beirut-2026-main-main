@@ -7,12 +7,10 @@ import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { ProductCard } from "@components/product/ProductCard";
 import { catalogSectionUrl, groupCatalog, resolveCatalogGroups } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
+import { catalogSearchMatches, catalogSearchTerms } from "@domain/catalog/search";
 import { usePageTitle } from "@hooks/usePageTitle";
 
 gsap.registerPlugin(useGSAP);
-
-const normalize = (value: string) =>
-  value.toLocaleLowerCase("es-CO").normalize("NFD").replace(/\p{M}/gu, "");
 
 export function StorePage() {
   usePageTitle("Nuestra Tienda | Delikatessen Beyrouth");
@@ -24,7 +22,7 @@ export function StorePage() {
   const groups = useMemo(() => (data ? groupCatalog(data) : []), [data]);
   const category = params.get("categoria");
   const query = (params.get("q") ?? "").trim();
-  const terms = normalize(query).split(/\s+/).filter(Boolean);
+  const terms = catalogSearchTerms(query);
   const featured = terms.length === 0 && params.get("destacados") === "1";
   const selectedGroups = resolveCatalogGroups(groups, category);
   const filtering = Boolean(query) || featured;
@@ -41,10 +39,12 @@ export function StorePage() {
           ...group,
           products: group.products.filter((product) => {
             if (featured) return product.featured;
-            const text = normalize(
-              [product.name, product.category_name, group.name, product.description].join(" "),
-            );
-            return terms.every((term) => text.includes(term));
+            return catalogSearchMatches(terms, [
+              product.name,
+              product.category_name,
+              group.name,
+              product.description,
+            ]);
           }),
         }))
         .filter(({ products }) => products.length > 0)
@@ -89,7 +89,7 @@ export function StorePage() {
   return (
     <div className="route-page">
       <header className="arabesque border-b border-border">
-        <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:py-10">
+        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-7 lg:py-10">
           <h1 className="font-display text-4xl leading-none text-sand sm:text-5xl">
             Nuestra tienda
           </h1>
@@ -158,7 +158,11 @@ export function StorePage() {
           </>
         )}
 
-        <section ref={resultsRef} aria-labelledby="store-results-heading" className="min-w-0">
+        <section
+          ref={resultsRef}
+          aria-labelledby="store-results-heading"
+          className="@container/catalog min-w-0"
+        >
           <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1 border-b border-border pb-4">
             <h2
               id="store-results-heading"
@@ -191,7 +195,7 @@ export function StorePage() {
                     </Link>
                   </h3>
                 )}
-                <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-4">
+                <div className="catalog-card-grid">
                   {section.products.map((product) => (
                     <ProductCard
                       key={product.id}

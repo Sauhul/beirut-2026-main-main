@@ -165,16 +165,16 @@ export function ProductDetailPage() {
       </div>
 
       {related.length > 0 && (
-        <section className="mt-20">
+        <section className="@container/catalog mt-12 sm:mt-20">
           <div className="flex items-end justify-between">
             <div>
               <p className="eyebrow">Para completar la mesa</p>
               <h2 className="mt-3 font-display text-4xl text-sand">Combina con este producto</h2>
             </div>
           </div>
-          <div className="related-grid mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="related-grid catalog-card-grid mt-8">
             {related.map((p) => (
-              <div key={p.id} className="related-card">
+              <div key={p.id} className="related-card min-w-0 [&>article]:h-full">
                 <ProductCard product={p} />
               </div>
             ))}

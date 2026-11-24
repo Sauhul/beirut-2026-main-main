@@ -127,16 +127,24 @@ export function HomePage() {
             <span>Delikatessen Beyrouth</span>
           </div>
           <div className="beirut-cover-copy">
+            <p data-enter="detail" className="eyebrow mb-4 leading-relaxed">
+              BEIRUT DELIKATESSEN · DESDE HACE MÁS DE 20 AÑOS
+            </p>
             <h1 id="home-title" className="beirut-cover-title">
               <span className="beirut-hero-line">
-                <span data-enter="line">Sabores</span>
+                <span data-enter="line">El Líbano,</span>
               </span>
               <span className="beirut-hero-line">
-                <em data-enter="line">del Líbano.</em>
+                <span data-enter="line">auténtico,</span>
+              </span>
+              <span className="beirut-hero-line">
+                <em data-enter="line">en tu mesa.</em>
               </span>
             </h1>
             <p data-enter="detail" className="beirut-cover-description">
-              Café con cardamomo, dulces de pistacho y especias del Mediterráneo, en Barranquilla.
+              Por más de 20 años hemos traído a Barranquilla lo mejor de la despensa libanesa:
+              especias, tahinis, aceites de oliva, aceitunas, dulces y productos de cuidado
+              personal, importados 100% del Líbano.
             </p>
           </div>
           <p className="beirut-cover-scroll">
@@ -174,8 +182,8 @@ export function HomePage() {
       </section>
 
       {/* CATEGORÍAS */}
-      <section data-reveal-section className="border-y border-border bg-muted py-24">
-        <div className="mx-auto max-w-7xl px-5">
+      <section data-reveal-section className="border-y border-border bg-muted py-16 sm:py-24">
+        <div className="@container/catalog mx-auto max-w-7xl px-4 sm:px-5">
           <div className="text-center">
             <p className="eyebrow">Qué encuentras</p>
             <h2 className="beirut-hero-line mt-3 font-display text-4xl text-sand md:text-5xl">
@@ -184,17 +192,17 @@ export function HomePage() {
             <div className="rule-gold mt-5" />
           </div>
 
-          <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3">
+          <div className="catalog-card-grid mt-8 [--catalog-wide-columns:3] sm:mt-14">
             {tiles.map((tile) => (
               <Link
                 data-reveal-item
                 key={tile.slug}
                 to={catalogSectionUrl(tile.slug)}
-                className="card-onyx mx-auto flex w-full max-w-sm flex-col overflow-hidden rounded-2xl"
+                className="card-hover-lift card-onyx mx-auto flex w-full max-w-sm flex-col overflow-hidden rounded-2xl"
               >
                 <ProductPhoto imageUrl={tile.image} alt="" />
-                <div className="flex flex-1 flex-col p-3 sm:p-5">
-                  <p className="font-display text-xl text-sand">{tile.name}</p>
+                <div className="flex flex-1 flex-col p-4 sm:p-5">
+                  <p className="font-display text-xl wrap-anywhere text-sand">{tile.name}</p>
                 </div>
               </Link>
             ))}

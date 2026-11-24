@@ -1,12 +1,13 @@
-import { useMemo, useState, type FormEvent } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, Instagram, Package, Search, ShoppingBag } from "lucide-react";
+import { ChevronDown, Instagram, Package, ShoppingBag } from "lucide-react";
 import { SITE } from "@config/site";
 import { useCart } from "@domain/cart/use-cart";
 import { catalogSectionUrl, groupCatalog } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
 import logo from "@assets/beirut-logo.png";
+import { CatalogSearch } from "./CatalogSearch";
 
 const NAV = [
   { to: "/", label: "Inicio" },
@@ -14,47 +15,6 @@ const NAV = [
   { to: "/tienda?destacados=1", label: "Destacados" },
   { to: "/al-por-mayor", label: "Al por mayor" },
 ];
-
-function CatalogSearch({ initialQuery }: { initialQuery: string }) {
-  const [query, setQuery] = useState(initialQuery);
-  const navigate = useNavigate();
-
-  function search(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const term = query.trim();
-    setQuery(term);
-    navigate(term ? `/tienda?${new URLSearchParams({ q: term })}` : "/tienda");
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }
-
-  return (
-    <form
-      role="search"
-      onSubmit={search}
-      className="relative col-span-2 flex min-w-0 items-stretch rounded-lg border border-input bg-background focus-within:border-gold focus-within:ring-1 focus-within:ring-gold md:col-span-1 md:col-start-2 md:row-start-1"
-    >
-      <Search
-        aria-hidden="true"
-        className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-      />
-      <input
-        type="search"
-        name="q"
-        aria-label="Buscar en toda la tienda"
-        placeholder="Buscar café, dulces, especias…"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        className="min-h-11 min-w-0 flex-1 rounded-l-lg bg-transparent pl-9 pr-2 text-base outline-none focus-visible:outline-none"
-      />
-      <button
-        type="submit"
-        className="rounded-r-lg bg-secondary px-4 text-sm font-semibold text-secondary-foreground hover:bg-secondary/90 sm:px-6"
-      >
-        Buscar
-      </button>
-    </form>
-  );
-}
 
 export function Header() {
   const { pathname, search } = useLocation();
@@ -112,7 +72,7 @@ export function Header() {
       </div>
 
       <nav aria-label="Navegación principal" className="border-t border-border">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-2 px-3 text-xs font-semibold sm:justify-start sm:gap-x-6 sm:px-6 sm:text-sm">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-2 px-3 text-xs font-semibold max-[359px]:gap-x-1 max-[359px]:px-2 max-[359px]:text-[0.6875rem] sm:justify-start sm:gap-x-6 sm:px-6 sm:text-sm">
           <div
             className="relative mr-0.5"
             onBlur={(event) => {

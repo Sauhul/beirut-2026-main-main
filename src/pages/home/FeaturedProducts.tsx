@@ -131,7 +131,7 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
       className="featured-products"
       aria-labelledby="featured-products-title"
     >
-      <div className="mx-auto max-w-7xl px-5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-5">
         <h2
           data-reveal-heading
           id="featured-products-title"
@@ -145,11 +145,12 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
           </p>
         )}
         {products.length > 0 && (
-          <div ref={viewportRef} data-reveal-item className="featured-products-viewport mt-3">
-            <ul
-              ref={trackRef}
-              className="featured-products-track grid gap-5 py-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-            >
+          <div
+            ref={viewportRef}
+            data-reveal-item
+            className="featured-products-viewport @container/catalog mt-3"
+          >
+            <ul ref={trackRef} className="featured-products-track catalog-card-grid py-4">
               {products.map((product) => (
                 <li key={product.id} className="min-w-0 [&>article]:h-full">
                   <ProductCard product={product} />
