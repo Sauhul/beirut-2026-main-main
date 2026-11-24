@@ -514,7 +514,7 @@ function ProductForm({
                 onClick={() => set("unit", preset)}
                 className={`text-[0.65rem] px-2.5 py-1 rounded-md border transition-all ${
                   value.unit === preset
-                    ? "bg-gold text-black border-gold font-bold shadow-sm"
+                    ? "bg-gold text-primary-foreground border-gold font-bold shadow-sm"
                     : "bg-secondary/30 text-muted-foreground border-border hover:border-gold/50 hover:text-sand"
                 }`}
               >

@@ -123,7 +123,7 @@ export function StorePage() {
           <>
             <nav
               aria-label="Categorías de la tienda"
-              className="hidden lg:sticky lg:top-40 lg:block lg:self-start"
+              className="hidden lg:sticky lg:top-32 lg:block lg:self-start"
             >
               <h2 className="mb-3 border-b border-border pb-3 font-display text-xl text-sand">
                 Categorías

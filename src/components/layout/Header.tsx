@@ -1,15 +1,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ChevronDown,
-  CircleHelp,
-  Instagram,
-  MapPin,
-  Package,
-  Search,
-  ShoppingBag,
-} from "lucide-react";
+import { ChevronDown, Instagram, Package, Search, ShoppingBag } from "lucide-react";
 import { SITE } from "@config/site";
 import { useCart } from "@domain/cart/use-cart";
 import { groupCatalog } from "@domain/catalog/groups";
@@ -76,20 +68,6 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
-      <div className="border-b border-border bg-background">
-        <div className="mx-auto flex min-h-8 max-w-7xl items-center justify-between gap-3 px-4 text-xs font-medium text-muted-foreground sm:px-6">
-          <Link to="/contacto" className="inline-flex items-center gap-1.5 hover:underline">
-            <MapPin aria-hidden="true" className="size-3.5" /> Barranquilla
-          </Link>
-          <a
-            href={`mailto:${SITE.email}`}
-            className="inline-flex items-center gap-1.5 hover:underline"
-          >
-            <CircleHelp aria-hidden="true" className="size-3.5" /> Ayuda
-          </a>
-        </div>
-      </div>
-
       <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-2 sm:px-6 md:grid-cols-[1fr_minmax(0,2.5fr)_1fr] md:gap-6 md:py-3">
         <Link to="/" aria-label={SITE.brandFull} className="flex w-fit items-center gap-2">
           <img src={logo} alt="" className="h-10 w-auto md:h-12" />

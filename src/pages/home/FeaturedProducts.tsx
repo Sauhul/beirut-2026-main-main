@@ -6,9 +6,17 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
   if (!products.length && !loading) return null;
 
   return (
-    <section className="featured-products" aria-labelledby="featured-products-title">
+    <section
+      data-reveal-section
+      className="featured-products"
+      aria-labelledby="featured-products-title"
+    >
       <div className="mx-auto max-w-7xl px-5">
-        <h2 id="featured-products-title" className="font-display text-4xl text-sand md:text-5xl">
+        <h2
+          data-reveal-heading
+          id="featured-products-title"
+          className="font-display text-4xl text-sand md:text-5xl"
+        >
           Productos destacados
         </h2>
         {loading && (
@@ -19,7 +27,7 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
         {products.length > 0 && (
           <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product) => (
-              <li key={product.id} className="min-w-0 [&>article]:h-full">
+              <li data-reveal-item key={product.id} className="min-w-0 [&>article]:h-full">
                 <ProductCard product={product} />
               </li>
             ))}

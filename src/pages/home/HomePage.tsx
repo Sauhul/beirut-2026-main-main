@@ -26,9 +26,9 @@ export function HomePage() {
     const motion = gsap.matchMedia();
 
     motion.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.timeline({ defaults: { ease: "expo.out" } })
-        .from("[data-enter='line']", { yPercent: 105, stagger: 0.09, duration: 0.85 })
-        .from("[data-enter='detail']", { y: 10, duration: 0.42 }, 0.18);
+      gsap.timeline({ defaults: { ease: "power2.out", clearProps: "transform,opacity" } })
+        .from("[data-enter='line']", { yPercent: 105, stagger: 0.19, duration: 1.24 })
+        .from("[data-enter='detail']", { y: 14, opacity: 0.65, duration: 0.8 }, 0.48);
     });
 
     return () => motion.revert();
@@ -37,27 +37,33 @@ export function HomePage() {
 
   const { data, isPending } = useQuery(catalogQuery);
   useGSAP(() => {
-    if (isPending) return;
     const motion = gsap.matchMedia();
 
     motion.add("(prefers-reduced-motion: no-preference)", () => {
       const sections = pageRef.current?.querySelectorAll<HTMLElement>("[data-reveal-section]");
       sections?.forEach((section) => {
         const heading = section.querySelector("[data-reveal-heading]");
-        const items = section.querySelectorAll("[data-reveal-item]");
-        if (!heading || !items.length) return;
+        if (!heading) return;
 
-        gsap.timeline({
-          defaults: { ease: "expo.out" },
-          scrollTrigger: { trigger: section, start: "clamp(top 88%)", once: true },
-        })
-          .from(heading, { yPercent: 105, duration: 0.85 })
-          .from(items, { y: 20, opacity: 0.7, duration: 0.65, stagger: 0.07 }, 0.15);
+        const items = section.querySelectorAll("[data-reveal-item]");
+        const reveal = gsap.timeline({
+          defaults: { ease: "power2.out", clearProps: "transform,opacity" },
+          scrollTrigger: { trigger: section, start: "clamp(top 90%)", once: true },
+        });
+        reveal.from(heading, { y: 30, opacity: 0.55, duration: 0.94 });
+
+        if (items.length) {
+          reveal.from(
+            items,
+            { y: 38, opacity: 0.65, duration: 0.9, stagger: { amount: 0.43 } },
+            0.24,
+          );
+        }
       });
     });
 
     return () => motion.revert();
-  }, { scope: pageRef, dependencies: [isPending], revertOnUpdate: true });
+  }, { scope: pageRef, dependencies: [data, isPending], revertOnUpdate: true });
 
   const products = data?.products ?? [];
 
@@ -150,9 +156,9 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="beirut-home-intro" aria-labelledby="home-intro-title">
+      <section data-reveal-section className="beirut-home-intro" aria-labelledby="home-intro-title">
         <div className="beirut-hero-inner">
-          <div>
+          <div data-reveal-heading>
             <h2 id="home-intro-title" className="beirut-home-intro-title">
               De nuestra tienda a tu mesa
             </h2>
@@ -164,7 +170,7 @@ export function HomePage() {
               Explorar la tienda <ArrowUpRight size={19} aria-hidden="true" />
             </Link>
           </div>
-          <div className="beirut-hero-video">
+          <div data-reveal-item className="beirut-hero-video">
             <HeroVideo />
           </div>
         </div>
@@ -173,9 +179,9 @@ export function HomePage() {
       <FeaturedProducts products={featured} loading={isPending} />
 
       {/* PILARES */}
-      <section className="arabesque border-y border-border bg-muted py-20">
+      <section data-reveal-section className="arabesque border-y border-border bg-muted py-20">
         <div className="mx-auto max-w-7xl px-5">
-          <div className="text-center">
+          <div data-reveal-heading className="text-center">
             <p className="eyebrow">Por qué comprarnos</p>
             <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">
               La tienda, en corto
@@ -184,7 +190,7 @@ export function HomePage() {
           </div>
           <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS.map((p) => (
-              <div key={p.title} className="border-t border-gold/40 pt-6">
+              <div data-reveal-item key={p.title} className="border-t border-gold/40 pt-6">
                 <p.icon className="h-7 w-7 text-gold" />
                 <h3 className="mt-4 font-display text-2xl text-sand">{p.title}</h3>
                 <p className="mt-3 text-xs leading-7 text-muted-foreground">{p.text}</p>
@@ -227,15 +233,15 @@ export function HomePage() {
       </section>
 
       {/* CÓMO COMPRAR */}
-      <section className="mx-auto max-w-7xl px-5 py-24">
-        <div className="text-center">
+      <section data-reveal-section className="mx-auto max-w-7xl px-5 py-24">
+        <div data-reveal-heading className="text-center">
           <p className="eyebrow">Cómo comprar</p>
           <h2 className="mt-3 font-display text-4xl text-sand md:text-5xl">Tres pasos</h2>
           <div className="rule-gold mt-5" />
         </div>
         <div className="mt-14 grid gap-8 md:grid-cols-3">
           {STEPS.map((s) => (
-            <div key={s.n} className="card-onyx p-8">
+            <div data-reveal-item key={s.n} className="card-onyx p-8">
               <p className="font-display text-5xl text-gold/60">{s.n}</p>
               <h3 className="mt-4 font-display text-2xl text-sand">{s.title}</h3>
               <p className="mt-3 text-xs leading-7 text-muted-foreground">{s.text}</p>
@@ -245,9 +251,9 @@ export function HomePage() {
       </section>
 
       {/* VISÍTANOS */}
-      <section className="arabesque border-t border-border bg-muted py-24">
+      <section data-reveal-section className="arabesque border-t border-border bg-muted py-24">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2">
-          <div>
+          <div data-reveal-heading>
             <p className="eyebrow">Visítanos</p>
             <h2 className="mt-3 font-display text-4xl leading-tight text-sand md:text-5xl">
               Te esperamos en la tienda
@@ -289,7 +295,7 @@ export function HomePage() {
             </Link>
           </div>
 
-          <div className="min-h-[380px] border border-border">
+          <div data-reveal-item className="min-h-[380px] border border-border">
             <iframe
               title="Mapa de Delikatessen Beyrouth"
               src={SITE.mapEmbed}

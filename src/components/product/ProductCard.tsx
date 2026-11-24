@@ -24,12 +24,9 @@ export function ProductCard({
   return (
     <article
       data-catalog-item={compact || undefined}
-      className="card-onyx group flex flex-col overflow-hidden rounded-2xl"
+      className="product-card card-onyx flex flex-col overflow-hidden rounded-2xl"
     >
-      <Link
-        to={`/producto/${product.slug}`}
-        className="product-card-photo relative block overflow-hidden"
-      >
+      <Link to={`/producto/${product.slug}`} className="relative block overflow-hidden">
         <ProductPhoto imageUrl={product.image_url} alt={name} />
         {!compact && (
           <span className="absolute top-3 left-3 bg-background/80 px-2 py-1 text-[0.55rem] font-bold tracking-[0.18em] uppercase text-gold">

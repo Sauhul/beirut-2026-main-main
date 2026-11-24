@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Route, Routes, useLocation, useNavigate, Link } from "react-router-dom";
+import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { getMotionQuality } from "@hooks/useAnimationQuality";
@@ -14,13 +15,13 @@ import { ContactPage } from "@pages/contacto/ContactPage";
 import { WholesalePage } from "@pages/al-por-mayor/WholesalePage";
 import { AdminPage } from "@pages/admin/AdminPage";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Solo hace scroll al top si NO estamos entrando a un producto
+    // Las fichas de producto gestionan su posición de scroll.
     if (!pathname.includes("/producto/")) {
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
       requestAnimationFrame(() => ScrollTrigger.refresh());
@@ -63,49 +64,60 @@ function NotFound() {
 }
 
 function AnimatedRoutes() {
-  const motion = getMotionQuality();
   const location = useLocation();
   const pageRef = useRef<HTMLDivElement>(null);
-  const animateRoute = motion !== "minimal" && location.pathname !== "/";
+  const featured =
+    location.pathname === "/tienda" &&
+    new URLSearchParams(location.search).get("destacados") === "1";
 
-  useEffect(() => {
-    if (!animateRoute) return;
+  useGSAP(
+    () => {
+      const quality = getMotionQuality();
+      if (quality === "minimal" || location.pathname === "/") return;
 
-    const ctx = gsap.context(() => {
-      if (motion === "full") {
-        gsap.fromTo(
-          ".route-page",
-          { autoAlpha: 0, y: 22 },
+      const media = gsap.matchMedia();
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        const full = quality === "full";
+        const page = pageRef.current?.querySelector(".route-page");
+        const transition = gsap.timeline({ defaults: { ease: "power3.inOut" } });
+
+        transition.fromTo(
+          "[data-route-curtain]",
+          { yPercent: 0, autoAlpha: 1 },
           {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
+            yPercent: -102,
+            duration: full ? 0.78 : 0.46,
+            stagger: full ? { each: 0.12, from: "end" } : 0,
             clearProps: "transform,visibility,opacity",
           },
         );
-      }
 
-      gsap.fromTo(
-        ".route-wipe",
-        { scaleX: 1, autoAlpha: 1, transformOrigin: "left center" },
-        {
-          scaleX: 0,
-          autoAlpha: 0,
-          duration: motion === "full" ? 0.75 : 0.5,
-          ease: "expo.inOut",
-        },
-      );
-    }, pageRef);
+        if (page) {
+          transition.from(
+            page,
+            {
+              y: full ? 30 : 12,
+              opacity: 0.78,
+              duration: full ? 0.72 : 0.4,
+              ease: "power3.out",
+              clearProps: "transform,opacity",
+            },
+            full ? 0.32 : 0.17,
+          );
+        }
+      });
 
-    return () => ctx.revert();
-  }, [animateRoute, location.pathname, motion]);
+      return () => media.revert();
+    },
+    { scope: pageRef, dependencies: [location.pathname, featured], revertOnUpdate: true },
+  );
 
   return (
     <div ref={pageRef} className="relative">
-      {animateRoute && (
-        <div className="route-wipe pointer-events-none fixed inset-0 z-40 bg-primary" />
-      )}
+      <div aria-hidden="true" className="route-wipe pointer-events-none fixed inset-0 z-40">
+        <div data-route-curtain className="invisible absolute inset-0 bg-primary" />
+        <div data-route-curtain className="invisible absolute inset-0 bg-secondary" />
+      </div>
       <Routes location={location}>
         <Route path="/" element={<HomePage />} />
         <Route path="/tienda" element={<StorePage />} />

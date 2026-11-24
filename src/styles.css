@@ -6,7 +6,7 @@
 
 /*
  * Delikatessen Beyrouth — sistema de diseño "Herencia Levantina".
- * Paleta: marfil, oro, verde cedro y borgoña. Tipografía editorial
+ * Paleta: marfil, oliva, terracota y bronce. Tipografía editorial
  * (DM Serif Display para títulos, Fira Sans para texto).
  */
 
@@ -47,40 +47,39 @@
 
 :root {
   --radius: 0.25rem;
-  --background: oklch(0.955 0.025 82);
-  --foreground: oklch(0.31 0.07 160);
-  --card: oklch(0.99 0.008 82);
-  --card-foreground: oklch(0.31 0.07 160);
-  --popover: oklch(0.99 0.008 82);
-  --popover-foreground: oklch(0.31 0.07 160);
-  --primary: oklch(0.73 0.13 85);
-  --primary-foreground: oklch(0.22 0.055 160);
-  --secondary: oklch(0.31 0.07 160);
-  --secondary-foreground: oklch(0.97 0.018 82);
-  --muted: oklch(0.91 0.025 82);
-  --muted-foreground: oklch(0.47 0.035 145);
-  --accent: oklch(0.46 0.13 24);
-  --accent-foreground: oklch(0.98 0.012 82);
-  --destructive: oklch(0.58 0.19 25);
-  --destructive-foreground: oklch(0.97 0.01 85);
-  --border: oklch(0.73 0.13 85 / 30%);
-  --input: oklch(0.65 0.035 82 / 45%);
-  --ring: oklch(0.73 0.13 85 / 65%);
-  --gold: oklch(0.73 0.13 85);
-  --gold-soft: oklch(0.82 0.11 88);
-  --onyx: oklch(0.99 0.008 82);
-  --sand: oklch(0.31 0.07 160);
-  --coral: oklch(0.58 0.19 25);
+  --background: #f4eee1;
+  --foreground: #333922;
+  --card: #fbf7ee;
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: #914d38;
+  --primary-foreground: #fff9ed;
+  --secondary: #4c5634;
+  --secondary-foreground: var(--primary-foreground);
+  --muted: #ebe0cb;
+  --muted-foreground: #5d5846;
+  --accent: #853f2d;
+  --accent-foreground: var(--primary-foreground);
+  --destructive: #a13d32;
+  --destructive-foreground: var(--primary-foreground);
+  --border: #d9c9ad;
+  --input: #a08c70;
+  --ring: #806138;
+  --gold: #795927;
+  --gold-soft: #e3cda4;
+  --onyx: var(--card);
+  --sand: var(--foreground);
+  --coral: var(--destructive);
   --gradient-veil: linear-gradient(
     180deg,
-    oklch(0.31 0.07 160 / 0.03) 0%,
-    oklch(0.31 0.07 160 / 0.45) 55%,
-    oklch(0.22 0.055 160 / 0.88) 100%
+    rgb(51 57 34 / 3%) 0%,
+    rgb(51 57 34 / 45%) 55%,
+    rgb(36 39 25 / 88%) 100%
   );
-  --shadow-gold: 0 18px 60px -24px oklch(0.55 0.1 82 / 0.32);
-  --shadow-soft: 0 1px 2px rgba(22, 18, 10, 0.05), 0 18px 48px -28px oklch(0.31 0.07 160 / 0.32);
-  --shadow-lift:
-    0 16px 44px -22px oklch(0.22 0.055 160 / 0.5), 0 34px 70px -38px oklch(0.22 0.055 160 / 0.42);
+  --shadow-gold: 0 18px 60px -24px rgb(105 73 35 / 32%);
+  --shadow-soft: 0 1px 2px rgb(44 33 24 / 5%), 0 18px 48px -28px rgb(51 57 34 / 32%);
+  --shadow-lift: 0 16px 44px -22px rgb(36 39 25 / 50%), 0 34px 70px -38px rgb(51 57 34 / 42%);
 }
 
 @layer base {
@@ -141,8 +140,8 @@
 /* Ornamento geométrico árabe (patrón de estrellas de ocho puntas). */
 @utility arabesque {
   background-image:
-    repeating-linear-gradient(45deg, oklch(0.73 0.13 85 / 0.09) 0 1px, transparent 1px 16px),
-    repeating-linear-gradient(-45deg, oklch(0.73 0.13 85 / 0.09) 0 1px, transparent 1px 16px);
+    repeating-linear-gradient(45deg, color-mix(in srgb, var(--gold) 7%, transparent) 0 1px, transparent 1px 16px),
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--gold) 7%, transparent) 0 1px, transparent 1px 16px);
 }
 
 /* Cenefa dorada horizontal con rombo central. */
@@ -183,9 +182,10 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--primary-foreground);
-  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  background: var(--primary);
   transition: all 0.35s ease;
   &:hover {
+    background: var(--accent);
     box-shadow: var(--shadow-gold);
     transform: translateY(-2px);
   }
@@ -226,15 +226,6 @@
 }
 
 @layer utilities {
-  /* Transiciones de página (GSAP) */
-  .route-wipe {
-    pointer-events: none;
-    /* Oculto por defecto: GSAP lo muestra solo mientras corre la animación.
-       Si la animación no corre (reduced motion, error), nunca tapa la página. */
-    opacity: 0;
-    visibility: hidden;
-  }
-
   .motion-ready,
   .store-motion,
   .detail-motion,
@@ -273,14 +264,14 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: oklch(0.955 0.025 82);
+  background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.73 0.13 85 / 45%);
+  background: color-mix(in srgb, var(--gold) 45%, transparent);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.73 0.13 85 / 70%);
+  background: color-mix(in srgb, var(--gold) 70%, transparent);
 }
 
 /* Editorial storefront */
@@ -321,7 +312,7 @@
 }
 
 .beirut-cover-title em {
-  color: #326348;
+  color: var(--accent);
 }
 
 .beirut-cover-description {
@@ -350,8 +341,8 @@
 }
 
 .beirut-home-intro {
-  background: #f5efdf;
-  color: #173c2b;
+  background: var(--card);
+  color: var(--foreground);
   border-bottom: 1px solid var(--border);
 }
 
@@ -386,7 +377,7 @@
 .beirut-hero-description {
   max-width: 35ch;
   margin-block: 2rem;
-  color: #405747;
+  color: var(--muted-foreground);
   font-size: clamp(1rem, 1.5vw, 1.2rem);
   line-height: 1.65;
 }
@@ -398,13 +389,13 @@
   gap: 1.25rem;
   min-height: 3.25rem;
   padding: 0.7rem 1.25rem;
-  background: #214a35;
-  color: #fff9ea;
+  background: var(--secondary);
+  color: var(--secondary-foreground);
   font-weight: 600;
 }
 
 .beirut-hero-cta:focus-visible {
-  outline: 2px solid #214a35;
+  outline: 2px solid var(--secondary);
   outline-offset: 4px;
 }
 
@@ -414,7 +405,7 @@
   aspect-ratio: 16 / 15;
   overflow: hidden;
   border-radius: 1rem;
-  background: #e4dcc4;
+  background: var(--muted);
 }
 
 .beirut-hero-video video {
@@ -510,7 +501,7 @@
   position: relative;
   aspect-ratio: 5 / 6;
   overflow: hidden;
-  background: #e0d9c7;
+  background: var(--muted);
 }
 
 .product-photo img {
@@ -525,12 +516,15 @@
 }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .product-card-photo img {
-    transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+  .product-card {
+    position: relative;
+    transform-origin: center 20%;
+    transition: transform 230ms cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  .product-card-photo:hover img {
-    transform: scale(1.025);
+  .product-card:hover {
+    z-index: 1;
+    transform: translateY(-10px) scale(1.06);
   }
 }
 
@@ -553,7 +547,7 @@
   display: grid;
   place-items: center;
   height: 100%;
-  color: #625b49;
+  color: var(--muted-foreground);
 }
 
 .product-gallery-controls {
@@ -666,14 +660,6 @@
 
     .nav-motion-link:is(:hover, :focus-visible)::after {
       transform: scaleX(1);
-    }
-
-    [data-catalog-item] .product-card-photo img {
-      transition-duration: 230ms;
-    }
-
-    [data-catalog-item]:hover .product-card-photo img {
-      transform: scale(1.05);
     }
   }
 }
