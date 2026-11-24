@@ -497,6 +497,20 @@
   padding-block: clamp(3rem, 7vw, 6.5rem);
 }
 
+.featured-products-viewport[data-carousel="true"] {
+  overflow: clip;
+}
+
+.featured-products-viewport[data-carousel="true"] .featured-products-track {
+  position: relative;
+  display: flex;
+}
+
+.featured-products-viewport[data-carousel="true"] .featured-products-track > li {
+  flex: 0 0 clamp(14rem, 44vw, 19rem);
+}
+
+
 .product-photo {
   position: relative;
   aspect-ratio: 5 / 6;
