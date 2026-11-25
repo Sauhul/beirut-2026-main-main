@@ -12,7 +12,7 @@ import { usePageTitle } from "@hooks/usePageTitle";
 import { categoryImage } from "@shared/utils/category-images";
 import { ProductPhoto } from "@components/product/ProductPhoto";
 import { SITE } from "@config/site";
-import coverPhoto from "@assets/hero-despensa-beirut.webp";
+import coverPhoto from "@assets/hero-despensa-beirut-v2.webp";
 import { HeroVideo } from "./HeroVideo";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -161,7 +161,7 @@ export function HomePage() {
         <div className="beirut-cover-photo">
           <img
             src={coverPhoto}
-            alt="Aceite de oliva, café con cardamomo, aceitunas verdes, pan con zaatar, tahini, melaza de granada y baklawa"
+            alt="Aceite de oliva, café con cardamomo, pan con zaatar, tahini, melaza de granada, agua de rosas y halva de pistacho"
             fetchPriority="high"
           />
         </div>
