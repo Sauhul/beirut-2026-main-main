@@ -6,7 +6,6 @@ import { SITE } from "@config/site";
 import { useCart } from "@domain/cart/use-cart";
 import { catalogSectionUrl, groupCatalog } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
-import logo from "@assets/beirut-logo.png";
 import { CatalogSearch } from "./CatalogSearch";
 
 const NAV = [
@@ -30,13 +29,13 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
       <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-6 md:py-3">
         <Link to="/" aria-label={SITE.brandFull} className="flex w-fit items-center gap-2">
-          <img src={logo} alt="" className="h-10 w-auto md:h-12" />
+          <img src="/beirut-marca-dorada.png" width={40} height={40} alt="" className="size-10" />
           <span className="leading-none">
-            <span className="block font-display text-xl tracking-[0.22em] text-foreground">
-              BEIRUT
-            </span>
-            <span className="block text-[0.55rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+            <span className="block font-display text-sm tracking-wider text-gold uppercase">
               Delikatessen
+            </span>
+            <span className="block font-display text-base text-foreground italic">
+              Beyrouth
             </span>
           </span>
         </Link>

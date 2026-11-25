@@ -13,7 +13,6 @@ import { categoryImage } from "@shared/utils/category-images";
 import { ProductPhoto } from "@components/product/ProductPhoto";
 import { SITE } from "@config/site";
 import coverPhoto from "@assets/hero-despensa-beirut.webp";
-import logo from "@assets/beirut-logo.png";
 import { HeroVideo } from "./HeroVideo";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -129,8 +128,8 @@ export function HomePage() {
     <div ref={pageRef} className="route-page home-page">
       <section ref={heroRef} className="beirut-cover" aria-labelledby="home-title">
         <div className="beirut-cover-content">
-          <div className="beirut-cover-brand">
-            <img src={logo} width={48} height={48} alt="" />
+          <div className="beirut-cover-brand text-gold">
+            <img src="/beirut-marca-dorada.png" width={40} height={40} alt="" />
             <span>Delikatessen Beyrouth</span>
           </div>
           <div className="beirut-cover-copy">
