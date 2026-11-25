@@ -973,6 +973,8 @@
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 1rem;
+  box-shadow: 0 1rem 2.5rem -1rem rgb(75 49 25 / 38%),
+    0 0.25rem 0.75rem rgb(75 49 25 / 10%);
 }
 
 .beirut-cover-photo img {
@@ -982,6 +984,30 @@
   height: 100%;
   min-height: 0;
   object-fit: cover;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .beirut-cover-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(115deg, transparent 30%, rgb(255 239 199 / 30%) 50%, transparent 70%);
+    animation: beirut-cover-light-sweep 1.5s ease-in-out 300ms backwards;
+    opacity: 0;
+  }
+}
+
+@keyframes beirut-cover-light-sweep {
+  from {
+    opacity: 1;
+    transform: translateX(-110%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(110%);
+  }
 }
 
 .beirut-home-intro {
