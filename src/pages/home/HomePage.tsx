@@ -128,10 +128,6 @@ export function HomePage() {
     <div ref={pageRef} className="route-page home-page">
       <section ref={heroRef} className="beirut-cover" aria-labelledby="home-title">
         <div className="beirut-cover-content">
-          <div className="beirut-cover-brand text-gold">
-            <img src="/beirut-marca-dorada.png" width={40} height={40} alt="" />
-            <span>Delikatessen Beyrouth</span>
-          </div>
           <div className="beirut-cover-copy">
             <p data-enter="detail" className="eyebrow mb-4 leading-relaxed">
               BEIRUT DELIKATESSEN · DESDE HACE MÁS DE 20 AÑOS

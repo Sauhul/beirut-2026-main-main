@@ -29,13 +29,13 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
       <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-6 md:py-3">
         <Link to="/" aria-label={SITE.brandFull} className="flex w-fit items-center gap-2">
-          <img src="/beirut-marca-dorada.png" width={40} height={40} alt="" className="size-10" />
+          <img src="/beirut-cedro-dorado.png" width={40} height={40} alt="" className="size-10" />
           <span className="leading-none">
-            <span className="block font-display text-sm tracking-wider text-gold uppercase">
-              Delikatessen
-            </span>
-            <span className="block font-display text-base text-foreground italic">
+            <span className="block [font-family:'DM_Serif_Display',Georgia,serif] text-2xl text-foreground">
               Beyrouth
+            </span>
+            <span className="block text-[0.625rem] font-bold tracking-[0.16em] text-gold uppercase">
+              Delikatessen
             </span>
           </span>
         </Link>
