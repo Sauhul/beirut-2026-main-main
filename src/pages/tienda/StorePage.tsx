@@ -17,6 +17,7 @@ import { ProductCard } from "@components/product/ProductCard";
 import { catalogSectionUrl, groupCatalog, resolveCatalogGroups } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
 import { catalogSearchMatches, catalogSearchTerms } from "@domain/catalog/search";
+import { useEntrance } from "@hooks/useEntrance";
 import { usePageTitle } from "@hooks/usePageTitle";
 const sectionNotes: Record<string, string> = {
   "cafe-bebidas": "Para empezar el día o alargar la sobremesa.",
@@ -35,7 +36,10 @@ export function StorePage() {
 
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
+  const introRef = useRef<HTMLElement>(null);
+  const catalogRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLElement>(null);
+  const previousSection = useRef("");
   const { data, isPending } = useQuery(catalogQuery);
   const groups = useMemo(() => (data ? groupCatalog(data) : []), [data]);
   const category = params.get("categoria");
@@ -88,14 +92,28 @@ export function StorePage() {
   }));
   const count = sections.reduce((total, section) => total + section.products.length, 0);
   const showSectionHeadings = !activeGroup;
+  const sectionKey = query
+    ? `q:${query}`
+    : featured
+      ? "featured"
+      : category
+        ? `category:${category}`
+        : "";
+
+  useEntrance(introRef);
+  useEntrance(resultsRef, JSON.stringify([sectionKey, title]));
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [category]);
+    if (previousSection.current === sectionKey) return;
+    const frame = requestAnimationFrame(() => {
+      catalogRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
+      previousSection.current = sectionKey;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [sectionKey]);
 
   useGSAP(
     () => {
-      if (filtering) return;
       const motion = gsap.matchMedia();
       motion.add("(prefers-reduced-motion: no-preference)", () => {
         const items = Array.from(
@@ -116,20 +134,22 @@ export function StorePage() {
     },
     {
       scope: resultsRef,
-      dependencies: [category, filtering, data],
+      dependencies: [sectionKey, data],
       revertOnUpdate: true,
     },
   );
 
   return (
     <div className="route-page store-page">
-      <header className="store-intro arabesque border-b border-border">
+      <header ref={introRef} className="store-intro arabesque border-b border-border">
         <div className="mx-auto max-w-7xl px-4 py-9 text-center sm:px-6 sm:py-12">
-          <p className="eyebrow">Beirut · Delikatessen</p>
-          <h1 className="mt-4 font-display text-5xl leading-none text-sand sm:text-6xl">
-            Nuestra tienda
+          <p data-enter="detail" className="eyebrow">
+            Beirut · Delikatessen
+          </p>
+          <h1 className="beirut-hero-line mt-4 font-display text-5xl leading-none text-sand sm:text-6xl">
+            <span data-enter="line">Nuestra tienda</span>
           </h1>
-          <p className="mx-auto mt-4 max-w-md text-base text-muted-foreground">
+          <p data-enter="detail" className="mx-auto mt-4 max-w-md text-base text-muted-foreground">
             Ingredientes y utensilios para la mesa libanesa.
           </p>
           <a href="#store-catalog" className="store-catalog-link">
@@ -151,6 +171,7 @@ export function StorePage() {
       </div>
 
       <div
+        ref={catalogRef}
         id="store-catalog"
         className={`mx-auto grid max-w-7xl scroll-mt-44 gap-6 lg:scroll-mt-36 px-4 pb-10 pt-7 sm:px-6 lg:gap-8 lg:pb-14 ${groups.length ? "lg:grid-cols-[13rem_minmax(0,1fr)]" : ""}`}
       >
@@ -229,9 +250,9 @@ export function StorePage() {
             <div>
               <h2
                 id="store-results-heading"
-                className="min-w-0 font-display text-3xl leading-tight break-words text-sand sm:text-4xl"
+                className="beirut-hero-line min-w-0 font-display text-3xl leading-tight break-words text-sand sm:text-4xl"
               >
-                {title}
+                <span data-enter="line">{title}</span>
               </h2>
               {!isPending && (
                 <span

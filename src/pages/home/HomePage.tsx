@@ -9,6 +9,7 @@ import { FeaturedProducts } from "./FeaturedProducts";
 import { catalogSectionUrl, groupCatalog } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
 import { usePageTitle } from "@hooks/usePageTitle";
+import { useEntrance } from "@hooks/useEntrance";
 import { categoryImage } from "@shared/utils/category-images";
 import { ProductPhoto } from "@components/product/ProductPhoto";
 import { SITE } from "@config/site";
@@ -21,33 +22,7 @@ export function HomePage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
 
-  useGSAP(
-    () => {
-      const motion = gsap.matchMedia();
-
-      motion.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap
-          .timeline({
-            defaults: { duration: 1.24, ease: "power2.out", clearProps: "transform,opacity" },
-          })
-          .from("[data-enter='line']", { yPercent: 105, stagger: 0.19 }, 0)
-          .fromTo(
-            "[data-enter='photo']",
-            { yPercent: 105, clipPath: "inset(0% -12% 100% -12%)" },
-            {
-              yPercent: 0,
-              clipPath: "inset(-12% -12% -12% -12%)",
-              clearProps: "transform,clipPath",
-            },
-            0,
-          )
-          .from("[data-enter='detail']", { y: 14, opacity: 0.65, duration: 0.8 }, 0.48);
-      });
-
-      return () => motion.revert();
-    },
-    { scope: heroRef },
-  );
+  useEntrance(heroRef);
   usePageTitle("Delikatessen Beyrouth | Tienda libanesa en Barranquilla");
 
   const { data, isPending } = useQuery(catalogQuery);

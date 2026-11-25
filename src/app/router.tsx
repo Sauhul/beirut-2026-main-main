@@ -66,14 +66,12 @@ function NotFound() {
 function AnimatedRoutes() {
   const location = useLocation();
   const pageRef = useRef<HTMLDivElement>(null);
-  const featured =
-    location.pathname === "/tienda" &&
-    new URLSearchParams(location.search).get("destacados") === "1";
-
   useGSAP(
     () => {
       const quality = getMotionQuality();
-      if (quality === "minimal" || location.pathname === "/") return;
+      if (quality === "minimal" || ["/", "/tienda", "/al-por-mayor"].includes(location.pathname)) {
+        return;
+      }
 
       const media = gsap.matchMedia();
       media.add("(prefers-reduced-motion: no-preference)", () => {
@@ -109,7 +107,7 @@ function AnimatedRoutes() {
 
       return () => media.revert();
     },
-    { scope: pageRef, dependencies: [location.pathname, featured], revertOnUpdate: true },
+    { scope: pageRef, dependencies: [location.pathname], revertOnUpdate: true },
   );
 
   return (
