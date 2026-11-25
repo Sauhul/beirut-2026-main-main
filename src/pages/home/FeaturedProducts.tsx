@@ -30,9 +30,6 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
         let viewportWidth = 0;
         let offset = 0;
         let wrap: ((value: number) => number) | undefined;
-        let visible = false;
-        let hovered = false;
-        let focused = false;
 
         function render() {
           const wrapPosition = wrap;
@@ -44,7 +41,7 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
         }
 
         function tick(_time: number, delta: number) {
-          if (!wrap || !visible || hovered || focused || document.hidden) return;
+          if (!wrap) return;
           offset =
             (offset + (pixelsPerSecond * Math.min(delta, 50)) / 1000) % (step * cards.length);
           render();
@@ -71,7 +68,6 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
         }
 
         function focusCard(event: FocusEvent) {
-          focused = true;
           const card = (event.target as HTMLElement).closest("li");
           const index = cards.indexOf(card as HTMLLIElement);
           if (!wrap || index < 0) return;
@@ -82,37 +78,17 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
           }
         }
 
-        const onFocusOut = (event: FocusEvent) => {
-          focused = viewport.contains(event.relatedTarget as Node | null);
-        };
-        const onPointerEnter = (event: PointerEvent) => {
-          hovered = event.pointerType === "mouse";
-        };
-        const onPointerLeave = () => {
-          hovered = false;
-        };
         const resize = new ResizeObserver(measure);
-        const intersection = new IntersectionObserver(([entry]) => {
-          visible = entry.isIntersecting;
-        });
 
         measure();
         resize.observe(viewport);
-        intersection.observe(viewport);
-        viewport.addEventListener("pointerenter", onPointerEnter);
-        viewport.addEventListener("pointerleave", onPointerLeave);
         viewport.addEventListener("focusin", focusCard);
-        viewport.addEventListener("focusout", onFocusOut);
         gsap.ticker.add(tick);
 
         return () => {
           gsap.ticker.remove(tick);
           resize.disconnect();
-          intersection.disconnect();
-          viewport.removeEventListener("pointerenter", onPointerEnter);
-          viewport.removeEventListener("pointerleave", onPointerLeave);
           viewport.removeEventListener("focusin", focusCard);
-          viewport.removeEventListener("focusout", onFocusOut);
           delete viewport.dataset.carousel;
           gsap.set(cards, { clearProps: "transform" });
         };
