@@ -1306,6 +1306,18 @@
     translate: 0 -10px;
     scale: 1.06;
   }
+
+  .featured-products-viewport[data-carousel="true"] .featured-products-track > li {
+    padding-block-start: 10px;
+  }
+
+  .featured-products-viewport[data-carousel="true"] .card-hover-lift {
+    scale: 0.94;
+  }
+
+  .featured-products-viewport[data-carousel="true"] .card-hover-lift:hover {
+    scale: 1;
+  }
 }
 
 .product-photo--framed img {
