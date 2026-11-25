@@ -27,8 +27,20 @@ export function HomePage() {
 
       motion.add("(prefers-reduced-motion: no-preference)", () => {
         gsap
-          .timeline({ defaults: { ease: "power2.out", clearProps: "transform,opacity" } })
-          .from("[data-enter='line']", { yPercent: 105, stagger: 0.19, duration: 1.24 })
+          .timeline({
+            defaults: { duration: 1.24, ease: "power2.out", clearProps: "transform,opacity" },
+          })
+          .from("[data-enter='line']", { yPercent: 105, stagger: 0.19 }, 0)
+          .fromTo(
+            "[data-enter='photo']",
+            { yPercent: 105, clipPath: "inset(0% -12% 100% -12%)" },
+            {
+              yPercent: 0,
+              clipPath: "inset(-12% -12% -12% -12%)",
+              clearProps: "transform,clipPath",
+            },
+            0,
+          )
           .from("[data-enter='detail']", { y: 14, opacity: 0.65, duration: 0.8 }, 0.48);
       });
 
@@ -154,7 +166,7 @@ export function HomePage() {
             Desliza para explorar
           </p>
         </div>
-        <div className="beirut-cover-photo">
+        <div data-enter="photo" className="beirut-cover-photo">
           <img
             src={coverPhoto}
             alt="Aceite de oliva, café con cardamomo, pan con zaatar, tahini, melaza de granada, agua de rosas y halva de pistacho"
