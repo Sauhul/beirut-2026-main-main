@@ -50,12 +50,13 @@ export function ProductCard({
           <span
             className={`font-display tabular-nums text-gold ${compact ? "text-lg sm:text-xl" : "text-2xl"}`}
           >
-            {formatCOP(product.price)}
+            {product.price > 0 ? formatCOP(product.price) : "Precio por confirmar"}
           </span>
         </div>
 
         <div className={compact ? "mt-3" : "mt-5 flex gap-2"}>
           <button
+            disabled={!product.in_stock || product.price <= 0}
             onClick={() => {
               add({
                 id: product.id,
@@ -69,15 +70,21 @@ export function ProductCard({
               setAddCount((count) => count + 1);
               toast.success(`${name} agregado al carrito`);
             }}
-            aria-label={`Agregar ${name} al carrito`}
-            className={`btn-gold min-h-11 w-full !py-3 !text-xs ${compact ? "!px-2 !tracking-normal" : "!px-3 !tracking-normal"}`}
+            aria-label={
+              product.in_stock && product.price > 0 ? `Agregar ${name} al carrito` : undefined
+            }
+            className={`btn-gold min-h-11 w-full !py-3 !text-xs disabled:opacity-60 ${compact ? "!px-2 !tracking-normal" : "!px-3 !tracking-normal"}`}
           >
             <ShoppingCart
               key={addCount}
               aria-hidden="true"
               className={`h-3.5 w-3.5 shrink-0 ${addCount ? "motion-added" : ""}`}
             />{" "}
-            {compact ? (
+            {product.price <= 0 ? (
+              "No disponible"
+            ) : !product.in_stock ? (
+              "Agotado"
+            ) : compact ? (
               "Agregar"
             ) : (
               <>

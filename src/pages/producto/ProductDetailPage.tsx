@@ -99,59 +99,65 @@ export function ProductDetailPage() {
             {product.description}
           </p>
           <p className="detail-meta detail-motion mt-6 font-display text-5xl text-gold">
-            {formatCOP(product.price)}
+            {product.price > 0 ? formatCOP(product.price) : "Precio por confirmar"}
           </p>
 
-          <div className="detail-actions detail-motion mt-10 flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 border border-input bg-onyx px-3 py-2">
+          {product.in_stock && product.price > 0 ? (
+            <div className="detail-actions detail-motion mt-10 flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2 border border-input bg-onyx px-3 py-2">
+                <button
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  className="motion-press grid h-11 w-11 place-items-center text-muted-foreground hover:text-gold"
+                  aria-label="Restar"
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <span
+                  key={qty}
+                  className="motion-value min-w-6 text-center text-sm font-bold text-sand"
+                >
+                  {qty}
+                </span>
+                <button
+                  onClick={() => setQty((q) => q + 1)}
+                  className="motion-press grid h-11 w-11 place-items-center text-muted-foreground hover:text-gold"
+                  aria-label="Sumar"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
               <button
-                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="motion-press grid h-11 w-11 place-items-center text-muted-foreground hover:text-gold"
-                aria-label="Restar"
+                onClick={() => {
+                  add(
+                    {
+                      id: product.id,
+                      slug: product.slug,
+                      name: product.name,
+                      price: product.price,
+                      unit: product.unit,
+                      categorySlug: product.category_slug,
+                      imageUrl: product.image_url,
+                    },
+                    qty,
+                  );
+                  setAddCount((count) => count + 1);
+                  toast.success(`${name} agregado al carrito`);
+                }}
+                className="btn-gold w-full sm:w-auto sm:flex-none"
               >
-                <Minus className="h-4 w-4" />
-              </button>
-              <span
-                key={qty}
-                className="motion-value min-w-6 text-center text-sm font-bold text-sand"
-              >
-                {qty}
-              </span>
-              <button
-                onClick={() => setQty((q) => q + 1)}
-                className="motion-press grid h-11 w-11 place-items-center text-muted-foreground hover:text-gold"
-                aria-label="Sumar"
-              >
-                <Plus className="h-4 w-4" />
+                <CheckCircle2
+                  key={addCount}
+                  aria-hidden="true"
+                  className={`h-4 w-4 ${addCount ? "motion-added" : ""}`}
+                />
+                Agregar al carrito
               </button>
             </div>
-            <button
-              onClick={() => {
-                add(
-                  {
-                    id: product.id,
-                    slug: product.slug,
-                    name: product.name,
-                    price: product.price,
-                    unit: product.unit,
-                    categorySlug: product.category_slug,
-                    imageUrl: product.image_url,
-                  },
-                  qty,
-                );
-                setAddCount((count) => count + 1);
-                toast.success(`${name} agregado al carrito`);
-              }}
-              className="btn-gold w-full sm:w-auto sm:flex-none"
-            >
-              <CheckCircle2
-                key={addCount}
-                aria-hidden="true"
-                className={`h-4 w-4 ${addCount ? "motion-added" : ""}`}
-              />
-              Agregar al carrito
-            </button>
-          </div>
+          ) : (
+            <p className="detail-meta detail-motion mt-10 font-semibold text-muted-foreground">
+              {product.price <= 0 ? "No disponible para compra" : "Agotado"}
+            </p>
+          )}
 
           <ul className="detail-meta detail-motion mt-12 space-y-3 border-t border-border pt-8 text-sm text-muted-foreground">
             <li className="flex items-center gap-2">

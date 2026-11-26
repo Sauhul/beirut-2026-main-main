@@ -146,7 +146,7 @@ export function CatalogSearch({ initialQuery }: { initialQuery: string }) {
                     {product.name}
                   </span>
                   <span className="shrink-0 text-xs whitespace-nowrap text-gold">
-                    {formatCOP(product.price)}
+                    {product.price > 0 ? formatCOP(product.price) : "Precio por confirmar"}
                   </span>
                 </button>
               </li>

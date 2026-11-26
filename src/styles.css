@@ -1183,16 +1183,11 @@
 .featured-products-viewport[data-carousel="true"] .featured-products-track {
   position: relative;
   display: flex;
+  gap: clamp(0.625rem, 2cqi, 1rem);
 }
 
 .featured-products-viewport[data-carousel="true"] .featured-products-track > li {
-  flex: 0 0 clamp(14rem, 78cqi, 19rem);
-}
-
-@container catalog (width < 20rem) {
-  .featured-products-viewport[data-carousel="true"] .featured-products-track > li {
-    flex-basis: 100%;
-  }
+  flex: 0 0 min(100%, clamp(7rem, 46cqi, 15rem));
 }
 
 

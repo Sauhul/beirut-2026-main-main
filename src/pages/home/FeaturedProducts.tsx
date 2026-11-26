@@ -129,7 +129,7 @@ export function FeaturedProducts({ products, loading }: { products: Product[]; l
             <ul ref={trackRef} className="featured-products-track catalog-card-grid py-4">
               {products.map((product) => (
                 <li key={product.id} className="min-w-0 [&>article]:h-full">
-                  <ProductCard product={product} />
+                  <ProductCard product={product} compact />
                 </li>
               ))}
             </ul>
