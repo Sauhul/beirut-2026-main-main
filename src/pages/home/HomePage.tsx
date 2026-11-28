@@ -257,14 +257,14 @@ export function HomePage() {
       {/* VISÍTANOS */}
       <section data-reveal-section className="border-t border-border bg-muted py-24">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2">
-          <div data-reveal-heading>
+          <div data-reveal-heading className="max-sm:text-center">
             <p className="eyebrow">Visítanos</p>
             <h2 className="mt-3 font-display text-4xl leading-tight text-sand md:text-5xl">
               Te esperamos en la tienda
             </h2>
-            <div className="mt-6 h-px w-24 bg-gold" />
+            <div className="mt-6 h-px w-24 bg-gold max-sm:mx-auto" />
             <ul className="mt-8 space-y-6 text-sm text-muted-foreground">
-              <li className="flex gap-4">
+              <li className="flex gap-4 max-sm:flex-col max-sm:items-center max-sm:gap-2">
                 <MapPin className="mt-1 h-5 w-5 shrink-0 text-gold" />
                 <span>
                   <span className="block text-[0.6rem] font-bold tracking-[0.22em] uppercase text-gold">
@@ -273,7 +273,7 @@ export function HomePage() {
                   {SITE.address}
                 </span>
               </li>
-              <li className="flex gap-4">
+              <li className="flex gap-4 max-sm:flex-col max-sm:items-center max-sm:gap-2">
                 <Clock className="mt-1 h-5 w-5 shrink-0 text-gold" />
                 <span>
                   <span className="block text-[0.6rem] font-bold tracking-[0.22em] uppercase text-gold">
@@ -284,7 +284,7 @@ export function HomePage() {
                   {SITE.hoursSunday}
                 </span>
               </li>
-              <li className="flex gap-4">
+              <li className="flex gap-4 max-sm:flex-col max-sm:items-center max-sm:gap-2">
                 <Phone className="mt-1 h-5 w-5 shrink-0 text-gold" />
                 <span>
                   <span className="block text-[0.6rem] font-bold tracking-[0.22em] uppercase text-gold">

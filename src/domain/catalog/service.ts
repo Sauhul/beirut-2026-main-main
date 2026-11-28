@@ -9,7 +9,7 @@ import { productDescriptions } from "@data/product-descriptions";
 import { formatPresentation, normalizeProductName, productPresentation } from "@shared/utils/product-format";
 import backgroundPhotoSlugs from "./background-photos.json";
 import brochureProducts from "./brochure-products.json";
-import type { Catalog, Product } from "./types";
+import type { Catalog, Category, Product } from "./types";
 
 const defaultDescription = "Producto auténtico árabe importado de alta calidad";
 
@@ -19,7 +19,7 @@ const brochureBySlug = new Map<string, { name: string; price: number; descriptio
   Object.entries(brochureProducts),
 );
 
-function isVisibleInCatalog(product: { slug: string }) {
+export function isVisibleInCatalog(product: { slug: string }) {
   return !duplicateTahinaSlugs.has(product.slug);
 }
 
@@ -27,6 +27,15 @@ function catalogDescription(slug: string, description: string | null): string {
   const saved = description?.trim();
   if (saved && saved !== defaultDescription) return saved;
   return productDescriptions.get(slug) ?? saved ?? "";
+}
+
+export function catalogImageUrl(
+  slug: string | undefined,
+  imageUrl: string | null = null,
+): string | null {
+  return slug && backgroundPhotos.has(slug)
+    ? `/products-backgrounds/${encodeURIComponent(slug)}.webp`
+    : imageUrl;
 }
 
 function withDisplayProduct(product: Product, useBrochure = import.meta.env.DEV): Product {
@@ -55,15 +64,25 @@ function withDisplayProduct(product: Product, useBrochure = import.meta.env.DEV)
     name,
     category_name: normalizeProductName(product.category_name),
     price: brochure?.price ?? product.price,
-    image_url:
-      backgroundPhotos.has(product.slug)
-        ? `/products-backgrounds/${encodeURIComponent(product.slug)}.webp`
-        : product.image_url,
+    image_url: catalogImageUrl(product.slug, product.image_url),
     unit,
     description:
       brochure?.description ??
       (needsPresentation ? `Presentación de ${presentation}. ${description}`.trim() : description),
   };
+}
+
+const fallbackOtherCategory = CATEGORIES.find((category) => category.slug === "otros")!;
+
+export function toCatalogProduct(
+  product: Omit<Product, "category_slug" | "category_name">,
+  category: Pick<Category, "slug" | "name"> = fallbackOtherCategory,
+): Product {
+  return withDisplayProduct({
+    ...product,
+    category_slug: category.slug,
+    category_name: category.name,
+  });
 }
 
 const fallbackCatalog: Catalog = {
@@ -92,25 +111,11 @@ export async function getCatalog(): Promise<Catalog> {
   const categoriesById = new Map(savedCategories.map((category) => [category.id, category]));
   const otherCategory =
     savedCategories.find((category) => category.slug === "otros") ??
-    CATEGORIES.find((category) => category.slug === "otros")!;
+    fallbackOtherCategory;
 
-  const dbProducts = (productsRes.data ?? []).filter(isVisibleInCatalog).map((p): Product => {
-    const category = categoriesById.get(p.category_id) ?? otherCategory;
-
-    return withDisplayProduct({
-      id: p.id,
-      slug: p.slug,
-      name: p.name,
-      description: p.description,
-      price: p.price,
-      unit: p.unit,
-      featured: p.featured,
-      in_stock: p.in_stock,
-      image_url: p.image_url,
-      category_slug: category.slug,
-      category_name: category.name,
-    });
-  });
+  const dbProducts = (productsRes.data ?? []).filter(isVisibleInCatalog).map((product) =>
+    toCatalogProduct(product, categoriesById.get(product.category_id) ?? otherCategory),
+  );
 
   const categories = categoriesById.has(otherCategory.id)
     ? savedCategories

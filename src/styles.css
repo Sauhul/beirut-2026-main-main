@@ -1295,6 +1295,7 @@
   object-fit: cover;
 }
 
+.admin-product-photo img,
 .cart-product-photo img {
   object-fit: cover;
 }

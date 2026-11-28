@@ -32,7 +32,7 @@ export function productImageSrc(
   if (!imageUrl) return fallbackUrl;
   const refined = refinedPhotos.get(imageUrl);
   if (refined) return refined;
-  if (/^https?:\/\//i.test(imageUrl)) return imageUrl;
+  if (/^(https?:\/\/|blob:)/i.test(imageUrl)) return imageUrl;
   if (imageUrl.startsWith("/") && !/^\/?(?:products|product-images)\//i.test(imageUrl)) {
     return imageUrl;
   }

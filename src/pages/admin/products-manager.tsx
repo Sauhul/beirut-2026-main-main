@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
-import { ImageOff, Pencil, Plus, Trash2, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { ProductPhoto } from "@components/product/ProductPhoto";
+import { catalogImageUrl, isVisibleInCatalog, toCatalogProduct } from "@domain/catalog/service";
 import { supabase } from "@data/supabase/client";
 import { formatCOP } from "@shared/utils/format";
 import { UNIT_OPTIONS, formatPresentation } from "@shared/utils/product-format";
@@ -47,7 +49,7 @@ export function ProductsManager() {
       setLoading(false);
       return;
     }
-    setProducts((prods as ProductRow[]) ?? []);
+    setProducts(((prods as ProductRow[]) ?? []).filter(isVisibleInCatalog));
     setCategories((cats as CategoryRow[]) ?? []);
     setLoading(false);
   }, []);
@@ -57,11 +59,19 @@ export function ProductsManager() {
   }, [load]);
 
   const searchTerm = searchQuery.trim().toLocaleLowerCase("es-CO");
-  const visibleProducts = products.filter(({ name, unit }) =>
-      [name, [name, formatPresentation(unit)].filter(Boolean).join(" ")].some((label) =>
-        label.toLocaleLowerCase("es-CO").includes(searchTerm),
-      ),
-    );
+  const catalogProducts = useMemo(() => {
+    const categoriesById = new Map(categories.map((category) => [category.id, category]));
+    const otherCategory = categories.find((category) => category.slug === "otros");
+    return products.map((row) => ({
+      row,
+      product: toCatalogProduct(row, categoriesById.get(row.category_id ?? "") ?? otherCategory),
+    }));
+  }, [categories, products]);
+  const visibleProducts = catalogProducts.filter(({ row, product }) =>
+    [row, product].some(({ name, unit }) =>
+      [name, formatPresentation(unit)].join(" ").toLocaleLowerCase("es-CO").includes(searchTerm),
+    ),
+  );
 
   async function save(imageFile?: File | null) {
     if (!supabase || !editing) return;
@@ -194,11 +204,16 @@ export function ProductsManager() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {visibleProducts.map((p) => (
+              {visibleProducts.map(({ row, product: p }) => (
                 <tr key={p.id} className="hover:bg-muted/50">
                   <td className="px-4 py-3">
                     <div className="flex min-w-52 items-center gap-3">
-                      <ProductPhoto src={p.image_url} className="h-14 w-14" />
+                      <ProductPhoto
+                        imageUrl={p.image_url}
+                        productSlug={p.slug}
+                        alt=""
+                        className="admin-product-photo size-14 shrink-0 rounded-lg"
+                      />
                       <div>
                         <span className="block font-semibold text-sand">{p.name}</span>
                         <span className="text-sm text-muted-foreground">
@@ -211,7 +226,7 @@ export function ProductsManager() {
                     </div>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
-                    {categories.find((c) => c.id === p.category_id)?.name ?? "—"}
+                    {p.category_name}
                   </td>
                   <td className="px-4 py-3 font-display text-gold">{formatCOP(p.price)}</td>
                   <td className="px-4 py-3">
@@ -224,14 +239,14 @@ export function ProductsManager() {
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => setEditing(p)}
+                        onClick={() => setEditing(row)}
                         aria-label={`Editar ${p.name}`}
                         className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-input px-3 font-semibold text-sand hover:bg-muted"
                       >
                         <Pencil className="h-4 w-4" aria-hidden="true" /> Editar
                       </button>
                       <button
-                        onClick={() => setDeleting(p)}
+                        onClick={() => setDeleting(row)}
                         aria-label={`Eliminar ${p.name}`}
                         className="grid min-h-11 min-w-11 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-destructive"
                       >
@@ -330,28 +345,6 @@ async function compressImage(file: File) {
   return new File([blob], `${name || "imagen"}.jpg`, { type: "image/jpeg" });
 }
 
-function ProductPhoto({ src, className }: { src: string | null; className: string }) {
-  const [failedSrc, setFailedSrc] = useState<string | null>(null);
-
-  return src && failedSrc !== src ? (
-    <img
-      src={src}
-      alt=""
-      loading="lazy"
-      onError={() => setFailedSrc(src)}
-      className={`${className} shrink-0 rounded-lg border border-border bg-muted object-contain`}
-    />
-  ) : (
-    <span
-      aria-label="Sin foto disponible"
-      role="img"
-      className={`${className} grid shrink-0 place-items-center rounded-lg border border-border bg-muted text-muted-foreground`}
-    >
-      <ImageOff size={20} aria-hidden="true" />
-    </span>
-  );
-}
-
 function ProductForm({
   value,
   categories,
@@ -368,9 +361,11 @@ function ProductForm({
   const set = <K extends keyof ProductRow>(key: K, v: ProductRow[K]) =>
     onChange({ ...value, [key]: v });
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(value.image_url ?? null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [processingImage, setProcessingImage] = useState(false);
   const [saving, setSaving] = useState(false);
+  const imageUrl = previewUrl ?? catalogImageUrl(value.slug, value.image_url);
+  const imageSlug = previewUrl ? undefined : value.slug;
 
   useEffect(() => {
     if (previewUrl?.startsWith("blob:")) return () => URL.revokeObjectURL(previewUrl);
@@ -433,7 +428,14 @@ function ProductForm({
           className="mt-6 grid gap-4"
           aria-busy={saving}
         >
-          {previewUrl && <ProductPhoto src={previewUrl} className="h-36 w-full" />}
+          {imageUrl && (
+            <ProductPhoto
+              imageUrl={imageUrl}
+              productSlug={imageSlug}
+              alt=""
+              className="admin-product-photo mx-auto h-36 rounded-lg"
+            />
+          )}
           <label className="block text-base font-semibold text-sand">
             Nombre del producto
             <input
@@ -540,18 +542,12 @@ function ProductForm({
           <div className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Imagen del producto (opcional)
             <div className="mt-2 flex items-center gap-4">
-              {previewUrl ? (
-                <img
-                  src={previewUrl}
-                  alt="Vista previa"
-                  crossOrigin="anonymous"
-                  className="h-20 w-20 border border-border bg-onyx object-contain p-1"
-                />
-              ) : (
-                <div className="flex h-20 w-20 items-center justify-center border border-dashed border-border bg-onyx text-[0.6rem] uppercase tracking-wider text-muted-foreground">
-                  Sin foto
-                </div>
-              )}
+              <ProductPhoto
+                imageUrl={imageUrl}
+                productSlug={imageSlug}
+                alt="Vista previa"
+                className="admin-product-photo size-20 shrink-0 rounded-lg"
+              />
               <div className="flex flex-col gap-2">
                 <label className="btn-outline-gold cursor-pointer !px-4 !py-2 text-xs">
                   {imageFile ? "Cambiar imagen" : "Elegir imagen"}
