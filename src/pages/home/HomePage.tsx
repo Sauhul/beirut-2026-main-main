@@ -84,7 +84,7 @@ export function HomePage() {
     },
     {
       icon: Store,
-      title: "Tienda física en El Prado",
+      title: "Tienda física",
       text: "Puedes venir, oler las especias, probar el café y pedir consejo sobre cada producto.",
     },
     {
