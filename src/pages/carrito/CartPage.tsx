@@ -239,7 +239,7 @@ export function CartPage() {
 
       {crossSellDialog}
       {showConfirmDialog && (
-        <div className="motion-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="motion-backdrop fixed inset-0 z-50 flex items-center justify-center bg-foreground/55">
           <div className="motion-dialog mx-4 w-full max-w-lg max-h-[90dvh] overflow-y-auto bg-card p-5 shadow-[var(--shadow-lift)] sm:p-8">
             <h2 className="font-display text-3xl text-sand">¿Vaciar carrito?</h2>
             <p className="mt-3 text-sm leading-7 text-muted-foreground">

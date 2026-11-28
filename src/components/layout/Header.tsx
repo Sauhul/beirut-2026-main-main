@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
 import {
   ChevronDown,
   House,
@@ -17,6 +19,8 @@ import { catalogSectionUrl, groupCatalog } from "@domain/catalog/groups";
 import { catalogQuery } from "@domain/catalog/queries";
 import { CatalogSearch } from "./CatalogSearch";
 
+gsap.registerPlugin(useGSAP);
+
 const NAV = [
   { to: "/", label: "Inicio", icon: House },
   { to: "/tienda", label: "Tienda", icon: Store },
@@ -29,10 +33,32 @@ export function Header() {
   const params = new URLSearchParams(search);
   const query = pathname === "/tienda" ? (params.get("q") ?? "") : "";
   const featured = pathname === "/tienda" && params.get("destacados") === "1" && !query.trim();
-  const { count } = useCart();
+  const { count, addCount } = useCart();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const categoriesRef = useRef<HTMLUListElement>(null);
   const { data, isPending } = useQuery({ ...catalogQuery, enabled: categoriesOpen });
   const groups = useMemo(() => (data ? groupCatalog(data) : []), [data]);
+
+  useGSAP(
+    () => {
+      const menu = categoriesRef.current;
+      if (!categoriesOpen || !menu) return;
+
+      const motion = gsap.matchMedia();
+      motion.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from(menu, {
+          opacity: 0.4,
+          scaleY: 0.94,
+          duration: 0.24,
+          ease: "power2.out",
+          clearProps: "opacity,transform",
+        });
+      });
+
+      return () => motion.revert();
+    },
+    { scope: categoriesRef, dependencies: [categoriesOpen], revertOnUpdate: true },
+  );
 
   return (
     <header className="site-header sticky top-0 z-50 border-b border-border bg-card shadow-sm">
@@ -64,7 +90,11 @@ export function Header() {
             aria-label={count > 0 ? `Ver carrito, ${count} productos` : "Ver carrito"}
             className="relative grid size-11 place-items-center hover:text-accent"
           >
-            <ShoppingBag aria-hidden="true" className="size-5" />
+            <ShoppingBag
+              key={addCount}
+              aria-hidden="true"
+              className={addCount ? "size-5 motion-added" : "size-5"}
+            />
             {count > 0 && (
               <span
                 aria-hidden="true"
@@ -74,6 +104,10 @@ export function Header() {
               </span>
             )}
           </Link>
+          <span role="status" className="sr-only">
+            {addCount > 0 &&
+              (count === 1 ? "1 producto en el carrito" : `${count} productos en el carrito`)}
+          </span>
         </div>
 
         <CatalogSearch key={`${pathname}:${query}`} initialQuery={query} />
@@ -107,8 +141,9 @@ export function Header() {
             </button>
             <ul
               id="catalog-navigation"
+              ref={categoriesRef}
               hidden={!categoriesOpen}
-              className="absolute left-0 top-full z-10 max-h-[55dvh] w-[min(22rem,calc(100vw-2rem))] overflow-y-auto rounded-b-lg border border-border bg-card p-2 shadow-lg"
+              className="absolute left-0 top-full z-10 max-h-[55dvh] w-[min(22rem,calc(100vw-2rem))] origin-bottom overflow-y-auto rounded-b-lg border border-border bg-card p-2 shadow-lg sm:origin-top"
             >
               {isPending && (
                 <li role="status" className="px-3 py-2">

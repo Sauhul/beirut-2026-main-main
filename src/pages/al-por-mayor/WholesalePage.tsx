@@ -18,25 +18,28 @@ export function WholesalePage() {
       ref={heroRef}
       className="route-page mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 md:items-center md:gap-12 md:py-16"
     >
-      <div>
+      <div className="max-sm:text-center">
         <h1 className="beirut-hero-line text-5xl leading-none text-sand sm:text-6xl [font-family:'DM_Serif_Display',Georgia,serif]">
           <span data-enter="line">Al por mayor</span>
         </h1>
         <p
           data-enter="detail"
-          className="mt-5 max-w-md text-lg leading-relaxed text-muted-foreground"
+          className="mt-5 max-w-md text-lg leading-relaxed text-muted-foreground max-sm:mx-auto"
         >
           Café con cardamomo, aceitunas, especias y otros productos de nuestra tienda para
           restaurantes, tiendas y negocios.
         </p>
         <p
           data-enter="detail"
-          className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground"
+          className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground max-sm:mx-auto"
         >
           Cuéntanos qué productos necesitas, en qué cantidades y en qué ciudad. Te responderemos por
           correo con disponibilidad y precios.
         </p>
-        <div data-enter="detail" className="mt-7 flex flex-wrap items-center gap-4">
+        <div
+          data-enter="detail"
+          className="mt-7 flex flex-wrap items-center gap-4 max-sm:justify-center"
+        >
           <a href={quoteEmail} className="btn-gold">
             <Mail aria-hidden="true" size={17} /> Solicitar cotización
           </a>

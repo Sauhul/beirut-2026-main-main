@@ -17,6 +17,7 @@ export type CartItem = {
 type CartContextValue = {
   items: CartItem[];
   count: number;
+  addCount: number;
   subtotal: number;
   add: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
   setQuantity: (id: string, quantity: number) => void;
@@ -31,6 +32,7 @@ export const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [addCount, setAddCount] = useState(0);
   const [hydrated, setHydrated] = useState(false);
   const crossSellSeen = useRef(false);
 
@@ -69,6 +71,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, { ...item, quantity }];
     });
+    setAddCount((count) => count + 1);
   }, []);
 
   const setQuantity = useCallback((id: string, quantity: number) => {
@@ -126,6 +129,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     () => ({
       items: currentItems,
       count: currentItems.reduce((n, i) => n + i.quantity, 0),
+      addCount,
       subtotal: currentItems.reduce((n, i) => n + i.price * i.quantity, 0),
       add,
       setQuantity,
@@ -133,7 +137,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clear,
       consumeCrossSell,
     }),
-    [currentItems, add, setQuantity, remove, clear, consumeCrossSell],
+    [currentItems, addCount, add, setQuantity, remove, clear, consumeCrossSell],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

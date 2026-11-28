@@ -4,7 +4,6 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { useQuery } from "@tanstack/react-query";
 import {
-  ArrowDown,
   ArrowUpRight,
   ArrowDownWideNarrow,
   ChevronDown,
@@ -36,7 +35,6 @@ export function StorePage() {
 
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
-  const introRef = useRef<HTMLElement>(null);
   const catalogRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLElement>(null);
   const previousSection = useRef("");
@@ -100,7 +98,6 @@ export function StorePage() {
         ? `category:${category}`
         : "";
 
-  useEntrance(introRef);
   useEntrance(resultsRef, JSON.stringify([sectionKey, title]));
 
   useEffect(() => {
@@ -141,23 +138,6 @@ export function StorePage() {
 
   return (
     <div className="route-page store-page">
-      <header ref={introRef} className="store-intro arabesque border-b border-border">
-        <div className="mx-auto max-w-7xl px-4 py-9 text-center sm:px-6 sm:py-12">
-          <p data-enter="detail" className="eyebrow">
-            Beirut · Delikatessen
-          </p>
-          <h1 className="beirut-hero-line mt-4 font-display text-5xl leading-none text-sand sm:text-6xl">
-            <span data-enter="line">Nuestra tienda</span>
-          </h1>
-          <p data-enter="detail" className="mx-auto mt-4 max-w-md text-base text-muted-foreground">
-            Ingredientes y utensilios para la mesa libanesa.
-          </p>
-          <a href="#store-catalog" className="store-catalog-link">
-            Encuentra tu próximo favorito <ArrowDown aria-hidden="true" size={14} />
-          </a>
-        </div>
-      </header>
-
       <div className="store-reassurance mx-auto max-w-7xl px-4 sm:px-6">
         <span>
           <Truck aria-hidden="true" size={18} /> Envíos a toda Colombia
@@ -248,12 +228,12 @@ export function StorePage() {
         >
           <div className="store-results-bar">
             <div>
-              <h2
+              <h1
                 id="store-results-heading"
                 className="beirut-hero-line min-w-0 font-display text-3xl leading-tight break-words text-sand sm:text-4xl"
               >
                 <span data-enter="line">{title}</span>
-              </h2>
+              </h1>
               {!isPending && (
                 <span
                   role="status"

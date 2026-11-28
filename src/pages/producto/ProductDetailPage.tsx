@@ -5,7 +5,6 @@ import { ArrowLeft, CheckCircle2, Minus, Plus, Truck } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { toast } from "sonner";
 import { productQuery } from "@domain/catalog/queries";
 import { ProductPhotoGallery } from "@components/product/ProductPhotoGallery";
 import { formatCOP } from "@shared/utils/format";
@@ -32,7 +31,6 @@ export function ProductDetailPage() {
   const { data } = useQuery(productQuery(slug ?? ""));
   const { add } = useCart();
   const [qty, setQty] = useState(1);
-  const [addCount, setAddCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   usePageTitle(data ? `${data.product.name} · Beirut` : "Producto · Beirut");
@@ -148,16 +146,10 @@ export function ProductDetailPage() {
                     },
                     qty,
                   );
-                  setAddCount((count) => count + 1);
-                  toast.success(`${name} agregado al carrito`);
                 }}
                 className="btn-gold w-full sm:w-auto sm:flex-none"
               >
-                <CheckCircle2
-                  key={addCount}
-                  aria-hidden="true"
-                  className={`h-4 w-4 ${addCount ? "motion-added" : ""}`}
-                />
+                <CheckCircle2 aria-hidden="true" className="h-4 w-4" />
                 Agregar al carrito
               </button>
             </div>

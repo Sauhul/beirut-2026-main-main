@@ -22,6 +22,7 @@ export function OrdersManager() {
   const [items, setItems] = useState<OrderItemRow[]>([]);
   const [archivedOrders, setArchivedOrders] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [viewArchived, setViewArchived] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
@@ -29,14 +30,18 @@ export function OrdersManager() {
   async function loadData() {
     if (!supabase) return;
     setLoading(true);
+    setLoadError(false);
     try {
-      const [{ data: ords }, { data: its }] = await Promise.all([
+      const [ordersResult, itemsResult] = await Promise.all([
         supabase.from("orders").select("*").order("created_at", { ascending: false }),
         supabase.from("order_items").select("order_id, product_name, quantity, line_total"),
       ]);
 
-      const allOrders = (ords as OrderRow[]) ?? [];
-      const allItems = (its as OrderItemRow[]) ?? [];
+      const error = ordersResult.error ?? itemsResult.error;
+      if (error) throw error;
+
+      const allOrders = (ordersResult.data as OrderRow[]) ?? [];
+      const allItems = (itemsResult.data as OrderItemRow[]) ?? [];
 
       const now = new Date().getTime();
       const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
@@ -59,7 +64,7 @@ export function OrdersManager() {
       setItems(allItems);
     } catch (err) {
       console.error("[Admin Orders]", err);
-      toast.error("Error cargando los pedidos");
+      setLoadError(true);
     } finally {
       setLoading(false);
     }
@@ -159,6 +164,19 @@ export function OrdersManager() {
       <div className="py-20 text-center text-sm text-muted-foreground">
         <RefreshCw className="mx-auto h-6 w-6 animate-spin text-gold mb-2" />
         Cargando panel de pedidos...
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="card-onyx space-y-3 p-6">
+        <p role="alert" className="font-semibold text-destructive">
+          Error cargando los pedidos
+        </p>
+        <button type="button" className="btn-outline-gold" onClick={() => void loadData()}>
+          Intentar de nuevo
+        </button>
       </div>
     );
   }

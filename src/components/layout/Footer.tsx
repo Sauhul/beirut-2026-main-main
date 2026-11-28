@@ -4,7 +4,7 @@ import { SITE } from "@config/site";
 
 export function Footer() {
   return (
-    <footer className="arabesque border-t border-border bg-secondary text-secondary-foreground">
+    <footer className="border-t border-border bg-secondary text-secondary-foreground">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div className="sm:col-span-2">
           <p className="font-display text-3xl tracking-[0.24em] text-gold-soft">BEIRUT</p>

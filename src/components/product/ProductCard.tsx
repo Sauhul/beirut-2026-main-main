@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
-import { toast } from "sonner";
 import type { Product } from "@domain/catalog/types";
 import { ProductPhoto } from "./ProductPhoto";
 import { formatCOP } from "@shared/utils/format";
@@ -19,7 +17,6 @@ export function ProductCard({
   headingLevel?: 3 | 4;
 }) {
   const { add } = useCart();
-  const [addCount, setAddCount] = useState(0);
   const { name } = product;
   const Heading = headingLevel === 4 ? "h4" : "h3";
 
@@ -74,19 +71,13 @@ export function ProductCard({
                 categorySlug: product.category_slug,
                 imageUrl: product.image_url,
               });
-              setAddCount((count) => count + 1);
-              toast.success(`${name} agregado al carrito`);
             }}
             aria-label={
               product.in_stock && product.price > 0 ? `Agregar ${name} al carrito` : undefined
             }
             className={`btn-gold min-h-11 w-full !py-3 !text-xs disabled:opacity-60 ${compact ? "!px-2 !tracking-normal" : "!px-3 !tracking-normal"}`}
           >
-            <ShoppingCart
-              key={addCount}
-              aria-hidden="true"
-              className={`h-3.5 w-3.5 shrink-0 ${addCount ? "motion-added" : ""}`}
-            />{" "}
+            <ShoppingCart aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />{" "}
             {product.price <= 0 ? (
               "No disponible"
             ) : !product.in_stock ? (

@@ -80,7 +80,7 @@ export function HomePage() {
     {
       icon: Ship,
       title: "Importación directa",
-      text: "Traemos cada lote desde Líbano, Siria y Turquía, sin intermediarios que encarezcan la mesa.",
+      text: "Traemos cada lote directamente del Líbano, sin intermediarios.",
     },
     {
       icon: Store,
@@ -214,7 +214,7 @@ export function HomePage() {
       {/* PILARES */}
       <section
         data-reveal-section
-        className="arabesque border-y border-border bg-muted py-12 sm:py-20"
+        className="beirut-store-notes border-y border-border py-12 sm:py-20"
       >
         <div className="mx-auto max-w-7xl px-5">
           <div data-reveal-heading className="text-center">
@@ -224,10 +224,10 @@ export function HomePage() {
             </h2>
             <div className="rule-gold mt-5" />
           </div>
-          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-14 grid gap-8 max-sm:text-center sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS.map((p) => (
               <div data-reveal-item key={p.title} className="border-t border-gold/40 pt-6">
-                <p.icon className="h-7 w-7 text-gold" />
+                <p.icon className="h-7 w-7 text-gold max-sm:mx-auto" />
                 <h3 className="mt-4 font-display text-2xl text-sand">{p.title}</h3>
                 <p className="mt-3 text-xs leading-7 text-muted-foreground">{p.text}</p>
               </div>
@@ -255,7 +255,7 @@ export function HomePage() {
       </section>
 
       {/* VISÍTANOS */}
-      <section data-reveal-section className="arabesque border-t border-border bg-muted py-24">
+      <section data-reveal-section className="border-t border-border bg-muted py-24">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2">
           <div data-reveal-heading>
             <p className="eyebrow">Visítanos</p>

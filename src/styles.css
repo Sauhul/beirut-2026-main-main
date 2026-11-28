@@ -6,7 +6,7 @@
 
 /*
  * Delikatessen Beyrouth — sistema de diseño "Herencia Levantina".
- * Paleta: marfil, oliva, terracota y bronce. Tipografía editorial
+ * Paleta: arena tostada, avena, oliva, terracota y bronce. Tipografía editorial
  * (DM Serif Display para títulos, Fira Sans para texto).
  */
 
@@ -47,27 +47,27 @@
 
 :root {
   --radius: 0.25rem;
-  --background: #f4eee1;
-  --foreground: #333922;
-  --card: #fbf7ee;
+  --background: #e2d3bc;
+  --foreground: #35281e;
+  --card: #efe3ce;
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
-  --primary: #793d2d;
-  --primary-foreground: #fff9ed;
-  --secondary: #3c4629;
-  --secondary-foreground: var(--primary-foreground);
-  --muted: #ebe0cb;
-  --muted-foreground: #5d5846;
-  --accent: #733321;
+  --primary: #494f32;
+  --primary-foreground: #fff9ef;
+  --secondary: #3d452d;
+  --secondary-foreground: #f5ecd9;
+  --muted: #d7c4a8;
+  --muted-foreground: #564333;
+  --accent: #7c412f;
   --accent-foreground: var(--primary-foreground);
-  --destructive: #a13d32;
+  --destructive: #a03c35;
   --destructive-foreground: var(--primary-foreground);
-  --border: #d9c9ad;
-  --input: #a08c70;
-  --ring: #806138;
-  --gold: #6e4d20;
-  --gold-soft: #e3cda4;
+  --border: #c4af92;
+  --input: #8b7056;
+  --ring: #64411f;
+  --gold: #64411f;
+  --gold-soft: #f4da9e;
   --onyx: var(--card);
   --sand: var(--foreground);
   --coral: var(--destructive);
@@ -77,7 +77,7 @@
     rgb(51 57 34 / 45%) 55%,
     rgb(36 39 25 / 88%) 100%
   );
-  --shadow-gold: 0 18px 60px -24px rgb(105 73 35 / 32%);
+  --shadow-gold: 0 18px 60px -24px rgb(119 81 47 / 32%);
   --shadow-soft: 0 1px 2px rgb(44 33 24 / 5%), 0 18px 48px -28px rgb(51 57 34 / 32%);
   --shadow-lift: 0 16px 44px -22px rgb(36 39 25 / 50%), 0 34px 70px -38px rgb(51 57 34 / 42%);
 }
@@ -337,21 +337,6 @@
   font-weight: 400;
 }
 
-.store-intro {
-  position: relative;
-  background-color: var(--card);
-}
-
-.store-catalog-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 2.75rem;
-  margin-top: 0.75rem;
-  color: var(--gold);
-  font-size: 0.875rem;
-}
-
 .store-reassurance {
   display: flex;
   flex-wrap: wrap;
@@ -467,15 +452,15 @@
   padding: 0.75rem 3.25rem 0.75rem 1.125rem;
   border: 1px solid var(--border);
   border-radius: 1.5rem;
-  background: linear-gradient(135deg, var(--card), #f1e6d3);
-  box-shadow: inset 0 1px rgb(255 255 255 / 70%), 0 3px 10px rgb(121 89 39 / 5%);
+  background: linear-gradient(135deg, var(--card), var(--muted));
+  box-shadow: inset 0 1px rgb(255 255 255 / 65%);
   color: var(--foreground);
   font-size: 1rem;
   font-weight: 500;
 }
 
 .store-sort select:hover {
-  border-color: #bda883;
+  border-color: var(--input);
 }
 
 .store-sort select:focus-visible {
@@ -492,7 +477,7 @@
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
-  background: #e8dcc5;
+  background: var(--muted);
   color: var(--gold);
   transform: translateY(-50%);
   pointer-events: none;
@@ -699,10 +684,10 @@
 @media (hover: hover) and (pointer: fine) {
   .cross-sell-product:hover {
     z-index: 1;
-    border-color: #cbb896;
-    background: #f1e6d3;
+    border-color: var(--input);
+    background: var(--muted);
     color: var(--foreground);
-    box-shadow: 0 14px 24px -12px rgb(121 89 39 / 24%);
+    box-shadow: var(--shadow-lift);
   }
 
   .cross-sell-product:hover .cross-sell-product-action {
@@ -710,7 +695,7 @@
   }
 
   .cross-sell-product:hover .cross-sell-product-action button {
-    background: #e8d6bc;
+    background: var(--card);
     color: var(--primary);
   }
 }
@@ -760,6 +745,7 @@
 
 .cross-sell-product-action button[aria-disabled="true"] {
   background: var(--secondary);
+  color: var(--secondary-foreground);
 }
 
 .cross-sell-footer {
@@ -827,18 +813,16 @@
     width: 100%;
   }
 
-  .store-intro h1 {
-    font-size: clamp(2.5rem, 11vw, 3.75rem);
-  }
-
   .store-reassurance {
     justify-content: flex-start;
     gap: 0.875rem;
   }
 
   .store-wholesale-banner {
+    justify-content: center;
     margin-inline: 1rem;
     border-radius: 0.75rem;
+    text-align: center;
   }
 
   .store-wholesale-banner > a {
@@ -1004,9 +988,18 @@
 }
 
 .beirut-home-intro {
-  background: var(--card);
+  background: color-mix(in srgb, var(--background), var(--accent) 10%);
   color: var(--foreground);
   border-bottom: 1px solid var(--border);
+}
+
+.beirut-store-notes {
+  --sand: var(--secondary-foreground);
+  --muted-foreground: #e6d9bf;
+  --gold: var(--gold-soft);
+  --border: #687253;
+  background: var(--secondary);
+  color: var(--secondary-foreground);
 }
 
 .beirut-hero-inner {
@@ -1058,7 +1051,7 @@
 }
 
 .beirut-hero-cta:focus-visible {
-  outline: 2px solid var(--secondary);
+  outline: 2px solid var(--ring);
   outline-offset: 4px;
 }
 
@@ -1418,7 +1411,8 @@
   }
 
   .motion-added {
-    animation: interface-added 240ms cubic-bezier(0.23, 1, 0.32, 1);
+    transform-origin: center top;
+    animation: interface-added 380ms ease-in-out;
   }
 
   .motion-gallery-frame {
@@ -1474,7 +1468,10 @@
 }
 
 @keyframes interface-added {
-  40% { transform: translateY(-3px) scale(1.18); }
+  20% { transform: rotate(-16deg); }
+  40% { transform: rotate(14deg); }
+  60% { transform: rotate(-9deg); }
+  80% { transform: rotate(5deg); }
 }
 
 @keyframes interface-fade {
@@ -1542,29 +1539,6 @@
     width: auto;
     border-radius: 0.875rem;
     max-height: min(62dvh, 28rem);
-  }
-
-  .store-intro > div {
-    padding-block: 1.25rem 1rem;
-    text-align: start;
-  }
-
-  .store-intro .eyebrow {
-    display: none;
-  }
-
-  .store-intro h1 {
-    margin-top: 0;
-    font-size: clamp(2.3rem, 10vw, 3.2rem);
-  }
-
-  .store-intro p {
-    margin: 0.5rem 0 0;
-  }
-
-  .store-intro .store-catalog-link {
-    min-height: 2.75rem;
-    margin-top: 0.25rem;
   }
 
   .store-reassurance {
