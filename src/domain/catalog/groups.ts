@@ -93,7 +93,7 @@ export type CatalogGroup = {
 const knownSources = new Set(GROUPS.flatMap(({ sources }) => sources));
 const otherSlug = "otros-productos";
 
-export function groupCatalog({ products }: Catalog): CatalogGroup[] {
+export function groupCatalog({ products }: Pick<Catalog, "products">): CatalogGroup[] {
   const bySource = new Map<string, Product[]>();
   for (const product of products) {
     const originalSource = product.category_slug;

@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { ProductPhoto } from "@components/product/ProductPhoto";
+import { catalogSectionUrl, groupCatalog } from "@domain/catalog/groups";
 import { catalogImageUrl, isVisibleInCatalog, toCatalogProduct } from "@domain/catalog/service";
 import { supabase } from "@data/supabase/client";
 import { formatCOP } from "@shared/utils/format";
@@ -62,15 +64,26 @@ export function ProductsManager() {
   const catalogProducts = useMemo(() => {
     const categoriesById = new Map(categories.map((category) => [category.id, category]));
     const otherCategory = categories.find((category) => category.slug === "otros");
-    return products.map((row) => ({
-      row,
-      product: toCatalogProduct(row, categoriesById.get(row.category_id ?? "") ?? otherCategory),
-    }));
+    const rowsById = new Map(products.map((row) => [row.id, row]));
+    const groups = groupCatalog({
+      products: products.map((row) =>
+        toCatalogProduct(row, categoriesById.get(row.category_id ?? "") ?? otherCategory),
+      ),
+    });
+    return groups.flatMap(({ products: groupProducts, slug, name }) =>
+      groupProducts.map((product) => ({
+        row: rowsById.get(product.id)!,
+        product,
+        section: { slug, name },
+      })),
+    );
   }, [categories, products]);
-  const visibleProducts = catalogProducts.filter(({ row, product }) =>
-    [row, product].some(({ name, unit }) =>
-      [name, formatPresentation(unit)].join(" ").toLocaleLowerCase("es-CO").includes(searchTerm),
-    ),
+  const visibleProducts = catalogProducts.filter(({ row, product, section }) =>
+    [
+      [row.name, formatPresentation(row.unit)].join(" "),
+      [product.name, formatPresentation(product.unit)].join(" "),
+      section.name,
+    ].some((label) => label.toLocaleLowerCase("es-CO").includes(searchTerm)),
   );
 
   async function save(imageFile?: File | null) {
@@ -197,14 +210,14 @@ export function ProductsManager() {
             <thead className="bg-muted text-sm font-semibold text-sand">
               <tr>
                 <th className="px-4 py-3">Producto</th>
-                <th className="px-4 py-3">Categoría</th>
+                <th className="px-4 py-3">Sección en tienda</th>
                 <th className="px-4 py-3">Precio</th>
                 <th className="px-4 py-3">Estado</th>
                 <th className="px-4 py-3">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {visibleProducts.map(({ row, product: p }) => (
+              {visibleProducts.map(({ row, product: p, section }) => (
                 <tr key={p.id} className="hover:bg-muted/50">
                   <td className="px-4 py-3">
                     <div className="flex min-w-52 items-center gap-3">
@@ -215,7 +228,12 @@ export function ProductsManager() {
                         className="admin-product-photo size-14 shrink-0 rounded-lg"
                       />
                       <div>
-                        <span className="block font-semibold text-sand">{p.name}</span>
+                        <Link
+                          to={`/producto/${p.slug}`}
+                          className="block font-semibold text-sand hover:underline"
+                        >
+                          {p.name}
+                        </Link>
                         <span className="text-sm text-muted-foreground">
                           {formatPresentation(p.unit)}
                         </span>
@@ -226,7 +244,9 @@ export function ProductsManager() {
                     </div>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
-                    {p.category_name}
+                    <Link to={catalogSectionUrl(section.slug)} className="hover:underline">
+                      {section.name}
+                    </Link>
                   </td>
                   <td className="px-4 py-3 font-display text-gold">{formatCOP(p.price)}</td>
                   <td className="px-4 py-3">
