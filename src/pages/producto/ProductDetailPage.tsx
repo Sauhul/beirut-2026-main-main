@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { toast } from "sonner";
 import { productQuery } from "@domain/catalog/queries";
+import { catalogGroupSlug } from "@domain/catalog/groups";
 import { ProductPhotoGallery } from "@components/product/ProductPhotoGallery";
 import { formatCOP } from "@shared/utils/format";
 import { useCart } from "@domain/cart/use-cart";
@@ -18,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 function ProductoNoEncontrado() {
   return (
-    <div className="route-page mx-auto max-w-xl px-5 py-28 text-center">
+    <div className="route-page product-detail-page mx-auto max-w-xl px-5 py-28 text-center">
       <p className="font-display text-4xl text-sand">No encontramos ese producto</p>
       <Link to="/tienda" className="btn-gold mx-auto mt-8 max-w-max">
         Volver a la tienda
@@ -72,7 +73,10 @@ export function ProductDetailPage() {
   const { name } = product;
 
   return (
-    <div ref={containerRef} className="route-page mx-auto max-w-7xl px-5 pb-24 pt-10">
+    <div
+      ref={containerRef}
+      className="route-page product-detail-page mx-auto max-w-7xl px-5 pb-24 pt-10"
+    >
       <Link
         to="/tienda"
         className="inline-flex min-h-11 items-center gap-2 text-sm font-bold tracking-normal text-muted-foreground hover:text-gold"
@@ -80,10 +84,15 @@ export function ProductDetailPage() {
         <ArrowLeft className="h-4 w-4" /> Volver a la tienda
       </Link>
 
-      <div className="mt-10 grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div className="product-detail-layout mt-10 grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <div className="detail-image detail-motion">
           <div className="card-onyx rounded-2xl p-3 sm:p-8">
-            <ProductPhotoGallery key={product.id} imageUrl={product.image_url} name={name} />
+            <ProductPhotoGallery
+              key={product.id}
+              imageUrl={product.image_url}
+              name={name}
+              sectionPhoto={{ productSlug: product.slug, groupSlug: catalogGroupSlug(product) }}
+            />
             <span className="mt-6 inline-flex border border-gold/50 px-3 py-1.5 text-[0.6rem] font-bold tracking-normal text-gold">
               {product.category_name}
             </span>
@@ -181,7 +190,7 @@ export function ProductDetailPage() {
           <div className="related-grid catalog-card-grid mt-8">
             {related.map((p) => (
               <div key={p.id} className="related-card min-w-0 [&>article]:h-full">
-                <ProductCard product={p} />
+                <ProductCard product={p} sectionSlug={catalogGroupSlug(p)} />
               </div>
             ))}
           </div>

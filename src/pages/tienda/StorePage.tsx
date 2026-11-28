@@ -211,7 +211,7 @@ export function StorePage() {
               </Link>
             </nav>
 
-            <div className="relative lg:hidden">
+            <div className="store-mobile-controls relative lg:hidden">
               <label htmlFor="store-category" className="mb-1.5 block text-sm font-semibold">
                 Ir a una sección
               </label>
@@ -301,7 +301,7 @@ export function StorePage() {
           )}
 
           <div className="mt-5 space-y-9 sm:mt-6">
-            {orderedSections.map((section) => (
+            {orderedSections.map((section, sectionIndex) => (
               <section
                 key={section.slug}
                 aria-label={section.name}
@@ -332,10 +332,12 @@ export function StorePage() {
                   </div>
                 )}
                 <div className="catalog-card-grid">
-                  {section.products.map((product) => (
+                  {section.products.map((product, productIndex) => (
                     <ProductCard
                       key={product.id}
                       product={product}
+                      sectionSlug={section.slug}
+                      loading={sectionIndex === 0 && productIndex < 2 ? "eager" : "lazy"}
                       compact
                       headingLevel={showSectionHeadings ? 4 : 3}
                     />

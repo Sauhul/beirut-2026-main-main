@@ -1,7 +1,12 @@
 import { useState, type CSSProperties } from "react";
+import sectionPhotoSources from "@domain/catalog/section-photos.json";
 import { ImageOff } from "lucide-react";
 import { productImageSrc } from "@shared/utils/category-images";
 import { getProductPhotoFraming } from "./product-photo-framing";
+
+const sectionPhotos = new Map(Object.entries(sectionPhotoSources));
+
+export type SectionPhoto = { productSlug: string; groupSlug: string };
 
 type ProductPhotoProps = {
   imageUrl?: string | null;
@@ -9,6 +14,7 @@ type ProductPhotoProps = {
   className?: string;
   loading?: "eager" | "lazy";
   showDetail?: boolean;
+  sectionPhoto?: SectionPhoto;
 };
 
 export function ProductPhoto({
@@ -17,17 +23,38 @@ export function ProductPhoto({
   className = "",
   loading = "lazy",
   showDetail = false,
+  sectionPhoto,
 }: ProductPhotoProps) {
   const [failedSources, setFailedSources] = useState<string[]>([]);
   const originalSource = imageUrl ? productImageSrc(imageUrl) : undefined;
-  const { focalPoint, enlarge, studioSource } = getProductPhotoFraming(originalSource);
+  const { focalPoint, enlarge, studioSource, detailSource } = getProductPhotoFraming(
+    originalSource,
+    sectionPhoto?.productSlug,
+  );
+  const cutoutUrl =
+    !showDetail &&
+    sectionPhoto &&
+    imageUrl &&
+    sectionPhotos.get(sectionPhoto.productSlug)?.includes(imageUrl)
+      ? `/catalog-cutouts/${encodeURIComponent(sectionPhoto.productSlug)}.webp`
+      : undefined;
+  const cutout = cutoutUrl && !failedSources.includes(cutoutUrl) ? cutoutUrl : undefined;
   const source =
-    !showDetail && studioSource && !failedSources.includes(studioSource)
+    (showDetail && detailSource && !failedSources.includes(detailSource)
+      ? detailSource
+      : undefined) ??
+    cutout ??
+    (!showDetail && studioSource && !failedSources.includes(studioSource)
       ? studioSource
-      : originalSource;
+      : originalSource);
+  const backdrop =
+    cutout && sectionPhoto
+      ? `url("/catalog-backdrops/${encodeURIComponent(sectionPhoto.groupSlug)}.webp")`
+      : undefined;
   const detailPoint = showDetail ? focalPoint : undefined;
   const modifiers = [
-    enlarge && "product-photo--framed",
+    backdrop && "product-photo--section",
+    !cutout && enlarge && "product-photo--framed",
     detailPoint && "product-photo--detail",
     className,
   ]
@@ -40,7 +67,7 @@ export function ProductPhoto({
     : undefined;
 
   return (
-    <div className={`product-photo ${modifiers}`}>
+    <div className={`product-photo ${modifiers}`} style={{ backgroundImage: backdrop }}>
       {source && !failedSources.includes(source) ? (
         <img
           src={source}

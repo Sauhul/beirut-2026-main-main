@@ -1,7 +1,16 @@
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, Instagram, Package, ShoppingBag } from "lucide-react";
+import {
+  ChevronDown,
+  House,
+  Instagram,
+  LayoutGrid,
+  Package,
+  ShoppingBag,
+  Sparkles,
+  Store,
+} from "lucide-react";
 import { SITE } from "@config/site";
 import { useCart } from "@domain/cart/use-cart";
 import { catalogSectionUrl, groupCatalog } from "@domain/catalog/groups";
@@ -9,10 +18,10 @@ import { catalogQuery } from "@domain/catalog/queries";
 import { CatalogSearch } from "./CatalogSearch";
 
 const NAV = [
-  { to: "/", label: "Inicio" },
-  { to: "/tienda", label: "Tienda" },
-  { to: "/tienda?destacados=1", label: "Destacados" },
-  { to: "/al-por-mayor", label: "Al por mayor" },
+  { to: "/", label: "Inicio", icon: House },
+  { to: "/tienda", label: "Tienda", icon: Store },
+  { to: "/tienda?destacados=1", label: "Destacados", icon: Sparkles },
+  { to: "/al-por-mayor", label: "Al por mayor", icon: Package },
 ];
 
 export function Header() {
@@ -26,7 +35,7 @@ export function Header() {
   const groups = useMemo(() => (data ? groupCatalog(data) : []), [data]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
+    <header className="site-header sticky top-0 z-50 border-b border-border bg-card shadow-sm">
       <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-2 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-6 md:py-3">
         <Link to="/" aria-label={SITE.brandFull} className="flex w-fit items-center gap-2">
           <img src="/beirut-cedro-dorado.png" width={40} height={40} alt="" className="size-10" />
@@ -70,10 +79,10 @@ export function Header() {
         <CatalogSearch key={`${pathname}:${query}`} initialQuery={query} />
       </div>
 
-      <nav aria-label="Navegación principal" className="border-t border-border">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-2 px-3 text-xs font-semibold max-[359px]:gap-x-1 max-[359px]:px-2 max-[359px]:text-[0.6875rem] sm:justify-start sm:gap-x-6 sm:px-6 sm:text-sm">
+      <nav aria-label="Navegación principal" className="site-navigation border-t border-border">
+        <div className="site-navigation-items mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-2 px-3 text-xs font-semibold max-[359px]:gap-x-1 max-[359px]:px-2 max-[359px]:text-[0.6875rem] sm:justify-start sm:gap-x-6 sm:px-6 sm:text-sm">
           <div
-            className="relative mr-0.5"
+            className="site-navigation-categories relative mr-0.5"
             onBlur={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) setCategoriesOpen(false);
             }}
@@ -88,12 +97,13 @@ export function Header() {
               aria-controls="catalog-navigation"
               aria-expanded={categoriesOpen}
               onClick={() => setCategoriesOpen(!categoriesOpen)}
-              className="flex min-h-11 items-center gap-1 text-foreground hover:text-accent sm:gap-2"
+              className="site-navigation-tab flex min-h-11 items-center gap-1 text-foreground hover:text-accent sm:gap-2"
             >
               <Package aria-hidden="true" className="hidden size-4 sm:block" />
               <span className="hidden sm:inline">Comprar por categorías</span>
+              <LayoutGrid aria-hidden="true" className="size-[1.125rem] sm:hidden" />
               <span className="sm:hidden">Categorías</span>
-              <ChevronDown aria-hidden="true" className="size-3.5" />
+              <ChevronDown aria-hidden="true" className="hidden size-3.5 sm:block" />
             </button>
             <ul
               id="catalog-navigation"
@@ -130,15 +140,16 @@ export function Header() {
               ))}
             </ul>
           </div>
-          {NAV.map(({ to, label }) => {
+          {NAV.map(({ to, label, icon: Icon }) => {
             const selected = to.includes("?") ? featured : pathname === to && !featured;
             return (
               <Link
                 key={to}
                 to={to}
                 aria-current={selected ? "page" : undefined}
-                className={`flex min-h-11 items-center whitespace-nowrap border-b-2 hover:text-accent ${selected ? "border-gold text-foreground" : "border-transparent text-muted-foreground"}`}
+                className={`site-navigation-tab flex min-h-11 items-center whitespace-nowrap border-b-2 hover:text-accent ${selected ? "border-gold text-foreground" : "border-transparent text-muted-foreground"}`}
               >
+                <Icon aria-hidden="true" className="size-[1.125rem] sm:hidden" />
                 {label}
               </Link>
             );

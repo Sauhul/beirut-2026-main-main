@@ -10,10 +10,14 @@ import { useCart } from "@domain/cart/use-cart";
 export function ProductCard({
   product,
   compact = false,
+  sectionSlug,
+  loading,
   headingLevel = 3,
 }: {
   product: Product;
   compact?: boolean;
+  sectionSlug?: string;
+  loading?: "eager" | "lazy";
   headingLevel?: 3 | 4;
 }) {
   const { add } = useCart();
@@ -27,7 +31,14 @@ export function ProductCard({
       className="card-hover-lift card-onyx flex min-w-0 flex-col overflow-hidden rounded-2xl"
     >
       <Link to={`/producto/${product.slug}`} className="relative block overflow-hidden">
-        <ProductPhoto imageUrl={product.image_url} alt={name} />
+        <ProductPhoto
+          imageUrl={product.image_url}
+          alt={name}
+          sectionPhoto={
+            sectionSlug ? { productSlug: product.slug, groupSlug: sectionSlug } : undefined
+          }
+          loading={loading}
+        />
         {!compact && (
           <span className="absolute top-3 right-3 left-3 w-fit wrap-anywhere bg-background/80 px-2 py-1 text-[0.55rem] font-bold tracking-normal text-gold">
             {product.category_name}

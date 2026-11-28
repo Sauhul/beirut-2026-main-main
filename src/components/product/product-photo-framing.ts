@@ -36,13 +36,15 @@ const uprightPouches = new Set([
   "zaatar-500gr",
 ]);
 
-export function getProductPhotoFraming(source?: string) {
+export function getProductPhotoFraming(source?: string, productSlug?: string) {
   const photo = source?.match(/^\/products-refined\/([^/]+)\.webp$/)?.[1] ?? "";
-  const focalPoint = coffeeSetFocalPoints.get(photo);
+  const detailPhoto = photo || productSlug || "";
+  const focalPoint = coffeeSetFocalPoints.get(detailPhoto);
 
   return {
     focalPoint,
     enlarge: uprightPouches.has(photo),
-    studioSource: focalPoint ? `/products-studio/${photo}.webp` : undefined,
+    studioSource: focalPoint ? `/products-studio/${detailPhoto}.webp` : undefined,
+    detailSource: focalPoint ? `/products-refined/${detailPhoto}.webp` : undefined,
   };
 }
