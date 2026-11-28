@@ -93,22 +93,13 @@ export type CatalogGroup = {
 const knownSources = new Set(GROUPS.flatMap(({ sources }) => sources));
 const otherSlug = "otros-productos";
 
-function catalogSource(product: Product) {
-  return (
-    LEGACY_SOURCES[product.category_slug]?.find(([pattern]) => pattern.test(product.slug))?.[1] ??
-    product.category_slug
-  );
-}
-
-export function catalogGroupSlug(product: Product) {
-  const source = catalogSource(product);
-  return GROUPS.find(({ sources }) => sources.includes(source))?.slug ?? otherSlug;
-}
-
 export function groupCatalog({ products }: Catalog): CatalogGroup[] {
   const bySource = new Map<string, Product[]>();
   for (const product of products) {
-    const source = catalogSource(product);
+    const originalSource = product.category_slug;
+    const source =
+      LEGACY_SOURCES[originalSource]?.find(([pattern]) => pattern.test(product.slug))?.[1] ??
+      originalSource;
     const bucket = knownSources.has(source) ? source : otherSlug;
     const entries = bySource.get(bucket) ?? [];
     entries.push(product);

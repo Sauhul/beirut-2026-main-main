@@ -1,12 +1,10 @@
 import { useState, type CSSProperties } from "react";
-import sectionPhotoSources from "@domain/catalog/section-photos.json";
+import editorialPhotoSources from "@domain/catalog/editorial-photo-sources.json";
 import { ImageOff } from "lucide-react";
 import { productImageSrc } from "@shared/utils/category-images";
 import { getProductPhotoFraming } from "./product-photo-framing";
 
-const sectionPhotos = new Map(Object.entries(sectionPhotoSources));
-
-export type SectionPhoto = { productSlug: string; groupSlug: string };
+const editorialPhotos = new Map(Object.entries(editorialPhotoSources));
 
 type ProductPhotoProps = {
   imageUrl?: string | null;
@@ -14,7 +12,7 @@ type ProductPhotoProps = {
   className?: string;
   loading?: "eager" | "lazy";
   showDetail?: boolean;
-  sectionPhoto?: SectionPhoto;
+  productSlug?: string;
 };
 
 export function ProductPhoto({
@@ -23,38 +21,31 @@ export function ProductPhoto({
   className = "",
   loading = "lazy",
   showDetail = false,
-  sectionPhoto,
+  productSlug,
 }: ProductPhotoProps) {
   const [failedSources, setFailedSources] = useState<string[]>([]);
   const originalSource = imageUrl ? productImageSrc(imageUrl) : undefined;
   const { focalPoint, enlarge, studioSource, detailSource } = getProductPhotoFraming(
     originalSource,
-    sectionPhoto?.productSlug,
+    productSlug,
   );
-  const cutoutUrl =
-    !showDetail &&
-    sectionPhoto &&
-    imageUrl &&
-    sectionPhotos.get(sectionPhoto.productSlug)?.includes(imageUrl)
-      ? `/catalog-cutouts/${encodeURIComponent(sectionPhoto.productSlug)}.webp`
+  const generatedSource =
+    !showDetail && productSlug && imageUrl && editorialPhotos.get(productSlug)?.includes(imageUrl)
+      ? `/catalog-editorial/${encodeURIComponent(productSlug)}.webp`
       : undefined;
-  const cutout = cutoutUrl && !failedSources.includes(cutoutUrl) ? cutoutUrl : undefined;
+  const editorialSource =
+    generatedSource && !failedSources.includes(generatedSource) ? generatedSource : undefined;
   const source =
     (showDetail && detailSource && !failedSources.includes(detailSource)
       ? detailSource
       : undefined) ??
-    cutout ??
+    editorialSource ??
     (!showDetail && studioSource && !failedSources.includes(studioSource)
       ? studioSource
       : originalSource);
-  const backdrop =
-    cutout && sectionPhoto
-      ? `url("/catalog-backdrops/${encodeURIComponent(sectionPhoto.groupSlug)}.webp")`
-      : undefined;
   const detailPoint = showDetail ? focalPoint : undefined;
   const modifiers = [
-    backdrop && "product-photo--section",
-    !cutout && enlarge && "product-photo--framed",
+    !editorialSource && enlarge && "product-photo--framed",
     detailPoint && "product-photo--detail",
     className,
   ]
@@ -67,7 +58,7 @@ export function ProductPhoto({
     : undefined;
 
   return (
-    <div className={`product-photo ${modifiers}`} style={{ backgroundImage: backdrop }}>
+    <div className={`product-photo ${modifiers}`}>
       {source && !failedSources.includes(source) ? (
         <img
           src={source}

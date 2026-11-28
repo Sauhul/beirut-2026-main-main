@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { Image, ZoomIn } from "lucide-react";
 import { productImageSrc } from "@shared/utils/category-images";
-import { ProductPhoto, type SectionPhoto } from "./ProductPhoto";
+import { ProductPhoto } from "./ProductPhoto";
 import { getProductPhotoFraming } from "./product-photo-framing";
 
 type ProductPhotoGalleryProps = {
   imageUrl?: string | null;
   name: string;
-  sectionPhoto?: SectionPhoto;
+  productSlug?: string;
 };
 
-export function ProductPhotoGallery({ imageUrl, name, sectionPhoto }: ProductPhotoGalleryProps) {
+export function ProductPhotoGallery({ imageUrl, name, productSlug }: ProductPhotoGalleryProps) {
   const [showDetail, setShowDetail] = useState(false);
   const source = imageUrl ? productImageSrc(imageUrl) : undefined;
-  const { focalPoint } = getProductPhotoFraming(source, sectionPhoto?.productSlug);
+  const { focalPoint } = getProductPhotoFraming(source, productSlug);
 
   return (
     <div className="mx-auto max-w-xl">
@@ -24,7 +24,7 @@ export function ProductPhotoGallery({ imageUrl, name, sectionPhoto }: ProductPho
         alt={showDetail ? `Detalle de ${name}` : name}
         loading="eager"
         showDetail={showDetail}
-        sectionPhoto={sectionPhoto}
+        productSlug={productSlug}
       />
       {focalPoint && (
         <div className="product-gallery-controls" role="group" aria-label="Vistas del producto">

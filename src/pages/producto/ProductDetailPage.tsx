@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { toast } from "sonner";
 import { productQuery } from "@domain/catalog/queries";
-import { catalogGroupSlug } from "@domain/catalog/groups";
 import { ProductPhotoGallery } from "@components/product/ProductPhotoGallery";
 import { formatCOP } from "@shared/utils/format";
 import { useCart } from "@domain/cart/use-cart";
@@ -91,7 +90,7 @@ export function ProductDetailPage() {
               key={product.id}
               imageUrl={product.image_url}
               name={name}
-              sectionPhoto={{ productSlug: product.slug, groupSlug: catalogGroupSlug(product) }}
+              productSlug={product.slug}
             />
             <span className="mt-6 inline-flex border border-gold/50 px-3 py-1.5 text-[0.6rem] font-bold tracking-normal text-gold">
               {product.category_name}
@@ -190,7 +189,7 @@ export function ProductDetailPage() {
           <div className="related-grid catalog-card-grid mt-8">
             {related.map((p) => (
               <div key={p.id} className="related-card min-w-0 [&>article]:h-full">
-                <ProductCard product={p} sectionSlug={catalogGroupSlug(p)} />
+                <ProductCard product={p} editorial />
               </div>
             ))}
           </div>
