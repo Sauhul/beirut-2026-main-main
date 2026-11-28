@@ -500,7 +500,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "b8643979-ff34-4883-bafe-bea94ac8e642",
     "slug": "castania-verde-lat",
-    "name": "Castania Super Extra Nuts | Mix de Frutos Secos Premium 450g",
+    "name": "Castania Super Extra Nuts - Mix de Frutos Secos Premium 450g",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 65000,
     "unit": "unidad",
@@ -1618,7 +1618,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "74d098dd-7c04-4ea6-a9e1-0b8400a33056",
     "slug": "sal-de-limon-lb",
-    "name": "Sal de Lim?n Epice et Nature - 500 g",
+    "name": "Sal de Limón Epice et Nature - 500 g",
     "description": "Producto auténtico árabe importado de alta calidad",
     "price": 20000,
     "unit": "unidad",
@@ -2099,7 +2099,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "061addeb-a398-5e6f-aead-8ca044b3e324",
     "slug": "datiles-premium-tamruk-1k",
-    "name": "D?tiles Premium Tamruk - 1 kg",
+    "name": "Dátiles Premium Tamruk - 1 kg",
     "description": "",
     "price": 100000,
     "unit": "1 kg",
@@ -2528,7 +2528,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "36be2eae-d5d0-5e18-ac04-eb737d32d57b",
     "slug": "dragees-de-almendra-almendras-confitadas-blanco-1kl",
-    "name": "Drag?es de Almendra (Almendras Confitadas Blancas) 1 kg",
+    "name": "Dragées de Almendra (Almendras Confitadas Blancas) 1 kg",
     "description": "",
     "price": 160000,
     "unit": "1 kg",
@@ -2541,7 +2541,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "dc248463-bacd-55de-8a9f-4b5c4c8969ea",
     "slug": "dragees-de-almendra-almendras-confitadas-grises-1kl",
-    "name": "Drag?es de Almendra (Almendras Confitadas Grises) 1 kg",
+    "name": "Dragées de Almendra (Almendras Confitadas Grises) 1 kg",
     "description": "",
     "price": 160000,
     "unit": "1 kg",
@@ -2554,7 +2554,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "839c500d-eb46-5530-8824-c9bbda46096c",
     "slug": "dragees-de-almendra-almendras-confitadas-dorado-1kl",
-    "name": "Drag?es de Almendra (Almendras Confitadas Doradas) 1 kg",
+    "name": "Dragées de Almendra (Almendras Confitadas Doradas) 1 kg",
     "description": "",
     "price": 160000,
     "unit": "1 kg",
@@ -2567,7 +2567,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "bf161026-eb73-567b-8d11-60fd46420bb2",
     "slug": "dragees-de-almendra-almendras-confitadas-rosadas-1kl",
-    "name": "Drag?es de Almendra (Almendras Confitadas Rosadas) 1 kg",
+    "name": "Dragées de Almendra (Almendras Confitadas Rosadas) 1 kg",
     "description": "",
     "price": 160000,
     "unit": "1 kg",
@@ -3581,7 +3581,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "d7181022-ee87-5e70-a68d-958e8e4f84c2",
     "slug": "bulgur-fino-moreno-gardenia-grain-dor-brown-brun-907",
-    "name": "Bulgur Fino Moreno Gardenia Grain D?Or (Brown/Brun) - 907 g",
+    "name": "Bulgur Fino Moreno Gardenia Grain d’Or (Brown/Brun) - 907 g",
     "description": "Esta variedad de trigo partido precocido es la elección ideal para quienes buscan sabor, textura y los beneficios de un grano integral. Su molienda fina es esencial para preparar la auténtica y fresca ensalada Tabulé.",
     "price": 16000,
     "unit": "907 g",
@@ -3958,7 +3958,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "72214c13-1bd1-5883-8cef-567b882fc1ad",
     "slug": "specias-para-shawarma-de-carne-meat-shawarma-spices-gardenia-grain-dor-50g",
-    "name": "Especias para Shawarma de Carne (Meat Shawarma Spices) Gardenia Grain D?Or 50 g",
+    "name": "Especias para Shawarma de Carne (Meat Shawarma Spices) Gardenia Grain d’Or 50 g",
     "description": "",
     "price": 12000,
     "unit": "50 g",
@@ -4296,7 +4296,7 @@ export const PRODUCTS: Product[] = [
   {
     "id": "ba8aa8b6-1cd5-5648-aabc-727d753a3ed6",
     "slug": "dulce-ajonjoli-bandeja-x-30-und",
-    "name": "Dulce de Ajonjol? - Bandeja x 30 unidades",
+    "name": "Dulce de Ajonjolí - Bandeja x 30 unidades",
     "description": "",
     "price": 55000,
     "unit": "unidad",
