@@ -189,7 +189,7 @@ export function ProductDetailPage() {
           <div className="related-grid catalog-card-grid mt-8">
             {related.map((p) => (
               <div key={p.id} className="related-card min-w-0 [&>article]:h-full">
-                <ProductCard product={p} editorial />
+                <ProductCard product={p} />
               </div>
             ))}
           </div>

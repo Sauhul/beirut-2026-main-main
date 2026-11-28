@@ -71,7 +71,8 @@ export function HomePage() {
     return {
       slug: group.slug,
       name: group.name,
-      image: categoryImage(sample?.category_slug, sample?.image_url),
+      image: sample?.image_url ?? categoryImage(null),
+      productSlug: sample?.slug,
     };
   });
 
@@ -191,7 +192,12 @@ export function HomePage() {
                 className="category-garden-link"
               >
                 <span className="category-garden-frame">
-                  <ProductPhoto imageUrl={tile.image} alt="" className="category-thumbnail" />
+                  <ProductPhoto
+                    imageUrl={tile.image}
+                    alt=""
+                    className="category-thumbnail"
+                    productSlug={tile.productSlug}
+                  />
                   <span className="category-garden-arrow">
                     <ArrowUpRight aria-hidden="true" className="size-4" />
                   </span>

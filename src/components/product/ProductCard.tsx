@@ -10,13 +10,11 @@ import { useCart } from "@domain/cart/use-cart";
 export function ProductCard({
   product,
   compact = false,
-  editorial = false,
   loading,
   headingLevel = 3,
 }: {
   product: Product;
   compact?: boolean;
-  editorial?: boolean;
   loading?: "eager" | "lazy";
   headingLevel?: 3 | 4;
 }) {
@@ -34,7 +32,7 @@ export function ProductCard({
         <ProductPhoto
           imageUrl={product.image_url}
           alt={name}
-          productSlug={editorial ? product.slug : undefined}
+          productSlug={product.slug}
           loading={loading}
         />
         {!compact && (

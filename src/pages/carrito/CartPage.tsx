@@ -93,6 +93,7 @@ export function CartPage() {
               >
                 <ProductPhoto
                   imageUrl={item.imageUrl}
+                  productSlug={item.slug}
                   alt={item.name}
                   className="cart-product-photo w-14 sm:w-20 shrink-0 self-start"
                 />

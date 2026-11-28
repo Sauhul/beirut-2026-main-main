@@ -336,7 +336,6 @@ export function StorePage() {
                     <ProductCard
                       key={product.id}
                       product={product}
-                      editorial
                       loading={sectionIndex === 0 && productIndex < 2 ? "eager" : "lazy"}
                       compact
                       headingLevel={showSectionHeadings ? 4 : 3}

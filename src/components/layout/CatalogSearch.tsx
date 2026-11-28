@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import { catalogQuery } from "@domain/catalog/queries";
 import { catalogSearchTerms, suggestProducts } from "@domain/catalog/search";
 import { formatCOP } from "@shared/utils/format";
-import { productImageSrc } from "@shared/utils/category-images";
+import { ProductPhoto } from "@components/product/ProductPhoto";
 
 export function CatalogSearch({ initialQuery }: { initialQuery: string }) {
   const [query, setQuery] = useState(initialQuery);
@@ -134,12 +134,11 @@ export function CatalogSearch({ initialQuery }: { initialQuery: string }) {
                   className="flex min-h-14 w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-muted aria-selected:bg-muted"
                 >
                   {product.image_url && (
-                    <img
-                      src={productImageSrc(product.image_url)}
+                    <ProductPhoto
+                      imageUrl={product.image_url}
+                      productSlug={product.slug}
                       alt=""
-                      width={36}
-                      height={42}
-                      className="h-[42px] w-9 shrink-0 rounded object-cover"
+                      className="h-[42px] w-9 shrink-0 rounded"
                     />
                   )}
                   <span className="min-w-0 flex-1 break-words font-semibold text-foreground">

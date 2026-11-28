@@ -97,7 +97,11 @@ export function CrossSellDialog({
           const added = items.some((item) => item.id === product.id);
           return (
             <li key={product.id} className="cross-sell-product">
-              <ProductPhoto imageUrl={product.image_url} alt={product.name} />
+              <ProductPhoto
+                imageUrl={product.image_url}
+                alt={product.name}
+                productSlug={product.slug}
+              />
               <div className="cross-sell-product-copy">
                 <h3>{product.name}</h3>
                 <div className="cross-sell-product-action">
